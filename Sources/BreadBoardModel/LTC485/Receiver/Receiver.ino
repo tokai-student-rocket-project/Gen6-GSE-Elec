@@ -13,7 +13,7 @@ void setup() {
 
   // 正常なパケットを受信したら点滅
   MsgPacketizer::subscribe(Serial, static_cast<uint8_t>(0xAA),
-    [](int value) {
+    [](float value) {
       digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     }
   );
