@@ -500,8 +500,16 @@
       ""
     ],
     [
-      "d3dbe3df-acde-4766-9e22-3db588259a4b",
-      "Interface"
+      "e0707eae-5795-481d-8074-cd2b21e2c883",
+      "Indicator"
+    ],
+    [
+      "2a858bef-9de7-4a3e-b0fa-43444ab9d510",
+      "Switch"
+    ],
+    [
+      "71498f40-b941-4f92-ab65-d7917868d6fa",
+      "Power"
     ]
   ],
   "text_variables": {}
