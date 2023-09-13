@@ -500,16 +500,24 @@
       ""
     ],
     [
-      "e0707eae-5795-481d-8074-cd2b21e2c883",
-      "Indicator"
+      "71498f40-b941-4f92-ab65-d7917868d6fa",
+      "Power"
+    ],
+    [
+      "7294b7f8-79a7-4ea3-8687-92a673d94882",
+      "Extension"
+    ],
+    [
+      "092bb5f6-479a-4342-8285-14bd550a4a8c",
+      "Peripheral"
     ],
     [
       "2a858bef-9de7-4a3e-b0fa-43444ab9d510",
       "Switch"
     ],
     [
-      "71498f40-b941-4f92-ab65-d7917868d6fa",
-      "Power"
+      "e0707eae-5795-481d-8074-cd2b21e2c883",
+      "Indicator"
     ]
   ],
   "text_variables": {}
