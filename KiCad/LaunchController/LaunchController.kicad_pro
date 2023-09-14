@@ -45,7 +45,7 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.5
+          "min_clearance": 0.25
         }
       },
       "diff_pair_dimensions": [
@@ -510,10 +510,6 @@
     [
       "092bb5f6-479a-4342-8285-14bd550a4a8c",
       "Peripheral"
-    ],
-    [
-      "2a858bef-9de7-4a3e-b0fa-43444ab9d510",
-      "Switch"
     ],
     [
       "e0707eae-5795-481d-8074-cd2b21e2c883",
