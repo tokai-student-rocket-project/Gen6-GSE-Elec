@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "TSRP_TerminalBlock_Alphaplus")(type "KiCad")(uri "${KIPRJMOD}/../TSRP_Library/TSRP_TerminalBlock_Alphaplus.pretty")(options "")(descr ""))
+)
