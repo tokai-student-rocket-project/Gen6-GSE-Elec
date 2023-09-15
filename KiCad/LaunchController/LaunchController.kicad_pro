@@ -439,7 +439,12 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Default",
+        "pattern": "SW_RESET"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -447,7 +452,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "LaunchController.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -514,6 +519,10 @@
     [
       "e0707eae-5795-481d-8074-cd2b21e2c883",
       "Indicator"
+    ],
+    [
+      "50cfa140-fcaf-4528-b6e7-da7a529677fd",
+      "Switch"
     ]
   ],
   "text_variables": {}
