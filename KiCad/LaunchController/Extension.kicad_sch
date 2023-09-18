@@ -1200,7 +1200,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x22") (at 120.65 60.96 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 10d1649a-3814-4529-aee6-9fd69671a430)
-    (property "Reference" "J22" (at 120.65 27.94 0)
+    (property "Reference" "J8" (at 120.65 27.94 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "CONN_PANEL_BAORD_2" (at 120.65 30.48 0)
@@ -1237,7 +1237,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "J22") (unit 1)
+          (reference "J8") (unit 1)
         )
       )
     )
@@ -1246,7 +1246,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x18") (at 78.74 62.23 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 1a6f73e7-c0fd-4cc2-a1b2-76e1e3a3c08a)
-    (property "Reference" "J23" (at 78.74 34.29 0)
+    (property "Reference" "J9" (at 78.74 34.29 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "CONN_PANEL_BAORD_1" (at 78.74 36.83 0)
@@ -1279,7 +1279,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "J23") (unit 1)
+          (reference "J9") (unit 1)
         )
       )
     )
@@ -1307,7 +1307,7 @@
           (reference "#PWR046") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR080") (unit 1)
+          (reference "#PWR049") (unit 1)
         )
       )
     )
@@ -1335,7 +1335,7 @@
           (reference "#PWR046") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR083") (unit 1)
+          (reference "#PWR048") (unit 1)
         )
       )
     )
@@ -1344,7 +1344,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x14") (at 27.94 60.96 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 5a11ce60-4fb0-427e-bbeb-266ccc5bf73e)
-    (property "Reference" "J17" (at 27.94 38.1 0)
+    (property "Reference" "J7" (at 27.94 38.1 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "CONN_STATUS_PANEL" (at 27.94 40.64 0)
@@ -1373,7 +1373,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "J17") (unit 1)
+          (reference "J7") (unit 1)
         )
       )
     )
@@ -1382,7 +1382,7 @@
   (symbol (lib_id "power:GND") (at 35.56 78.74 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 9344fd99-e0f4-4b61-ae41-4c3b772723cf)
-    (property "Reference" "#PWR067" (at 35.56 85.09 0)
+    (property "Reference" "#PWR051" (at 35.56 85.09 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 35.56 83.82 0)
@@ -1398,7 +1398,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR067") (unit 1)
+          (reference "#PWR051") (unit 1)
         )
       )
     )
@@ -1407,7 +1407,7 @@
   (symbol (lib_id "power:GND") (at 86.36 85.09 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a896b25a-2619-4589-927a-ac8688e9df41)
-    (property "Reference" "#PWR082" (at 86.36 91.44 0)
+    (property "Reference" "#PWR052" (at 86.36 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 86.36 90.17 0)
@@ -1423,7 +1423,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR082") (unit 1)
+          (reference "#PWR052") (unit 1)
         )
       )
     )
@@ -1451,7 +1451,7 @@
           (reference "#PWR046") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR079") (unit 1)
+          (reference "#PWR050") (unit 1)
         )
       )
     )
@@ -1460,7 +1460,7 @@
   (symbol (lib_id "power:GND") (at 128.27 88.9 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid ff382a4b-241b-4359-a3f0-80609b725dfd)
-    (property "Reference" "#PWR081" (at 128.27 95.25 0)
+    (property "Reference" "#PWR053" (at 128.27 95.25 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 128.27 93.98 0)
@@ -1476,7 +1476,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/7294b7f8-79a7-4ea3-8687-92a673d94882"
-          (reference "#PWR081") (unit 1)
+          (reference "#PWR053") (unit 1)
         )
       )
     )

@@ -1107,7 +1107,7 @@
           (reference "#PWR051") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR046") (unit 1)
+          (reference "#PWR059") (unit 1)
         )
       )
     )
@@ -1135,7 +1135,7 @@
           (reference "#PWR057") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR048") (unit 1)
+          (reference "#PWR060") (unit 1)
         )
       )
     )
@@ -1163,7 +1163,7 @@
           (reference "#PWR050") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR039") (unit 1)
+          (reference "#PWR057") (unit 1)
         )
       )
     )
@@ -1192,7 +1192,7 @@
           (reference "J16") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "J5") (unit 1)
+          (reference "J12") (unit 1)
         )
       )
     )
@@ -1220,7 +1220,7 @@
           (reference "#PWR048") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR043") (unit 1)
+          (reference "#PWR056") (unit 1)
         )
       )
     )
@@ -1249,7 +1249,7 @@
           (reference "R28") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "R25") (unit 1)
+          (reference "R26") (unit 1)
         )
       )
     )
@@ -1284,7 +1284,7 @@
           (reference "U2") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "U2") (unit 1)
+          (reference "U7") (unit 1)
         )
       )
     )
@@ -1312,7 +1312,7 @@
           (reference "#PWR014") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR014") (unit 1)
+          (reference "#PWR054") (unit 1)
         )
       )
     )
@@ -1340,7 +1340,7 @@
           (reference "#PWR015") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR015") (unit 1)
+          (reference "#PWR058") (unit 1)
         )
       )
     )
@@ -1375,7 +1375,7 @@
           (reference "U7") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "U7") (unit 1)
+          (reference "U8") (unit 1)
         )
       )
     )
@@ -1403,7 +1403,7 @@
           (reference "#PWR054") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR049") (unit 1)
+          (reference "#PWR055") (unit 1)
         )
       )
     )
@@ -1431,7 +1431,7 @@
           (reference "#PWR049") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "#PWR045") (unit 1)
+          (reference "#PWR061") (unit 1)
         )
       )
     )
@@ -1440,7 +1440,7 @@
   (symbol (lib_id "TSRP_Module:DFPlayer-mini") (at 102.87 24.13 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid e221ed3f-dd00-4b92-8dfd-b19fdcd097bc)
-    (property "Reference" "U11" (at 114.9859 22.86 0)
+    (property "Reference" "U6" (at 114.9859 22.86 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "DFPlayer" (at 102.87 20.32 0)
@@ -1471,7 +1471,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "U11") (unit 1)
+          (reference "U6") (unit 1)
         )
       )
     )
@@ -1500,7 +1500,7 @@
           (reference "J15") (unit 1)
         )
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "J4") (unit 1)
+          (reference "J10") (unit 1)
         )
       )
     )
@@ -1509,7 +1509,7 @@
   (symbol (lib_id "Connector:RJ45_Shielded") (at 209.55 33.02 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f58ccc2a-e04e-410a-8221-e899dbdb768d)
-    (property "Reference" "J10" (at 209.55 16.51 0)
+    (property "Reference" "J11" (at 209.55 16.51 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "RJ45" (at 209.55 19.05 0)
@@ -1533,7 +1533,7 @@
     (instances
       (project "LaunchController"
         (path "/628d040b-43bf-4733-804f-091644a90124/092bb5f6-479a-4342-8285-14bd550a4a8c"
-          (reference "J10") (unit 1)
+          (reference "J11") (unit 1)
         )
       )
     )
