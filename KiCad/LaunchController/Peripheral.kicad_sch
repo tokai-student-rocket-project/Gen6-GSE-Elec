@@ -1536,7 +1536,7 @@
     (property "Footprint" "Connector_RJ:RJ45_Wuerth_7499010001A_Horizontal" (at 209.55 32.385 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 209.55 32.385 90)
+    (property "Datasheet" "https://www.monotaro.com/p/4743/2638/" (at 209.55 32.385 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "LCSC" "" (at 209.55 33.02 0)

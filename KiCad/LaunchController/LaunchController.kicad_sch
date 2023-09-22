@@ -4115,7 +4115,7 @@
     (property "Footprint" "Connector_USB:USB_Micro-B_Wuerth_629105150521" (at 262.89 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "https://www.monotaro.com/g/04266004/" (at 262.89 110.49 0)
+    (property "Datasheet" "https://www.monotaro.com/p/4139/8097/" (at 262.89 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "LCSC" "" (at 259.08 109.22 0)
