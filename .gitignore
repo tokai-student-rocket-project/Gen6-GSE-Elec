@@ -1,0 +1,35 @@
+# 自動生成されるフォルダをコミットしないように設定
+.vscode/
+
+# .gitignoreが反映されないときは
+#
+# git rm -r --cached .//
+#
+# を実行
+# いっぱい色々出てくるが、おちついてコミット、プッシュでOK
+
+# Macのいらないファイル
+.DS_Store
+
+# パワポのいらないファイル
+~$*.pptx
+
+# エクセルのいらないファイル
+~$*.xlsx
+
+# drawioの一時ファイル
+*.drawio.bkp
+*.drawio.dtmp
+
+# KiCad バックアップ
+*-backups/
+
+# KiCad キャッシュファイル
+fp-info-cache
+
+# KiCad ローカル設定ファイル
+*.kicad_prl
+
+# KiCad オートセーブファイル
+_autosave-*
+*auto_saved_files*
