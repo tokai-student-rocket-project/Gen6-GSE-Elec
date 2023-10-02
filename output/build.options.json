@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "",
+  "builtInToolsFolders": "",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "arduino:avr:mega:cpu=atmega2560",
+  "hardwareFolders": "/Users/waiwai/Library/Arduino15/packages",
+  "otherLibrariesFolders": "/Users/waiwai/Documents/Arduino/libraries",
+  "runtime.ide.version": "10607",
+  "sketchLocation": "/Users/waiwai/Projects/Gen6-GSE-Elec/Sources/BreadBoardModel/PowerManagement"
+}
