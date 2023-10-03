@@ -15,6 +15,6 @@ public:
   /// @brief 一瞬光らせる
   void blink();
 
-protected:
+private:
   OutputPin* _pin;
 };

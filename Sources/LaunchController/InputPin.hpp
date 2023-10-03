@@ -15,6 +15,6 @@ public:
   /// @return 入力がHIGHか
   bool isHigh();
 
-protected:
+private:
   uint8_t _pinNumber;
 };

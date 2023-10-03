@@ -18,6 +18,6 @@ public:
   /// @brief OFFにする
   void turnOff();
 
-protected:
+private:
   OutputPin* _pin;
 };
