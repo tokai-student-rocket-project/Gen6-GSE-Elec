@@ -21,12 +21,15 @@ namespace button {
 void setup() {
   control::power.turnOn();
 
+  // FT232RL
   Serial.begin(115200);
+  // DFPlayer
   Serial2.begin(9600);
+
+  // HACK 動作確認用
   mp3_set_serial(Serial2);
   mp3_set_debug_serial(Serial);
   mp3_set_volume(30);
-
   mp3_play(1);
 }
 
