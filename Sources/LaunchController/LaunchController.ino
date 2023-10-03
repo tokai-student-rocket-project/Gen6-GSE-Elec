@@ -1,8 +1,8 @@
 #include <Arduino.h>
+#include <DFPlayer_Mini_Mp3.h>
 #include "Control.hpp"
 #include "AccessLED.hpp"
 #include "Button.hpp"
-#include "AudioPlayer.hpp"
 
 
 namespace control {
@@ -17,13 +17,17 @@ namespace button {
   Button kill(14, false);
 }
 
-namespace device {
-  // AudioPlayer audioPlayer;
-}
-
 
 void setup() {
   control::power.turnOn();
+
+  Serial.begin(115200);
+  Serial2.begin(9600);
+  mp3_set_serial(Serial2);
+  mp3_set_debug_serial(Serial);
+  mp3_set_volume(100);
+
+  mp3_play(1);
 }
 
 
