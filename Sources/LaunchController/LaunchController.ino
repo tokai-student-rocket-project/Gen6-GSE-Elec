@@ -27,10 +27,10 @@ void setup() {
   Serial2.begin(9600);
 
   // HACK 動作確認用
-  mp3_set_serial(Serial2);
-  mp3_set_debug_serial(Serial);
-  mp3_set_volume(30);
-  mp3_play(1);
+  // mp3_set_serial(Serial2);
+  // mp3_set_debug_serial(Serial);
+  // mp3_set_volume(30);
+  // mp3_play(1);
 }
 
 
