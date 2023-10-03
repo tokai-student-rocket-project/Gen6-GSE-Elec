@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <Arduino.h>
 #include "OutputPin.hpp"
 
@@ -18,6 +16,6 @@ public:
   /// @brief OFFにする
   void turnOff();
 
-protected:
+private:
   OutputPin* _pin;
 };

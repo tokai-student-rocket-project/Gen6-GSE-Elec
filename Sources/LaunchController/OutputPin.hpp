@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <Arduino.h>
 
 
@@ -20,6 +18,6 @@ public:
   /// @brief 出力を入れ替える（HIGHならLOW LOWならHIGH）
   void setToggle();
 
-protected:
+private:
   uint8_t _pinNumber;
 };
