@@ -25,3 +25,9 @@ void OutputPin::setLow() {
 void OutputPin::setToggle() {
   digitalWrite(_pinNumber, !digitalRead(_pinNumber));
 }
+
+
+/// @brief 出力を設定する
+void OutputPin::set(bool isHigh) {
+  digitalWrite(_pinNumber, isHigh ? HIGH : LOW);
+}
