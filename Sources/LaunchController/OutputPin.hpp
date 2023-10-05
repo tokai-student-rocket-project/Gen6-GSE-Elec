@@ -18,6 +18,9 @@ public:
   /// @brief 出力を入れ替える（HIGHならLOW LOWならHIGH）
   void setToggle();
 
+  /// @brief 出力を設定する
+  void set(bool isHigh);
+
 private:
   uint8_t _pinNumber;
 };
