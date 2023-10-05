@@ -10,9 +10,10 @@ void SemiAutoControl::set() {
 
 /// @brief コンストラクタ
 /// @param pinNumber ピン番号
-SemiAutoControl::SemiAutoControl(uint8_t pinNumber) {
+SemiAutoControl::SemiAutoControl(uint8_t pinNumber, String audioTaskName) {
   _pin = new OutputPin(pinNumber);
   _pin->setLow();
+  _audioTaskName = audioTaskName;
 }
 
 
@@ -25,6 +26,10 @@ void SemiAutoControl::autoSet(bool isHigh) {
 
 /// @brief 手動制御の出力を設定する
 void SemiAutoControl::manualSet(bool isHigh) {
+  if (isHigh && !_manualIsHigh) {
+    Tasks[_audioTaskName]->startOnceAfterMsec(200);
+  }
+
   _manualIsHigh = isHigh;
   set();
 }

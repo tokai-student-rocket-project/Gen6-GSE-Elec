@@ -14,9 +14,14 @@
 namespace control {
   Control power(PIN_PF5);
 
-  SemiAutoControl close(PIN_PB4);
-  SemiAutoControl dump(PIN_PB5);
-  SemiAutoControl purge(PIN_PB6);
+  SemiAutoControl shift(PIN_PH5, "ShiftAudio");
+  SemiAutoControl fill(PIN_PB0, "FillAudio");
+  SemiAutoControl dump(PIN_PB5, "DumpAudio");
+  SemiAutoControl oxygen(PIN_PB7, "OxygenAudio");
+  SemiAutoControl ignition(PIN_PH4, "IgnitionAudio");
+  SemiAutoControl open(PIN_PH6, "OpenAudio");
+  SemiAutoControl close(PIN_PB4, "CloseAudio");
+  SemiAutoControl purge(PIN_PB6, "PurgeAudio");
 }
 
 namespace indicator {
@@ -28,6 +33,15 @@ namespace indicator {
 namespace button {
   Button kill(PIN_PJ1, false);
   Button emergencyStop(PIN_PC4, false);
+
+  Button shift(PIN_PD4, false);
+  Button fill(PIN_PD5, false);
+  Button dump(PIN_PG1, false);
+  Button oxygen(PIN_PC1, false);
+  Button ignition(PIN_PD7, false);
+  Button open(PIN_PD6, false);
+  Button close(PIN_PG0, false);
+  Button purge(PIN_PC0, false);
 }
 
 
@@ -57,7 +71,7 @@ namespace task {
 
 
 bool isBusy = false;
-
+void playFillAudio();
 
 void setup() {
   control::power.turnOn();
@@ -76,13 +90,22 @@ void setup() {
   monitor::ampereVSW.begin();
   monitor::ampere12V.begin();
 
+  Tasks.add("ShiftAudio", [] {mp3_play(110);});
+  Tasks.add("FillAudio", [] {mp3_play(111);});
+  Tasks.add("DumpAudio", [] {mp3_play(112);});
+  Tasks.add("OxygenAudio", [] {mp3_play(113);});
+  Tasks.add("IgnitionAudio", []() {mp3_play(114);});
+  Tasks.add("OpenAudio", []() {mp3_play(115);});
+  Tasks.add("CloseAudio", []() {mp3_play(116);});
+  Tasks.add("PurgeAudio", []() {mp3_play(117);});
+
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&task::handleManualControl)->startFps(20);
 
   // HACK 動作確認用
   mp3_set_serial(Serial2);
-  mp3_set_volume(15);
+  mp3_set_volume(20);
   mp3_play(100);
 
   // Tasks.add<EmergencyStop>("EmergencyStop")
@@ -158,13 +181,26 @@ void task::handleManualControl() {
   // HACK 仮エマスト
   if (!isBusy && button::emergencyStop.isPushed()) {
     isBusy = true;
-    mp3_set_volume(30);
-    mp3_play(3);
+    mp3_set_volume(20);
+    // mp3_play(3);
+    // 空襲警報
+    mp3_play(102);
+
     indicator::emergencyStop.turnOn();
     control::close.autoSet(HIGH);
     control::dump.autoSet(HIGH);
     control::purge.autoSet(HIGH);
   }
+
+  // 手動制御
+  control::shift.manualSet(button::shift.isPushed());
+  control::fill.manualSet(button::fill.isPushed());
+  control::dump.manualSet(button::dump.isPushed());
+  control::oxygen.manualSet(button::oxygen.isPushed());
+  control::ignition.manualSet(button::ignition.isPushed());
+  control::open.manualSet(button::open.isPushed());
+  control::close.manualSet(button::close.isPushed());
+  control::purge.manualSet(button::purge.isPushed());
 
   indicator::task.blink();
 }
