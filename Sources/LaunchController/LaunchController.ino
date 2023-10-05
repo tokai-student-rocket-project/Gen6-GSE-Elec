@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <TaskManager.h>
+#include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
 #include "Control.hpp"
 #include "SemiAutoControl.hpp"
@@ -38,8 +39,19 @@ namespace monitor {
   ThermalMonitor thermal(PIN_PF4, 10000.0);
 }
 
+namespace rs485 {
+  Control sendEnableControl(PIN_PA2);
+  Control txLED(PIN_PA4);
+  Control rxLED(PIN_PA3);
+
+  void enableOutput();
+  void disableOutput();
+}
+
+
 namespace task {
   void monitor();
+  void controlSync();
   void handleManualControl();
 }
 
@@ -50,8 +62,13 @@ bool isBusy = false;
 void setup() {
   control::power.turnOn();
 
+  // RS485の送信が終わったら割り込みを発生させる
+  UCSR1B |= (1 << TXCIE0);
+
   // FT232RL
   Serial.begin(115200);
+  // LTC485
+  Serial1.begin(115200);
   // DFPlayer
   Serial2.begin(9600);
 
@@ -60,6 +77,7 @@ void setup() {
   monitor::ampere12V.begin();
 
   Tasks.add(&task::monitor)->startFps(10);
+  Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&task::handleManualControl)->startFps(20);
 
   // HACK 動作確認用
@@ -76,6 +94,26 @@ void setup() {
 
 void loop() {
   Tasks.update();
+}
+
+
+/// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
+ISR(USART1_TX_vect) {
+  rs485::disableOutput();
+}
+
+
+/// @brief 送信を有効にする
+void rs485::enableOutput() {
+  rs485::sendEnableControl.turnOn();
+  rs485::txLED.turnOn();
+}
+
+
+/// @brief 送信を無効にする
+void rs485::disableOutput() {
+  rs485::sendEnableControl.turnOff();
+  rs485::txLED.turnOff();
 }
 
 
@@ -100,6 +138,14 @@ void task::monitor() {
   Serial.print("\tTEMP[degC]:");
   Serial.print(thermal_degC, 3);
   Serial.println();
+}
+
+
+void task::controlSync() {
+  rs485::enableOutput();
+  //HACK テストパケット
+  float value = (float)millis() / 1000.0;
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(0xAA), value);
 }
 
 
