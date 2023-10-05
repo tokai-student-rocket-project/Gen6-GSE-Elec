@@ -9,6 +9,8 @@ VoltageMonitor::VoltageMonitor(uint8_t pinNumber, float upperResistance, float l
 
 
 float VoltageMonitor::getVoltage_V() {
-  float voltage = (float)analogRead(_pinNumber) / 1023.0 * 5.0;
+  float readingValue = (float)analogRead(_pinNumber);
+  float voltage = readingValue / 1024.0 * 5.0;
+
   return voltage * _scaleFactor;
 }

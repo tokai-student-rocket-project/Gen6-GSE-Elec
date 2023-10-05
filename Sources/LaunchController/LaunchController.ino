@@ -7,6 +7,7 @@
 #include "Button.hpp"
 #include "AmpereMonitor.hpp"
 #include "VoltageMonitor.hpp"
+#include "ThermalMonitor.hpp"
 
 
 namespace control {
@@ -32,8 +33,9 @@ namespace button {
 namespace monitor {
   AmpereMonitor ampereVSW(0x40);
   AmpereMonitor ampere12V(0x41);
-  VoltageMonitor voltageVSW(PIN_PF2, 12000, 2000);
-  VoltageMonitor voltage12V(PIN_PF3, 12000, 2000);
+  VoltageMonitor voltageVSW(PIN_PF2, 12000.0, 2000.0);
+  VoltageMonitor voltage12V(PIN_PF3, 12000.0, 2000.0);
+  ThermalMonitor thermal(PIN_PF4, 10000.0);
 }
 
 namespace task {
@@ -83,17 +85,20 @@ void task::monitor() {
   float voltageVSW_V = monitor::voltageVSW.getVoltage_V();
   float voltage12V_V = monitor::voltage12V.getVoltage_V();
   float powerDissipation_W = ampereVSW_A * voltageVSW_V;
+  float thermal_degC = monitor::thermal.getTemperature_degC();
 
-  Serial.print("IVSW:");
+  Serial.print("IVSW[A]:");
   Serial.print(ampereVSW_A, 3);
-  Serial.print("\tIV12:");
+  Serial.print("\tIV12[A]:");
   Serial.print(ampereV12_A, 3);
-  Serial.print("\tVVSW:");
+  Serial.print("\tVVSW[V]:");
   Serial.print(voltageVSW_V, 3);
-  Serial.print("\tVV12:");
+  Serial.print("\tVV12[V]:");
   Serial.print(voltage12V_V, 3);
-  Serial.print("\tPD:");
+  Serial.print("\tPD[W]:");
   Serial.print(powerDissipation_W, 3);
+  Serial.print("\tTEMP[degC]:");
+  Serial.print(thermal_degC, 3);
   Serial.println();
 }
 
