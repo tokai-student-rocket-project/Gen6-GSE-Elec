@@ -2,20 +2,23 @@
 #include <TaskManager.h>
 #include <DFPlayer_Mini_Mp3.h>
 #include "Control.hpp"
+#include "SemiAutoControl.hpp"
 #include "AccessLED.hpp"
 #include "Button.hpp"
 
 
 namespace control {
   Control power(PIN_PF5);
+
+  SemiAutoControl close(PIN_PB4);
+  SemiAutoControl dump(PIN_PB5);
+  SemiAutoControl purge(PIN_PB6);
 }
 
 namespace indicator {
   AccessLED task(PIN_PK4);
 
-  // LED
   Control emergencyStop(PIN_PG4);
-  Control dump(PIN_PB5);
 }
 
 namespace button {
@@ -28,6 +31,9 @@ namespace task {
 }
 
 
+bool isBusy = false;
+
+
 void setup() {
   control::power.turnOn();
 
@@ -37,10 +43,10 @@ void setup() {
   Serial2.begin(9600);
 
   // HACK 動作確認用
-  // mp3_set_serial(Serial2);
-  // mp3_set_debug_serial(Serial);
-  // mp3_set_volume(30);
-  // mp3_play(1);
+  mp3_set_serial(Serial2);
+  mp3_set_debug_serial(Serial);
+  mp3_set_volume(15);
+  mp3_play(100);
 
   Tasks.add(&task::handleManualControl)->startFps(20);
 
@@ -63,9 +69,14 @@ void task::handleManualControl() {
   }
 
   // HACK 仮エマスト
-  if (button::emergencyStop.isPushed()) {
+  if (!isBusy && button::emergencyStop.isPushed()) {
+    isBusy = true;
+    mp3_set_volume(30);
+    mp3_play(3);
     indicator::emergencyStop.turnOn();
-    indicator::dump.turnOn();
+    control::close.autoSet(HIGH);
+    control::dump.autoSet(HIGH);
+    control::purge.autoSet(HIGH);
   }
 
   indicator::task.blink();
