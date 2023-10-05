@@ -5,6 +5,8 @@
 #include "SemiAutoControl.hpp"
 #include "AccessLED.hpp"
 #include "Button.hpp"
+#include "AmpereMonitor.hpp"
+#include "VoltageMonitor.hpp"
 
 
 namespace control {
@@ -26,7 +28,16 @@ namespace button {
   Button emergencyStop(PIN_PC4, false);
 }
 
+
+namespace monitor {
+  AmpereMonitor ampereVSW(0x40);
+  AmpereMonitor ampere12V(0x41);
+  VoltageMonitor voltageVSW(PIN_PF2, 12000, 2000);
+  VoltageMonitor voltage12V(PIN_PF3, 12000, 2000);
+}
+
 namespace task {
+  void monitor();
   void handleManualControl();
 }
 
@@ -42,13 +53,17 @@ void setup() {
   // DFPlayer
   Serial2.begin(9600);
 
+  Wire.begin();
+  monitor::ampereVSW.begin();
+  monitor::ampere12V.begin();
+
+  Tasks.add(&task::monitor)->startFps(10);
+  Tasks.add(&task::handleManualControl)->startFps(20);
+
   // HACK 動作確認用
   mp3_set_serial(Serial2);
-  mp3_set_debug_serial(Serial);
   mp3_set_volume(15);
   mp3_play(100);
-
-  Tasks.add(&task::handleManualControl)->startFps(20);
 
   // Tasks.add<EmergencyStop>("EmergencyStop")
   //   ->sync<EmergencyStop>("Dump", [&](TaskRef<EmergencyStop> task) {
@@ -59,6 +74,27 @@ void setup() {
 
 void loop() {
   Tasks.update();
+}
+
+
+void task::monitor() {
+  float ampereVSW_A = monitor::ampereVSW.getAmpere_A();
+  float ampereV12_A = monitor::ampere12V.getAmpere_A();
+  float voltageVSW_V = monitor::voltageVSW.getVoltage_V();
+  float voltage12V_V = monitor::voltage12V.getVoltage_V();
+  float powerDissipation_W = ampereVSW_A * voltageVSW_V;
+
+  Serial.print("IVSW:");
+  Serial.print(ampereVSW_A, 3);
+  Serial.print("\tIV12:");
+  Serial.print(ampereV12_A, 3);
+  Serial.print("\tVVSW:");
+  Serial.print(voltageVSW_V, 3);
+  Serial.print("\tVV12:");
+  Serial.print(voltage12V_V, 3);
+  Serial.print("\tPD:");
+  Serial.print(powerDissipation_W, 3);
+  Serial.println();
 }
 
 
