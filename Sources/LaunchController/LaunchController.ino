@@ -22,18 +22,25 @@ namespace control {
   SemiAutoControl open(PIN_PD6, PIN_PH6, "OpenAudio");
   SemiAutoControl close(PIN_PG0, PIN_PB4, "CloseAudio");
   SemiAutoControl purge(PIN_PC0, PIN_PB6, "PurgeAudio");
-}
+
+  void handleManualTask();
+} // namespace control
 
 namespace indicator {
   AccessLED task(PIN_PK4);
 
   Control emergencyStop(PIN_PG4);
-}
+} // namespace indicator
 
 namespace button {
   Button kill(PIN_PJ1, false);
   Button emergencyStop(PIN_PC4, false);
-}
+} // namespace button
+
+
+namespace sequence {
+
+} // namespace sequence
 
 
 namespace monitor {
@@ -42,7 +49,7 @@ namespace monitor {
   VoltageMonitor voltageVSW(PIN_PF2, 12000.0, 2000.0);
   VoltageMonitor voltage12V(PIN_PF3, 12000.0, 2000.0);
   ThermalMonitor thermal(PIN_PF4, 10000.0);
-}
+} // namespace monitor
 
 namespace rs485 {
   Control sendEnableControl(PIN_PA2);
@@ -51,14 +58,13 @@ namespace rs485 {
 
   void enableOutput();
   void disableOutput();
-}
+} // namespace rs485
 
 
 namespace task {
   void monitor();
   void controlSync();
-  void handleManualControl();
-}
+} // namespace task
 
 
 bool isBusy = false;
@@ -91,7 +97,7 @@ void setup() {
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
-  Tasks.add(&task::handleManualControl)->startFps(20);
+  Tasks.add(&control::handleManualTask)->startFps(20);
 
   // HACK 動作確認用
   mp3_set_serial(Serial2);
@@ -162,7 +168,7 @@ void task::controlSync() {
 }
 
 
-void task::handleManualControl() {
+void control::handleManualTask() {
   if (button::kill.isPushed()) {
     // 終了処理
     control::power.turnOff();
