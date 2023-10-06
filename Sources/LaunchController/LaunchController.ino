@@ -14,14 +14,14 @@
 namespace control {
   Control power(PIN_PF5);
 
-  SemiAutoControl shift(PIN_PD4, PIN_PH5, "ShiftAudio");
-  SemiAutoControl fill(PIN_PD5, PIN_PB0, "FillAudio");
-  SemiAutoControl dump(PIN_PG1, PIN_PB5, "DumpAudio");
-  SemiAutoControl oxygen(PIN_PC1, PIN_PB7, "OxygenAudio");
-  SemiAutoControl ignition(PIN_PD7, PIN_PH4, "IgnitionAudio");
-  SemiAutoControl open(PIN_PD6, PIN_PH6, "OpenAudio");
-  SemiAutoControl close(PIN_PG0, PIN_PB4, "CloseAudio");
-  SemiAutoControl purge(PIN_PC0, PIN_PB6, "PurgeAudio");
+  SemiAutoControl shift(PIN_PD4, PIN_PH5, "OnShift");
+  SemiAutoControl fill(PIN_PD5, PIN_PB0, "OnFill");
+  SemiAutoControl dump(PIN_PG1, PIN_PB5, "OnDump");
+  SemiAutoControl oxygen(PIN_PC1, PIN_PB7, "OnOxygen");
+  SemiAutoControl ignition(PIN_PD7, PIN_PH4, "OnIgnition");
+  SemiAutoControl open(PIN_PD6, PIN_PH6, "OnOpen");
+  SemiAutoControl close(PIN_PG0, PIN_PB4, "OnClose");
+  SemiAutoControl purge(PIN_PC0, PIN_PB6, "OnPurge");
 
   void handleManualTask();
 } // namespace control
@@ -86,14 +86,14 @@ void setup() {
   monitor::ampereVSW.begin();
   monitor::ampere12V.begin();
 
-  Tasks.add("ShiftAudio", [] {mp3_play(110);});
-  Tasks.add("FillAudio", [] {mp3_play(111);});
-  Tasks.add("DumpAudio", [] {mp3_play(112);});
-  Tasks.add("OxygenAudio", [] {mp3_play(113);});
-  Tasks.add("IgnitionAudio", []() {mp3_play(114);});
-  Tasks.add("OpenAudio", []() {mp3_play(115);});
-  Tasks.add("CloseAudio", []() {mp3_play(116);});
-  Tasks.add("PurgeAudio", []() {mp3_play(117);});
+  Tasks.add("OnShift", [] {mp3_play(110);});
+  Tasks.add("OnFill", [] {mp3_play(111);});
+  Tasks.add("OnDump", [] {mp3_play(112);});
+  Tasks.add("OnOxygen", [] {mp3_play(113);});
+  Tasks.add("OnIgnition", []() {mp3_play(114);});
+  Tasks.add("OnOpen", []() {mp3_play(115);});
+  Tasks.add("OnClose", []() {mp3_play(116);});
+  Tasks.add("OnPurge", []() {mp3_play(117);});
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
