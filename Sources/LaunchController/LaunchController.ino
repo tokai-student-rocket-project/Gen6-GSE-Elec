@@ -1,3 +1,5 @@
+#define TASKMANAGER_MAX_SUBTASKS 16
+
 #include <Arduino.h>
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
@@ -37,11 +39,9 @@ namespace button {
   Button emergencyStop(PIN_PC4, false);
 } // namespace button
 
-
 namespace sequence {
-
+  void startup();
 } // namespace sequence
-
 
 namespace monitor {
   AmpereMonitor ampereVSW(0x40);
@@ -101,14 +101,115 @@ void setup() {
   Tasks.add("PlayClose", []() {mp3_play(116);});
   Tasks.add("PlayPurge", []() {mp3_play(117);});
 
+  // 自動制御のタスクたち
+  Tasks.add("SetShiftOn", []() {control::shift.setAutomaticOn();});
+  Tasks.add("SetShiftOff", []() {control::shift.setAutomaticOff();});
+  Tasks.add("SetFillOn", []() {control::fill.setAutomaticOn();});
+  Tasks.add("SetFillOff", []() {control::fill.setAutomaticOff();});
+  Tasks.add("SetDumpOn", []() {control::dump.setAutomaticOn();});
+  Tasks.add("SetDumpOff", []() {control::dump.setAutomaticOff();});
+  Tasks.add("SetOxygenOn", []() {control::oxygen.setAutomaticOn();});
+  Tasks.add("SetOxygenOff", []() {control::oxygen.setAutomaticOff();});
+  Tasks.add("SetIgnitionOn", []() {control::ignition.setAutomaticOn();});
+  Tasks.add("SetIgnitionOff", []() {control::ignition.setAutomaticOff();});
+  Tasks.add("SetOpenOn", []() {control::open.setAutomaticOn();});
+  Tasks.add("SetOpenOff", []() {control::open.setAutomaticOff();});
+  Tasks.add("SetCloseOn", []() {control::close.setAutomaticOn();});
+  Tasks.add("SetCloseOff", []() {control::close.setAutomaticOff();});
+  Tasks.add("SetPurgeOn", []() {control::purge.setAutomaticOn();});
+  Tasks.add("SetPurgeOff", []() {control::purge.setAutomaticOff();});
+
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&control::handleManualTask)->startFps(20);
+
+  sequence::startup();
 }
 
 
 void loop() {
   Tasks.update();
+}
+
+
+void sequence::startup() {
+  control::shift.setAutomaticOn();
+  delay(200);
+  control::fill.setAutomaticOn();
+  delay(200);
+  control::dump.setAutomaticOn();
+  delay(200);
+  control::oxygen.setAutomaticOn();
+  delay(200);
+  control::ignition.setAutomaticOn();
+  delay(200);
+  control::open.setAutomaticOn();
+  delay(200);
+  control::close.setAutomaticOn();
+  delay(200);
+  control::purge.setAutomaticOn();
+
+  delay(200);
+
+  control::shift.setAutomaticOff();
+  delay(200);
+  control::fill.setAutomaticOff();
+  delay(200);
+  control::dump.setAutomaticOff();
+  delay(200);
+  control::oxygen.setAutomaticOff();
+  delay(200);
+  control::ignition.setAutomaticOff();
+  delay(200);
+  control::open.setAutomaticOff();
+  delay(200);
+  control::close.setAutomaticOff();
+  delay(200);
+  control::purge.setAutomaticOff();
+
+  delay(500);
+
+  control::shift.setAutomaticOn();
+  control::fill.setAutomaticOn();
+  control::dump.setAutomaticOn();
+  control::oxygen.setAutomaticOn();
+  control::ignition.setAutomaticOn();
+  control::open.setAutomaticOn();
+  control::close.setAutomaticOn();
+  control::purge.setAutomaticOn();
+
+  delay(500);
+
+  control::shift.setAutomaticOff();
+  control::fill.setAutomaticOff();
+  control::dump.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::ignition.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOff();
+  control::purge.setAutomaticOff();
+
+  delay(500);
+
+  control::shift.setAutomaticOn();
+  control::fill.setAutomaticOn();
+  control::dump.setAutomaticOn();
+  control::oxygen.setAutomaticOn();
+  control::ignition.setAutomaticOn();
+  control::open.setAutomaticOn();
+  control::close.setAutomaticOn();
+  control::purge.setAutomaticOn();
+
+  delay(500);
+
+  control::shift.setAutomaticOff();
+  control::fill.setAutomaticOff();
+  control::dump.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::ignition.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOff();
+  control::purge.setAutomaticOff();
 }
 
 
@@ -140,19 +241,19 @@ void task::monitor() {
   float powerDissipation_W = ampereVSW_A * voltageVSW_V;
   float thermal_degC = monitor::thermal.getTemperature_degC();
 
-  Serial.print("IVSW[A]:");
-  Serial.print(ampereVSW_A, 3);
-  Serial.print("\tIV12[A]:");
-  Serial.print(ampereV12_A, 3);
-  Serial.print("\tVVSW[V]:");
-  Serial.print(voltageVSW_V, 3);
-  Serial.print("\tVV12[V]:");
-  Serial.print(voltage12V_V, 3);
-  Serial.print("\tPD[W]:");
-  Serial.print(powerDissipation_W, 3);
-  Serial.print("\tTEMP[degC]:");
-  Serial.print(thermal_degC, 3);
-  Serial.println();
+  // Serial.print("IVSW[A]:");
+  // Serial.print(ampereVSW_A, 3);
+  // Serial.print("\tIV12[A]:");
+  // Serial.print(ampereV12_A, 3);
+  // Serial.print("\tVVSW[V]:");
+  // Serial.print(voltageVSW_V, 3);
+  // Serial.print("\tVV12[V]:");
+  // Serial.print(voltage12V_V, 3);
+  // Serial.print("\tPD[W]:");
+  // Serial.print(powerDissipation_W, 3);
+  // Serial.print("\tTEMP[degC]:");
+  // Serial.print(thermal_degC, 3);
+  // Serial.println();
 }
 
 
@@ -179,9 +280,9 @@ void control::handleManualTask() {
     mp3_play(102);
 
     indicator::emergencyStop.turnOn();
-    control::close.setAutomatic(HIGH);
-    control::dump.setAutomatic(HIGH);
-    control::purge.setAutomatic(HIGH);
+    control::close.setAutomaticOn();
+    control::dump.setAutomaticOn();
+    control::purge.setAutomaticOn();
   }
 
   // 手動制御

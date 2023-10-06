@@ -18,9 +18,20 @@ SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber,
 }
 
 
-/// @brief 自動制御の出力を設定する
-void SemiAutoControl::setAutomatic(bool isHigh) {
-  _autoIsHigh = isHigh;
+/// @brief 自動制御の出力をオンに設定する
+void SemiAutoControl::setAutomaticOn() {
+  _autoIsHigh = true;
+  Serial.print(_onManualRisingTask);
+  Serial.println(" ON");
+  updateOutput();
+}
+
+
+/// @brief 自動制御の出力をオフに設定する
+void SemiAutoControl::setAutomaticOff() {
+  _autoIsHigh = false;
+  Serial.print(_onManualRisingTask);
+  Serial.println(" OFF");
   updateOutput();
 }
 
