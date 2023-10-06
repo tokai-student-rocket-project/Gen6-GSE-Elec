@@ -10,11 +10,11 @@ void SemiAutoControl::updateOutput() {
 /// @brief コンストラクタ
 /// @param controlPinNumber ボタンかスイッチのピン番号
 /// @param ledPinNumber LEDのピン番号
-/// @param ident 識別用の文字列
-SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber, String ident) {
+/// @param onManualRisingTask 手動制御の立ち上がりエッジで実行するタスク名
+SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber, String onManualRisingTask) {
   _buttonPin = new Button(controlPinNumber, false);
   _ledPin = new OutputPin(ledPinNumber);
-  _ident = ident;
+  _onManualRisingTask = onManualRisingTask;
 }
 
 
@@ -29,9 +29,9 @@ void SemiAutoControl::setAutomatic(bool isHigh) {
 void SemiAutoControl::setManual() {
   bool isHigh = _buttonPin->isPushed();
 
-  // オフからオンに切り替わった時のみ音声を再生する
+  // 立ち上がりエッジでタスクを実行する
   if (isHigh && !_manualIsHigh) {
-    Tasks[_ident]->startOnceAfterMsec(200);
+    Tasks[_onManualRisingTask]->startOnceAfterMsec(200);
   }
 
   _manualIsHigh = isHigh;
