@@ -15,6 +15,7 @@ class SemiAutoControl {
   // ピンの実際の出力は以下の変数をOR演算する
   bool _autoIsHigh = false;
   bool _manualIsHigh = false;
+  bool _testIsHigh = false;
 
   // 自動制御と手動制御の出力をもとにピンに出力する
   void updateOutput();
@@ -33,4 +34,8 @@ public:
 
   /// @brief 手動制御の出力を設定する
   void setManual();
+
+  /// @brief テストの出力を設定する
+  void setTestOn();
+  void setTestOff();
 };

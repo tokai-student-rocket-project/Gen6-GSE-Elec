@@ -14,6 +14,10 @@
 namespace control {
   Control power(PIN_PF5);
 
+  SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7, "");
+  SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3, "");
+  SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4, "EmergencyStop");
+
   SemiAutoControl shift(PIN_PD4, PIN_PH5, "PlayShift");
   SemiAutoControl fill(PIN_PD5, PIN_PB0, "PlayFill");
   SemiAutoControl dump(PIN_PG1, PIN_PB5, "PlayDump");
@@ -28,18 +32,16 @@ namespace control {
 
 namespace indicator {
   AccessLED task(PIN_PK4);
-
-  Control emergencyStop(PIN_PG4);
 } // namespace indicator
 
 namespace button {
   Button kill(PIN_PJ1, false);
-  Button emergencyStop(PIN_PC4, false);
 } // namespace button
 
 namespace sequence {
-  void christmasTree();
-  void clear();
+  void christmasTreeOn();
+  void christmasTreeOff();
+  void emergencyStop();
 } // namespace sequence
 
 namespace monitor {
@@ -101,17 +103,18 @@ void setup() {
   Tasks.add("PlayPurge", []() {mp3_play(117);});
 
   // シーケンス関係のタスクたち
-  Tasks.add("Clear", &sequence::clear);
-  Tasks.add("ChristmasTree", &sequence::christmasTree);
+  Tasks.add("ChristmasTreeOn", &sequence::christmasTreeOn);
+  Tasks.add("ChristmasTreeOff", &sequence::christmasTreeOff);
+  Tasks.add("EmergencyStop", &sequence::emergencyStop);
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&control::handleManualTask)->startFps(20);
 
   // クリスマスツリー
-  Tasks["ChristmasTree"]->startOnceAfterSec(0.2);
   Tasks["PlayStartup"]->startOnceAfterSec(0.2);
-  Tasks["Clear"]->startOnceAfterSec(3.0);
+  Tasks["ChristmasTreeOn"]->startOnceAfterSec(0.2);
+  Tasks["ChristmasTreeOff"]->startOnceAfterSec(3.2);
 }
 
 
@@ -126,29 +129,46 @@ ISR(USART1_TX_vect) {
 }
 
 
-
-void sequence::christmasTree() {
-  // TODO クリスマスツリーはLEDのみ制御する
-  control::shift.setAutomaticOn();
-  control::fill.setAutomaticOn();
-  control::dump.setAutomaticOn();
-  control::oxygen.setAutomaticOn();
-  control::ignition.setAutomaticOn();
-  control::open.setAutomaticOn();
-  control::close.setAutomaticOn();
-  control::purge.setAutomaticOn();
+void sequence::christmasTreeOn() {
+  control::safetyArmed.setTestOn();
+  control::sequenceStart.setTestOn();
+  control::emergencyStop.setTestOn();
+  control::shift.setTestOn();
+  control::fill.setTestOn();
+  control::dump.setTestOn();
+  control::oxygen.setTestOn();
+  control::ignition.setTestOn();
+  control::open.setTestOn();
+  control::close.setTestOn();
+  control::purge.setTestOn();
 }
 
 
-void sequence::clear() {
-  control::shift.setAutomaticOff();
-  control::fill.setAutomaticOff();
-  control::dump.setAutomaticOff();
-  control::oxygen.setAutomaticOff();
-  control::ignition.setAutomaticOff();
-  control::open.setAutomaticOff();
-  control::close.setAutomaticOff();
-  control::purge.setAutomaticOff();
+void sequence::christmasTreeOff() {
+  control::safetyArmed.setTestOff();
+  control::sequenceStart.setTestOff();
+  control::emergencyStop.setTestOff();
+  control::shift.setTestOff();
+  control::fill.setTestOff();
+  control::dump.setTestOff();
+  control::oxygen.setTestOff();
+  control::ignition.setTestOff();
+  control::open.setTestOff();
+  control::close.setTestOff();
+  control::purge.setTestOff();
+}
+
+
+void sequence::emergencyStop() {
+  mp3_set_volume(20);
+  // mp3_play(3);
+  // 空襲警報
+  mp3_play(102);
+
+  control::emergencyStop.setAutomaticOn();
+  control::close.setAutomaticOn();
+  control::dump.setAutomaticOn();
+  control::purge.setAutomaticOn();
 }
 
 
@@ -204,19 +224,9 @@ void control::handleManualTask() {
     control::power.turnOff();
   }
 
-  // HACK 仮エマスト
-  if (!isBusy && button::emergencyStop.isPushed()) {
-    isBusy = true;
-    mp3_set_volume(20);
-    // mp3_play(3);
-    // 空襲警報
-    mp3_play(102);
-
-    indicator::emergencyStop.turnOn();
-    control::close.setAutomaticOn();
-    control::dump.setAutomaticOn();
-    control::purge.setAutomaticOn();
-  }
+  control::safetyArmed.setManual();
+  control::sequenceStart.setManual();
+  control::emergencyStop.setManual();
 
   // 手動制御
   control::shift.setManual();

@@ -3,7 +3,7 @@
 
 // 自動制御と手動制御の出力をもとにピンに出力する
 void SemiAutoControl::updateOutput() {
-  _ledPin->set(_autoIsHigh || _manualIsHigh);
+  _ledPin->set(_autoIsHigh || _manualIsHigh || _testIsHigh);
 }
 
 
@@ -21,8 +21,6 @@ SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber,
 /// @brief 自動制御の出力をオンに設定する
 void SemiAutoControl::setAutomaticOn() {
   _autoIsHigh = true;
-  Serial.print(_onManualRisingTask);
-  Serial.println(" ON");
   updateOutput();
 }
 
@@ -30,8 +28,6 @@ void SemiAutoControl::setAutomaticOn() {
 /// @brief 自動制御の出力をオフに設定する
 void SemiAutoControl::setAutomaticOff() {
   _autoIsHigh = false;
-  Serial.print(_onManualRisingTask);
-  Serial.println(" OFF");
   updateOutput();
 }
 
@@ -46,5 +42,19 @@ void SemiAutoControl::setManual() {
   }
 
   _manualIsHigh = isHigh;
+  updateOutput();
+}
+
+
+/// @brief テストの出力をオンに設定する
+void SemiAutoControl::setTestOn() {
+  _testIsHigh = true;
+  updateOutput();
+}
+
+
+/// @brief テストの出力をオフに設定する
+void SemiAutoControl::setTestOff() {
+  _testIsHigh = false;
   updateOutput();
 }
