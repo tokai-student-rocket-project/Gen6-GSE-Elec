@@ -1,13 +1,15 @@
 #pragma once
 #include <Arduino.h>
 #include <TaskManager.h>
+#include "Button.hpp"
 #include "OutputPin.hpp"
 
 
 /// @brief 手動と自動のオンオフ制御
 class SemiAutoControl {
-  OutputPin* _pin;
-  String _audioTaskName;
+  Button* _buttonPin;
+  OutputPin* _ledPin;
+  String _ident;
 
   // 自動制御と手動制御の出力記憶しておく変数たち
   // ピンの実際の出力は以下の変数をOR演算する
@@ -15,16 +17,18 @@ class SemiAutoControl {
   bool _manualIsHigh = false;
 
   // 自動制御と手動制御の出力をもとにピンに出力する
-  void set();
+  void updateOutput();
 
 public:
   /// @brief コンストラクタ
-  /// @param pinNumber ピン番号
-  SemiAutoControl(uint8_t pinNumber, String audioTaskName);
+  /// @param buttonPinNumber ボタンかスイッチのピン番号
+  /// @param ledPinNumber LEDのピン番号
+  /// @param ident 識別用の文字列
+  SemiAutoControl(uint8_t buttonPinNumber, uint8_t ledPinNumber, String ident);
 
   /// @brief 自動制御の出力を設定する
-  void autoSet(bool isHigh);
+  void setAutomatic(bool isHigh);
 
   /// @brief 手動制御の出力を設定する
-  void manualSet(bool isHigh);
+  void setManual();
 };

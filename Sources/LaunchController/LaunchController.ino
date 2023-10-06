@@ -14,14 +14,14 @@
 namespace control {
   Control power(PIN_PF5);
 
-  SemiAutoControl shift(PIN_PH5, "ShiftAudio");
-  SemiAutoControl fill(PIN_PB0, "FillAudio");
-  SemiAutoControl dump(PIN_PB5, "DumpAudio");
-  SemiAutoControl oxygen(PIN_PB7, "OxygenAudio");
-  SemiAutoControl ignition(PIN_PH4, "IgnitionAudio");
-  SemiAutoControl open(PIN_PH6, "OpenAudio");
-  SemiAutoControl close(PIN_PB4, "CloseAudio");
-  SemiAutoControl purge(PIN_PB6, "PurgeAudio");
+  SemiAutoControl shift(PIN_PD4, PIN_PH5, "ShiftAudio");
+  SemiAutoControl fill(PIN_PD5, PIN_PB0, "FillAudio");
+  SemiAutoControl dump(PIN_PG1, PIN_PB5, "DumpAudio");
+  SemiAutoControl oxygen(PIN_PC1, PIN_PB7, "OxygenAudio");
+  SemiAutoControl ignition(PIN_PD7, PIN_PH4, "IgnitionAudio");
+  SemiAutoControl open(PIN_PD6, PIN_PH6, "OpenAudio");
+  SemiAutoControl close(PIN_PG0, PIN_PB4, "CloseAudio");
+  SemiAutoControl purge(PIN_PC0, PIN_PB6, "PurgeAudio");
 }
 
 namespace indicator {
@@ -33,15 +33,6 @@ namespace indicator {
 namespace button {
   Button kill(PIN_PJ1, false);
   Button emergencyStop(PIN_PC4, false);
-
-  Button shift(PIN_PD4, false);
-  Button fill(PIN_PD5, false);
-  Button dump(PIN_PG1, false);
-  Button oxygen(PIN_PC1, false);
-  Button ignition(PIN_PD7, false);
-  Button open(PIN_PD6, false);
-  Button close(PIN_PG0, false);
-  Button purge(PIN_PC0, false);
 }
 
 
@@ -71,7 +62,6 @@ namespace task {
 
 
 bool isBusy = false;
-void playFillAudio();
 
 void setup() {
   control::power.turnOn();
@@ -187,20 +177,20 @@ void task::handleManualControl() {
     mp3_play(102);
 
     indicator::emergencyStop.turnOn();
-    control::close.autoSet(HIGH);
-    control::dump.autoSet(HIGH);
-    control::purge.autoSet(HIGH);
+    control::close.setAutomatic(HIGH);
+    control::dump.setAutomatic(HIGH);
+    control::purge.setAutomatic(HIGH);
   }
 
   // 手動制御
-  control::shift.manualSet(button::shift.isPushed());
-  control::fill.manualSet(button::fill.isPushed());
-  control::dump.manualSet(button::dump.isPushed());
-  control::oxygen.manualSet(button::oxygen.isPushed());
-  control::ignition.manualSet(button::ignition.isPushed());
-  control::open.manualSet(button::open.isPushed());
-  control::close.manualSet(button::close.isPushed());
-  control::purge.manualSet(button::purge.isPushed());
+  control::shift.setManual();
+  control::fill.setManual();
+  control::dump.setManual();
+  control::oxygen.setManual();
+  control::ignition.setManual();
+  control::open.setManual();
+  control::close.setManual();
+  control::purge.setManual();
 
   indicator::task.blink();
 }

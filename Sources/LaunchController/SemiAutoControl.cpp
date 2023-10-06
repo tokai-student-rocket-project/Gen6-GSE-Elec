@@ -2,34 +2,38 @@
 
 
 // 自動制御と手動制御の出力をもとにピンに出力する
-void SemiAutoControl::set() {
-  _pin->set(_autoIsHigh || _manualIsHigh);
+void SemiAutoControl::updateOutput() {
+  _ledPin->set(_autoIsHigh || _manualIsHigh);
 }
 
 
-
 /// @brief コンストラクタ
-/// @param pinNumber ピン番号
-SemiAutoControl::SemiAutoControl(uint8_t pinNumber, String audioTaskName) {
-  _pin = new OutputPin(pinNumber);
-  _pin->setLow();
-  _audioTaskName = audioTaskName;
+/// @param controlPinNumber ボタンかスイッチのピン番号
+/// @param ledPinNumber LEDのピン番号
+/// @param ident 識別用の文字列
+SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber, String ident) {
+  _buttonPin = new Button(controlPinNumber, false);
+  _ledPin = new OutputPin(ledPinNumber);
+  _ident = ident;
 }
 
 
 /// @brief 自動制御の出力を設定する
-void SemiAutoControl::autoSet(bool isHigh) {
+void SemiAutoControl::setAutomatic(bool isHigh) {
   _autoIsHigh = isHigh;
-  set();
+  updateOutput();
 }
 
 
 /// @brief 手動制御の出力を設定する
-void SemiAutoControl::manualSet(bool isHigh) {
+void SemiAutoControl::setManual() {
+  bool isHigh = _buttonPin->isPushed();
+
+  // オフからオンに切り替わった時のみ音声を再生する
   if (isHigh && !_manualIsHigh) {
-    Tasks[_audioTaskName]->startOnceAfterMsec(200);
+    Tasks[_ident]->startOnceAfterMsec(200);
   }
 
   _manualIsHigh = isHigh;
-  set();
+  updateOutput();
 }
