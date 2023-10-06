@@ -77,17 +77,18 @@ void setup() {
 
   // FT232RL
   Serial.begin(115200);
+
   // LTC485
   Serial1.begin(115200);
+
   // DFPlayer
   Serial2.begin(9600);
+  mp3_set_serial(Serial2);
+  mp3_set_volume(20);
 
   Wire.begin();
   monitor::ampereVSW.begin();
   monitor::ampere12V.begin();
-
-  mp3_set_serial(Serial2);
-  mp3_set_volume(20);
 
   // 音声を再生するタスクたち
   Tasks.add("PlayStartup", [] {mp3_play(100);});
