@@ -11,9 +11,12 @@
 #include "ThermalMonitor.hpp"
 
 
-namespace control {
-  Control power(PIN_PF5);
+namespace power {
+  Button killButton(PIN_PJ1, false);
+  Control loadSwitch(PIN_PF5);
+} // namespace power
 
+namespace control {
   SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7, "");
   SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3, "");
   SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4, "EmergencyStop");
@@ -33,10 +36,6 @@ namespace control {
 namespace indicator {
   AccessLED task(PIN_PK4);
 } // namespace indicator
-
-namespace button {
-  Button kill(PIN_PJ1, false);
-} // namespace button
 
 namespace sequence {
   void christmasTreeOn();
@@ -68,10 +67,8 @@ namespace task {
 } // namespace task
 
 
-bool isBusy = false;
-
 void setup() {
-  control::power.turnOn();
+  power::loadSwitch.turnOn();
 
   // RS485の送信が終わったら割り込みを発生させる
   UCSR1B |= (1 << TXCIE0);
@@ -85,7 +82,7 @@ void setup() {
   // DFPlayer
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
-  mp3_set_volume(20);
+  mp3_set_volume(30);
 
   Wire.begin();
   monitor::ampereVSW.begin();
@@ -160,11 +157,7 @@ void sequence::christmasTreeOff() {
 
 
 void sequence::emergencyStop() {
-  mp3_set_volume(20);
-  // mp3_play(3);
-  // 空襲警報
   mp3_play(102);
-
   control::emergencyStop.setAutomaticOn();
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
@@ -219,9 +212,9 @@ void task::controlSync() {
 
 
 void control::handleManualTask() {
-  if (button::kill.isPushed()) {
+  if (power::killButton.isPushed()) {
     // 終了処理
-    control::power.turnOff();
+    power::loadSwitch.turnOff();
   }
 
   control::safetyArmed.setManual();
