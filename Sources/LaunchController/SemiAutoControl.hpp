@@ -38,4 +38,6 @@ public:
   /// @brief テストの出力を設定する
   void setTestOn();
   void setTestOff();
+
+  bool isManualRaised();
 };

@@ -58,3 +58,8 @@ void SemiAutoControl::setTestOff() {
   _testIsHigh = false;
   updateOutput();
 }
+
+
+bool SemiAutoControl::isManualRaised() {
+  return _manualIsHigh;
+}

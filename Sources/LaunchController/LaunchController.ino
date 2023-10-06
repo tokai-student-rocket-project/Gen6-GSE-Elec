@@ -19,7 +19,7 @@ namespace power {
 namespace control {
   SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7, "");
   SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3, "");
-  SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4, "EmergencyStop");
+  SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4, "PlayEmergencyStop");
 
   SemiAutoControl shift(PIN_PD4, PIN_PH5, "PlayShift");
   SemiAutoControl fill(PIN_PD5, PIN_PB0, "PlayFill");
@@ -41,6 +41,8 @@ namespace sequence {
   void christmasTreeOn();
   void christmasTreeOff();
   void emergencyStop();
+
+  bool emergencyStopIsActive = false;
 } // namespace sequence
 
 namespace monitor {
@@ -90,6 +92,7 @@ void setup() {
 
   // 音声を再生するタスクたち
   Tasks.add("PlayStartup", [] {mp3_play(100);});
+  Tasks.add("PlayEmergencyStop", [] {mp3_play(102);});
   Tasks.add("PlayShift", [] {mp3_play(110);});
   Tasks.add("PlayFill", [] {mp3_play(111);});
   Tasks.add("PlayDump", [] {mp3_play(112);});
@@ -157,7 +160,6 @@ void sequence::christmasTreeOff() {
 
 
 void sequence::emergencyStop() {
-  mp3_play(102);
   control::emergencyStop.setAutomaticOn();
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
@@ -220,6 +222,13 @@ void control::handleManualTask() {
   control::safetyArmed.setManual();
   control::sequenceStart.setManual();
   control::emergencyStop.setManual();
+
+  // エマスト
+  if (!sequence::emergencyStopIsActive && control::emergencyStop.isManualRaised()) {
+    sequence::emergencyStopIsActive = true;
+    Tasks["PlayEmergencyStop"]->startOnceAfterSec(0.2);
+    Tasks["EmergencyStop"]->startOnceAfterSec(0.2);
+  }
 
   // 手動制御
   control::shift.setManual();
