@@ -109,7 +109,7 @@ void setup() {
   Tasks.add(&control::handleManualTask)->startFps(20);
 
   // クリスマスツリー
-  Tasks["ChristmasTree"]->startOnce();
+  Tasks["ChristmasTree"]->startOnceAfterSec(0.2);
   Tasks["PlayStartup"]->startOnceAfterSec(0.2);
   Tasks["Clear"]->startOnceAfterSec(3.0);
 }
