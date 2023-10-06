@@ -1,5 +1,3 @@
-#define TASKMANAGER_MAX_SUBTASKS 16
-
 #include <Arduino.h>
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
@@ -40,7 +38,8 @@ namespace button {
 } // namespace button
 
 namespace sequence {
-  void startup();
+  void christmasTree();
+  void clear();
 } // namespace sequence
 
 namespace monitor {
@@ -101,29 +100,18 @@ void setup() {
   Tasks.add("PlayClose", []() {mp3_play(116);});
   Tasks.add("PlayPurge", []() {mp3_play(117);});
 
-  // 自動制御のタスクたち
-  Tasks.add("SetShiftOn", []() {control::shift.setAutomaticOn();});
-  Tasks.add("SetShiftOff", []() {control::shift.setAutomaticOff();});
-  Tasks.add("SetFillOn", []() {control::fill.setAutomaticOn();});
-  Tasks.add("SetFillOff", []() {control::fill.setAutomaticOff();});
-  Tasks.add("SetDumpOn", []() {control::dump.setAutomaticOn();});
-  Tasks.add("SetDumpOff", []() {control::dump.setAutomaticOff();});
-  Tasks.add("SetOxygenOn", []() {control::oxygen.setAutomaticOn();});
-  Tasks.add("SetOxygenOff", []() {control::oxygen.setAutomaticOff();});
-  Tasks.add("SetIgnitionOn", []() {control::ignition.setAutomaticOn();});
-  Tasks.add("SetIgnitionOff", []() {control::ignition.setAutomaticOff();});
-  Tasks.add("SetOpenOn", []() {control::open.setAutomaticOn();});
-  Tasks.add("SetOpenOff", []() {control::open.setAutomaticOff();});
-  Tasks.add("SetCloseOn", []() {control::close.setAutomaticOn();});
-  Tasks.add("SetCloseOff", []() {control::close.setAutomaticOff();});
-  Tasks.add("SetPurgeOn", []() {control::purge.setAutomaticOn();});
-  Tasks.add("SetPurgeOff", []() {control::purge.setAutomaticOff();});
+  // シーケンス関係のタスクたち
+  Tasks.add("Clear", &sequence::clear);
+  Tasks.add("ChristmasTree", &sequence::christmasTree);
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&control::handleManualTask)->startFps(20);
 
-  sequence::startup();
+  // クリスマスツリー
+  Tasks["ChristmasTree"]->startOnce();
+  Tasks["PlayStartup"]->startOnceAfterSec(0.2);
+  Tasks["Clear"]->startOnceAfterSec(3.0);
 }
 
 
@@ -132,90 +120,35 @@ void loop() {
 }
 
 
-void sequence::startup() {
-  control::shift.setAutomaticOn();
-  delay(200);
-  control::fill.setAutomaticOn();
-  delay(200);
-  control::dump.setAutomaticOn();
-  delay(200);
-  control::oxygen.setAutomaticOn();
-  delay(200);
-  control::ignition.setAutomaticOn();
-  delay(200);
-  control::open.setAutomaticOn();
-  delay(200);
-  control::close.setAutomaticOn();
-  delay(200);
-  control::purge.setAutomaticOn();
-
-  delay(200);
-
-  control::shift.setAutomaticOff();
-  delay(200);
-  control::fill.setAutomaticOff();
-  delay(200);
-  control::dump.setAutomaticOff();
-  delay(200);
-  control::oxygen.setAutomaticOff();
-  delay(200);
-  control::ignition.setAutomaticOff();
-  delay(200);
-  control::open.setAutomaticOff();
-  delay(200);
-  control::close.setAutomaticOff();
-  delay(200);
-  control::purge.setAutomaticOff();
-
-  delay(500);
-
-  control::shift.setAutomaticOn();
-  control::fill.setAutomaticOn();
-  control::dump.setAutomaticOn();
-  control::oxygen.setAutomaticOn();
-  control::ignition.setAutomaticOn();
-  control::open.setAutomaticOn();
-  control::close.setAutomaticOn();
-  control::purge.setAutomaticOn();
-
-  delay(500);
-
-  control::shift.setAutomaticOff();
-  control::fill.setAutomaticOff();
-  control::dump.setAutomaticOff();
-  control::oxygen.setAutomaticOff();
-  control::ignition.setAutomaticOff();
-  control::open.setAutomaticOff();
-  control::close.setAutomaticOff();
-  control::purge.setAutomaticOff();
-
-  delay(500);
-
-  control::shift.setAutomaticOn();
-  control::fill.setAutomaticOn();
-  control::dump.setAutomaticOn();
-  control::oxygen.setAutomaticOn();
-  control::ignition.setAutomaticOn();
-  control::open.setAutomaticOn();
-  control::close.setAutomaticOn();
-  control::purge.setAutomaticOn();
-
-  delay(500);
-
-  control::shift.setAutomaticOff();
-  control::fill.setAutomaticOff();
-  control::dump.setAutomaticOff();
-  control::oxygen.setAutomaticOff();
-  control::ignition.setAutomaticOff();
-  control::open.setAutomaticOff();
-  control::close.setAutomaticOff();
-  control::purge.setAutomaticOff();
-}
-
-
 /// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
 ISR(USART1_TX_vect) {
   rs485::disableOutput();
+}
+
+
+
+void sequence::christmasTree() {
+  // TODO クリスマスツリーはLEDのみ制御する
+  control::shift.setAutomaticOn();
+  control::fill.setAutomaticOn();
+  control::dump.setAutomaticOn();
+  control::oxygen.setAutomaticOn();
+  control::ignition.setAutomaticOn();
+  control::open.setAutomaticOn();
+  control::close.setAutomaticOn();
+  control::purge.setAutomaticOn();
+}
+
+
+void sequence::clear() {
+  control::shift.setAutomaticOff();
+  control::fill.setAutomaticOff();
+  control::dump.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::ignition.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOff();
+  control::purge.setAutomaticOff();
 }
 
 

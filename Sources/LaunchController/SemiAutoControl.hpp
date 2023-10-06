@@ -26,11 +26,10 @@ public:
   /// @param onManualRisingTask 手動制御の立ち上がりエッジで実行するタスク名
   SemiAutoControl(uint8_t buttonPinNumber, uint8_t ledPinNumber, String onManualRisingTask);
 
-  /// @brief 自動制御の出力をオンに設定する
+  /// @brief 自動制御の出力を設定する
   void setAutomaticOn();
-
-  /// @brief 自動制御の出力をオフに設定する
   void setAutomaticOff();
+  void setAutomaticToggle();
 
   /// @brief 手動制御の出力を設定する
   void setManual();
