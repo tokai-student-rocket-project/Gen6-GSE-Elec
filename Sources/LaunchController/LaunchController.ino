@@ -82,6 +82,15 @@ namespace rs485 {
 
 
 namespace task {
+  const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
+  const String FILL_START = "fill-start";
+  const String FILL_STOP = "fill-stop";
+  const String OXYGEN_START = "oxygen-start";
+  const String OXYGEN_STOP = "oxygen-stop";
+  const String IGNITER_START = "igniter-start";
+  const String IGNITER_STOP = "igniter-stop";
+  const String OPEN_START = "open-start";
+
   void monitor();
   void controlSync();
 } // namespace task
@@ -109,14 +118,14 @@ void setup() {
   monitor::ampere12V.begin();
 
   // シーケンス関係のタスクたち
-  Tasks.add("ChristmasTreeStop", &control::setChristmasTreeStop);
-  Tasks.add("FillStart", &control::setFillStart);
-  Tasks.add("FillStop", &control::setFillStop);
-  Tasks.add("OxygenStart", &control::setOxygenStart);
-  Tasks.add("OxygenStop", &control::setOxygenStop);
-  Tasks.add("IgniterStart", &control::setIgniterStart);
-  Tasks.add("IgniterStop", &control::setIgniterStop);
-  Tasks.add("OpenStart", &control::setIgniterStart);
+  Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
+  Tasks.add(task::FILL_START, &control::setFillStart);
+  Tasks.add(task::FILL_STOP, &control::setFillStop);
+  Tasks.add(task::OXYGEN_START, &control::setOxygenStart);
+  Tasks.add(task::OXYGEN_STOP, &control::setOxygenStop);
+  Tasks.add(task::IGNITER_START, &control::setIgniterStart);
+  Tasks.add(task::IGNITER_STOP, &control::setIgniterStop);
+  Tasks.add(task::OPEN_START, &control::setOpenStart);
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
@@ -232,7 +241,7 @@ void sequence::christmasTree() {
   mp3_play(100); // 0100_startup.mp3
   control::setChristmasTreeStart();
 
-  Tasks["ChristmasTreeStop"]->startOnceAfterSec(3.0);
+  Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
 }
 
 
@@ -255,7 +264,7 @@ void sequence::fill() {
   control::sequenceStart.setAutomaticOn();
   mp3_play(103); // 0103_fillSequenceStart.mp3
 
-  Tasks["FillStart"]->startOnceAfterSec(1.0);
+  Tasks[task::FILL_START]->startOnceAfterSec(1.0);
 }
 
 
@@ -270,15 +279,15 @@ void sequence::ignition() {
   control::sequenceStart.setAutomaticOn();
   mp3_play(104); // 0104_ignitionSequenceStart
 
-  Tasks["OxygenStart"]->startOnceAfterSec(2.0);
+  Tasks[task::OXYGEN_START]->startOnceAfterSec(2.0);
 
-  Tasks["IgniterStart"]->startOnceAfterSec(5.0);
+  Tasks[task::IGNITER_START]->startOnceAfterSec(5.0);
 
-  Tasks["FillStop"]->startOnceAfterSec(9.0);
-  Tasks["OpenStart"]->startOnceAfterSec(9.0);
+  Tasks[task::FILL_STOP]->startOnceAfterSec(9.0);
+  Tasks[task::OPEN_START]->startOnceAfterSec(9.0);
 
-  Tasks["OxygenStop"]->startOnceAfterSec(9.5);
-  Tasks["IgniterStop"]->startOnceAfterSec(9.5);
+  Tasks[task::OXYGEN_STOP]->startOnceAfterSec(9.5);
+  Tasks[task::IGNITER_STOP]->startOnceAfterSec(9.5);
 }
 
 
