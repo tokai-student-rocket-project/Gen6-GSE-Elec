@@ -11,7 +11,7 @@ void SemiAutoControl::updateOutput() {
 /// @param controlPinNumber ボタンかスイッチのピン番号
 /// @param ledPinNumber LEDのピン番号
 SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber) {
-  _buttonPin = new Button(controlPinNumber, false);
+  _buttonPin = new Button(controlPinNumber);
   _ledPin = new OutputPin(ledPinNumber);
 }
 

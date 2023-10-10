@@ -10,8 +10,7 @@ class Button {
 public:
   /// @brief コンストラクタ
   /// @param pinNumber ピン番号
-  /// @param isExternalPullup 外部回路でプルアップしているか
-  Button(uint8_t pinNumber, bool isExternalPullup);
+  Button(uint8_t pinNumber);
 
   /// @brief ボタンが押されているかを返す
   /// @return ボタンが押されているか
@@ -19,5 +18,4 @@ public:
 
 private:
   InputPin* _pin;
-  bool _isExternalPullup;
 };

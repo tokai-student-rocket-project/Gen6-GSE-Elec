@@ -12,7 +12,7 @@
 
 
 namespace power {
-  Button killButton(PIN_PJ1, false);
+  Button killButton(PIN_PJ1);
   Control loadSwitch(PIN_PF5);
 } // namespace power
 
@@ -20,6 +20,10 @@ namespace control {
   SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7);
   SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3);
   SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4);
+
+  Button confirm1(PIN_PC7);
+  Button confirm2(PIN_PC6);
+  Button confirm3(PIN_PC5);
 
   SemiAutoControl shift(PIN_PD4, PIN_PH5);
   SemiAutoControl fill(PIN_PD5, PIN_PB0);
@@ -46,9 +50,11 @@ namespace sequence {
   void christmasTree();
   void emergencyStop();
   void fill();
+  void ignition();
 
   bool emergencyStopSequenceIsActive = false;
   bool fillSequenceIsActive = false;
+  bool ignitionSequenceIsActive = false;
 } // namespace sequence
 
 namespace monitor {
@@ -191,6 +197,13 @@ void control::handleManualTask() {
     sequence::fill();
   }
 
+  // 点火シーケンス
+  if ((control::confirm1.isPushed() && control::confirm2.isPushed())
+    || (control::confirm2.isPushed() && control::confirm3.isPushed())
+    || (control::confirm3.isPushed() && control::confirm1.isPushed())) {
+    sequence::ignition();
+  }
+
   // 手動制御
   control::shift.setManual();
   control::fill.setManual();
@@ -204,7 +217,7 @@ void control::handleManualTask() {
 
 
 void sequence::christmasTree() {
-  mp3_play(100); // 0100_Startup.mp3を再生
+  mp3_play(100); // 0100_startup.mp3
   control::setChristmasTreeStart();
 
   Tasks["ChristmasTreeStop"]->startOnceAfterSec(3.0);
@@ -217,7 +230,7 @@ void sequence::emergencyStop() {
   sequence::emergencyStopSequenceIsActive = true;
 
   control::emergencyStop.setAutomaticOn();
-  mp3_play(102); // 0102_EmergencyStop.mp3
+  mp3_play(102); // 0102_emergencyStop.mp3
   control::setEmergencyStop();
 }
 
@@ -228,9 +241,22 @@ void sequence::fill() {
   sequence::fillSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
-  mp3_play(103); // 0102_EmergencyStop.mp3
+  mp3_play(103); // 0103_fillSequenceStart.mp3
 
   Tasks["FillStart"]->startOnceAfterSec(1.0);
+}
+
+
+void sequence::ignition() {
+  // 充填シーケンスがすでに進んでいる必要がある
+  if (!sequence::fillSequenceIsActive) return;
+
+  // 重複実行防止
+  if (sequence::ignitionSequenceIsActive) return;
+  sequence::ignitionSequenceIsActive = true;
+
+  control::sequenceStart.setAutomaticOn();
+  mp3_play(104); // 0104_ignitionSequenceStart
 }
 
 
