@@ -9,7 +9,6 @@
 class SemiAutoControl {
   Button* _buttonPin;
   OutputPin* _ledPin;
-  String _onManualRisingTask;
 
   // 自動制御と手動制御の出力記憶しておく変数たち
   // ピンの実際の出力は以下の変数をOR演算する
@@ -24,8 +23,7 @@ public:
   /// @brief コンストラクタ
   /// @param buttonPinNumber ボタンかスイッチのピン番号
   /// @param ledPinNumber LEDのピン番号
-  /// @param onManualRisingTask 手動制御の立ち上がりエッジで実行するタスク名
-  SemiAutoControl(uint8_t buttonPinNumber, uint8_t ledPinNumber, String onManualRisingTask);
+  SemiAutoControl(uint8_t buttonPinNumber, uint8_t ledPinNumber);
 
   /// @brief 自動制御の出力を設定する
   void setAutomaticOn();
