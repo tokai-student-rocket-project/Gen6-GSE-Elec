@@ -111,7 +111,7 @@ void setup() {
   // DFPlayer
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
-  mp3_set_volume(20);
+  mp3_set_volume(30);
 
   Wire.begin();
   monitor::ampereVSW.begin();
@@ -238,7 +238,7 @@ void control::handleManualTask() {
 
 
 void sequence::christmasTree() {
-  mp3_play(100); // 0100_startup.mp3
+  // mp3_play(100); // 0100_startup.mp3
   control::setChristmasTreeStart();
 
   Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
@@ -251,7 +251,7 @@ void sequence::emergencyStop() {
   sequence::emergencyStopSequenceIsActive = true;
 
   control::emergencyStop.setAutomaticOn();
-  mp3_play(102); // 0102_emergencyStop.mp3
+  mp3_play(3); // 0102_emergencyStop.mp3
 
   control::setEmergencyStop();
 }
@@ -266,13 +266,15 @@ void sequence::fill() {
   sequence::fillSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
-  mp3_play(103); // 0103_fillSequenceStart.mp3
+  mp3_play(9); // 0103_fillSequenceStart.mp3
 
-  Tasks[task::FILL_START]->startOnceAfterSec(1.0);
+  Tasks[task::FILL_START]->startOnceAfterSec(9.0);
 }
 
 
 void sequence::ignition() {
+  // HACK 充填開始前は点火シーケンスを始めない
+
   // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
@@ -287,17 +289,17 @@ void sequence::ignition() {
   sequence::ignitionSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
-  mp3_play(104); // 0104_ignitionSequenceStart
+  mp3_play(4); // 0104_ignitionSequenceStart
 
-  Tasks[task::OXYGEN_START]->startOnceAfterSec(2.0);
+  Tasks[task::OXYGEN_START]->startOnceAfterSec(3.0);
 
-  Tasks[task::IGNITER_START]->startOnceAfterSec(5.0);
+  Tasks[task::IGNITER_START]->startOnceAfterSec(6.0);
 
-  Tasks[task::FILL_STOP]->startOnceAfterSec(9.0);
-  Tasks[task::OPEN_START]->startOnceAfterSec(9.0);
+  Tasks[task::FILL_STOP]->startOnceAfterSec(10.0);
+  Tasks[task::OPEN_START]->startOnceAfterSec(10.0);
 
-  Tasks[task::OXYGEN_STOP]->startOnceAfterSec(9.5);
-  Tasks[task::IGNITER_STOP]->startOnceAfterSec(9.5);
+  Tasks[task::OXYGEN_STOP]->startOnceAfterSec(10.5);
+  Tasks[task::IGNITER_STOP]->startOnceAfterSec(10.5);
 }
 
 
