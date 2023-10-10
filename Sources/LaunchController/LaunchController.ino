@@ -260,7 +260,8 @@ void sequence::emergencyStop() {
 
 
 void sequence::fill() {
-  // HACK エマスト中は充填シーケンスを始めない
+  // エマスト中は充填シーケンスを始めない
+  if (sequence::emergencyStopSequenceIsActive) return;
 
   // 重複実行防止
   if (sequence::fillSequenceIsActive) return;
@@ -274,7 +275,8 @@ void sequence::fill() {
 
 
 void sequence::ignition() {
-  // HACK エマスト中は点火シーケンスを始めない
+  // エマスト中は点火シーケンスを始めない
+  if (sequence::emergencyStopSequenceIsActive) return;
 
   // 充填シーケンスがすでに進んでいる必要がある
   if (!sequence::fillSequenceIsActive) return;
