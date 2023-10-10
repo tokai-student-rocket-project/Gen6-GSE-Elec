@@ -40,6 +40,12 @@ namespace control {
   void setChristmasTreeStop();
   void setEmergencyStop();
   void setFillStart();
+  void setFillStop();
+  void setOxygenStart();
+  void setOxygenStop();
+  void setIgniterStart();
+  void setIgniterStop();
+  void setOpenStart();
 } // namespace control
 
 namespace indicator {
@@ -105,6 +111,12 @@ void setup() {
   // シーケンス関係のタスクたち
   Tasks.add("ChristmasTreeStop", &control::setChristmasTreeStop);
   Tasks.add("FillStart", &control::setFillStart);
+  Tasks.add("FillStop", &control::setFillStop);
+  Tasks.add("OxygenStart", &control::setOxygenStart);
+  Tasks.add("OxygenStop", &control::setOxygenStop);
+  Tasks.add("IgniterStart", &control::setIgniterStart);
+  Tasks.add("IgniterStop", &control::setIgniterStop);
+  Tasks.add("OpenStart", &control::setIgniterStart);
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
@@ -257,6 +269,16 @@ void sequence::ignition() {
 
   control::sequenceStart.setAutomaticOn();
   mp3_play(104); // 0104_ignitionSequenceStart
+
+  Tasks["OxygenStart"]->startOnceAfterSec(2.0);
+
+  Tasks["IgniterStart"]->startOnceAfterSec(5.0);
+
+  Tasks["FillStop"]->startOnceAfterSec(9.0);
+  Tasks["OpenStart"]->startOnceAfterSec(9.0);
+
+  Tasks["OxygenStop"]->startOnceAfterSec(9.5);
+  Tasks["IgniterStop"]->startOnceAfterSec(9.5);
 }
 
 
@@ -303,4 +325,34 @@ void control::setEmergencyStop() {
 
 void control::setFillStart() {
   control::fill.setAutomaticOn();
+}
+
+
+void control::setFillStop() {
+  control::fill.setAutomaticOff();
+}
+
+
+void control::setOxygenStart() {
+  control::oxygen.setAutomaticOn();
+}
+
+
+void control::setOxygenStop() {
+  control::oxygen.setAutomaticOff();
+}
+
+
+void control::setIgniterStart() {
+  control::igniter.setAutomaticOn();
+}
+
+
+void control::setIgniterStop() {
+  control::igniter.setAutomaticOff();
+}
+
+
+void control::setOpenStart() {
+  control::open.setAutomaticOn();
 }
