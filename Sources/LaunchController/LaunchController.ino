@@ -155,6 +155,10 @@ void sequence::emergencyStop() {
   // 0102_EmergencyStop.mp3
   mp3_play(102);
   control::emergencyStop.setAutomaticOn();
+  control::fill.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::ignition.setAutomaticOff();
+  control::open.setAutomaticOff();
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
   control::purge.setAutomaticOn();
