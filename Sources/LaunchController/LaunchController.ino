@@ -166,21 +166,27 @@ void task::controlSync() {
 
 
 void control::handleManualTask() {
+  indicator::task.blink();
+
   if (power::killButton.isPushed()) {
     // 終了処理
     power::loadSwitch.turnOff();
   }
 
+  // セーフティー
+  // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  control::sequenceStart.setManual();
-  control::emergencyStop.setManual();
+  if (!control::emergencyStop.isManualRaised()) return;
+
 
   // エマスト
+  control::emergencyStop.setManual();
   if (control::emergencyStop.isManualRaised()) {
     sequence::emergencyStop();
   }
 
   // 充填シーケンス
+  control::sequenceStart.setManual();
   if (control::sequenceStart.isManualRaised()) {
     sequence::fill();
   }
@@ -194,8 +200,6 @@ void control::handleManualTask() {
   control::open.setManual();
   control::close.setManual();
   control::purge.setManual();
-
-  indicator::task.blink();
 }
 
 
