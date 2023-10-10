@@ -272,6 +272,9 @@ void sequence::ignition() {
   // 充填シーケンスがすでに進んでいる必要がある
   if (!sequence::fillSequenceIsActive) return;
 
+  // 手動のFILLがONの間は点火シーケンスを始めない
+  if (control::fill.isManualRaised()) return;
+
   // 重複実行防止
   if (sequence::ignitionSequenceIsActive) return;
   sequence::ignitionSequenceIsActive = true;
