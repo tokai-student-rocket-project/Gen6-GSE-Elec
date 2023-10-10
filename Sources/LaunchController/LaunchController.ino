@@ -203,7 +203,7 @@ void control::handleManualTask() {
   // セーフティー
   // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  if (!control::emergencyStop.isManualRaised()) return;
+  if (!control::safetyArmed.isManualRaised()) return;
 
 
   // エマスト
