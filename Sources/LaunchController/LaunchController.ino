@@ -232,13 +232,13 @@ void control::handleManualTask() {
   // エマスト
   if (!sequence::emergencyStopIsActive && control::emergencyStop.isManualRaised()) {
     sequence::emergencyStopIsActive = true;
-    Tasks["EmergencyStop"]->startOnceAfterSec(0.1);
+    Tasks["EmergencyStop"]->startOnceAfterSec(0.01);
   }
 
   // 充填シーケンス
   if (!sequence::fillSequenceIsActive && control::sequenceStart.isManualRaised()) {
     sequence::fillSequenceIsActive = true;
-    Tasks["FillSequence"]->startOnceAfterSec(0.1);
+    Tasks["FillSequence"]->startOnceAfterSec(1.0);
   }
 
   // 手動制御
