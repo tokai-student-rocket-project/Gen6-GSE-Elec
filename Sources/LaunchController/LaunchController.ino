@@ -252,11 +252,16 @@ void sequence::emergencyStop() {
 
   control::emergencyStop.setAutomaticOn();
   mp3_play(102); // 0102_emergencyStop.mp3
+
+  // HACK 実行中のシーケンスを停止させる
+
   control::setEmergencyStop();
 }
 
 
 void sequence::fill() {
+  // HACK エマスト中は充填シーケンスを始めない
+
   // 重複実行防止
   if (sequence::fillSequenceIsActive) return;
   sequence::fillSequenceIsActive = true;
@@ -269,8 +274,11 @@ void sequence::fill() {
 
 
 void sequence::ignition() {
+  // HACK エマスト中は点火シーケンスを始めない
+
   // 充填シーケンスがすでに進んでいる必要がある
   if (!sequence::fillSequenceIsActive) return;
+  // HACK 充填シーケンス停止
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
