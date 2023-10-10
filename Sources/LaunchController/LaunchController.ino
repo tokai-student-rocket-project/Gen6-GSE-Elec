@@ -25,7 +25,7 @@ namespace control {
   SemiAutoControl fill(PIN_PD5, PIN_PB0);
   SemiAutoControl dump(PIN_PG1, PIN_PB5);
   SemiAutoControl oxygen(PIN_PC1, PIN_PB7);
-  SemiAutoControl ignition(PIN_PD7, PIN_PH4);
+  SemiAutoControl igniter(PIN_PD7, PIN_PH4);
   SemiAutoControl open(PIN_PD6, PIN_PH6);
   SemiAutoControl close(PIN_PG0, PIN_PB4);
   SemiAutoControl purge(PIN_PC0, PIN_PB6);
@@ -129,7 +129,7 @@ void sequence::christmasTreeOn() {
   control::fill.setTestOn();
   control::dump.setTestOn();
   control::oxygen.setTestOn();
-  control::ignition.setTestOn();
+  control::igniter.setTestOn();
   control::open.setTestOn();
   control::close.setTestOn();
   control::purge.setTestOn();
@@ -144,7 +144,7 @@ void sequence::christmasTreeOff() {
   control::fill.setTestOff();
   control::dump.setTestOff();
   control::oxygen.setTestOff();
-  control::ignition.setTestOff();
+  control::igniter.setTestOff();
   control::open.setTestOff();
   control::close.setTestOff();
   control::purge.setTestOff();
@@ -157,7 +157,7 @@ void sequence::emergencyStop() {
   control::emergencyStop.setAutomaticOn();
   control::fill.setAutomaticOff();
   control::oxygen.setAutomaticOff();
-  control::ignition.setAutomaticOff();
+  control::igniter.setAutomaticOff();
   control::open.setAutomaticOff();
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
@@ -246,7 +246,7 @@ void control::handleManualTask() {
   control::fill.setManual();
   control::dump.setManual();
   control::oxygen.setManual();
-  control::ignition.setManual();
+  control::igniter.setManual();
   control::open.setManual();
   control::close.setManual();
   control::purge.setManual();
