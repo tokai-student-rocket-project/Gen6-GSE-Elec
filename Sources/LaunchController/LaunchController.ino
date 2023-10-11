@@ -50,6 +50,8 @@ namespace control {
 
 namespace indicator {
   AccessLED task(PIN_PK4);
+  // HACK LEDだけでなく処理もする
+  OutputPin caution(PIN_PK6);
 } // namespace indicator
 
 namespace sequence {
@@ -113,8 +115,8 @@ void setup() {
   // DFPlayer
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
-  mp3_reset();
-  mp3_set_volume(20);
+  mp3_stop();
+  mp3_set_volume(10);
 
   Wire.begin();
   monitor::ampereVSW.begin();
@@ -282,7 +284,12 @@ void sequence::ignition() {
   if (sequence::emergencyStopSequenceIsActive) return;
 
   // 充填開始前は点火シーケンスを始めない
-  if (!control::fill.isAutomaticRaised()) return;
+  if (!control::fill.isAutomaticRaised()) {
+    // 最初から充填確認していた場合は点火シーケンスを始めない
+    // HACK エラー処理
+    indicator::caution.setHigh();
+    return;
+  }
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
