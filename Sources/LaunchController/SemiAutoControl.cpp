@@ -11,8 +11,8 @@ void SemiAutoControl::updateOutput() {
 /// @param controlPinNumber ボタンかスイッチのピン番号
 /// @param ledPinNumber LEDのピン番号
 SemiAutoControl::SemiAutoControl(uint8_t controlPinNumber, uint8_t ledPinNumber) {
-  _buttonPin = new Button(controlPinNumber);
-  _ledPin = new OutputPin(ledPinNumber);
+  _buttonPin = new Input(controlPinNumber);
+  _ledPin = new Output(ledPinNumber);
 }
 
 
@@ -32,7 +32,7 @@ void SemiAutoControl::setAutomaticOff() {
 
 /// @brief 手動制御の出力を設定する
 void SemiAutoControl::setManual() {
-  _manualIsHigh = _buttonPin->isPushed();
+  _manualIsHigh = _buttonPin->isHigh();
   updateOutput();
 }
 

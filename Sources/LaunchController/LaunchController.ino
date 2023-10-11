@@ -2,16 +2,16 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
+#include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
-#include "Button.hpp"
 #include "AmpereMonitor.hpp"
 #include "VoltageMonitor.hpp"
 #include "ThermalMonitor.hpp"
 
 
 namespace power {
-  Button killButton(PIN_PJ1);
+  Input killButton(PIN_PJ1);
   Output loadSwitch(PIN_PF5);
 } // namespace power
 
@@ -20,9 +20,9 @@ namespace control {
   SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3);
   SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4);
 
-  Button confirm1(PIN_PC7);
-  Button confirm2(PIN_PC6);
-  Button confirm3(PIN_PC5);
+  Input confirm1(PIN_PC7);
+  Input confirm2(PIN_PC6);
+  Input confirm3(PIN_PC5);
 
   SemiAutoControl shift(PIN_PD4, PIN_PH5);
   SemiAutoControl fill(PIN_PD5, PIN_PB0);
@@ -200,7 +200,7 @@ void task::controlSync() {
 void control::handleManualTask() {
   task::accessLamp.blink();
 
-  if (power::killButton.isPushed()) {
+  if (power::killButton.isHigh()) {
     // 終了処理
     power::loadSwitch.off();
   }
@@ -224,9 +224,9 @@ void control::handleManualTask() {
   }
 
   // 点火シーケンス
-  if ((control::confirm1.isPushed() && control::confirm2.isPushed())
-    || (control::confirm2.isPushed() && control::confirm3.isPushed())
-    || (control::confirm3.isPushed() && control::confirm1.isPushed())) {
+  if ((control::confirm1.isHigh() && control::confirm2.isHigh())
+    || (control::confirm2.isHigh() && control::confirm3.isHigh())
+    || (control::confirm3.isHigh() && control::confirm1.isHigh())) {
     sequence::ignition();
   }
 
@@ -278,7 +278,7 @@ void sequence::fill() {
   if (sequence::emergencyStopSequenceIsActive) return;
 
   // シーケンス開始時点で充填確認されていたらエラーを吐く
-  if (control::confirm1.isPushed() || control::confirm2.isPushed() || control::confirm3.isPushed()) {
+  if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh()) {
     // HACK エラー
     caution::statusLamp.on();
     return;

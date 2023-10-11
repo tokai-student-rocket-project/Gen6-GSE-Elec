@@ -1,14 +1,14 @@
 #pragma once
 #include <Arduino.h>
 #include <TaskManager.h>
-#include "Button.hpp"
-#include "OutputPin.hpp"
+#include "Input.hpp"
+#include "Output.hpp"
 
 
 /// @brief 手動と自動のオンオフ制御
 class SemiAutoControl {
-  Button* _buttonPin;
-  OutputPin* _ledPin;
+  Input* _buttonPin;
+  Output* _ledPin;
 
   // 自動制御と手動制御の出力記憶しておく変数たち
   // ピンの実際の出力は以下の変数をOR演算する
