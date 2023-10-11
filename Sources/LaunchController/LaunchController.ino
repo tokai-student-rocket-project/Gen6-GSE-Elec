@@ -267,6 +267,13 @@ void sequence::fill() {
   // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
+  // シーケンス開始時点で充填確認されていたらエラーを吐く
+  if (control::confirm1.isPushed() || control::confirm2.isPushed() || control::confirm3.isPushed()) {
+    // HACK エラー
+    indicator::caution.setHigh();
+    return;
+  }
+
   // 重複実行防止
   if (sequence::fillSequenceIsActive) return;
   sequence::fillSequenceIsActive = true;
@@ -284,12 +291,7 @@ void sequence::ignition() {
   if (sequence::emergencyStopSequenceIsActive) return;
 
   // 充填開始前は点火シーケンスを始めない
-  if (!control::fill.isAutomaticRaised()) {
-    // 最初から充填確認していた場合は点火シーケンスを始めない
-    // HACK エラー処理
-    indicator::caution.setHigh();
-    return;
-  }
+  if (!control::fill.isAutomaticRaised()) return;
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
