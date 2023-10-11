@@ -13,6 +13,7 @@
 namespace power {
   Input killButton(PIN_PJ1);
   Output loadSwitch(PIN_PF5);
+  Output lowVoltageLamp(PIN_PK7);
 } // namespace power
 
 namespace control {
@@ -98,7 +99,12 @@ namespace task {
 namespace caution {
   // HACK LEDだけでなく処理もする
   Output statusLamp(PIN_PK6);
-}
+} // namespace caution
+
+
+namespace satelliteController {
+  Output statusLamp(PIN_PK5);
+} // namespace satelliteController
 
 
 void setup() {
@@ -346,6 +352,12 @@ void sequence::ignition() {
 
 
 void control::setChristmasTreeStart() {
+  caution::statusLamp.setTestOn();
+  power::lowVoltageLamp.setTestOn();
+  task::accessLamp.setTestOn();
+  satelliteController::statusLamp.setTestOn();
+  rs485::txAccessLamp.setTestOn();
+  rs485::rxAccessLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -361,6 +373,12 @@ void control::setChristmasTreeStart() {
 
 
 void control::setChristmasTreeStop() {
+  caution::statusLamp.setTestOff();
+  power::lowVoltageLamp.setTestOff();
+  task::accessLamp.setTestOff();
+  satelliteController::statusLamp.setTestOff();
+  rs485::txAccessLamp.setTestOff();
+  rs485::rxAccessLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();

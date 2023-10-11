@@ -4,6 +4,11 @@
 
 /// @brief OUTPUT設定ピンの抽象的なクラス
 class Output {
+  bool _isHigh = false;
+  bool _testIsHigh = false;
+
+  void updateOutput();
+
 public:
   /// @brief コンストラクタ
   /// @param pinNumber ピン番号
@@ -23,6 +28,10 @@ public:
 
   /// @brief 出力を設定する
   void set(bool isHigh);
+
+  /// @brief テストの出力を設定する
+  void setTestOn();
+  void setTestOff();
 
 private:
   uint8_t _pinNumber;
