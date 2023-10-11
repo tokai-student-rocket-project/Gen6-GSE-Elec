@@ -1,9 +1,9 @@
-#include "InputPin.hpp"
+#include "Input.hpp"
 
 
 /// @brief コンストラクタ
 /// @param pinNumber ピン番号
-InputPin::InputPin(uint8_t pinNumber) {
+Input::Input(uint8_t pinNumber) {
   _pinNumber = pinNumber;
   pinMode(_pinNumber, INPUT);
 }
@@ -11,6 +11,6 @@ InputPin::InputPin(uint8_t pinNumber) {
 
 /// @brief 入力がHIGHかを返す
 /// @return 入力がHIGHか
-bool InputPin::isHigh() {
+bool Input::isHigh() {
   return digitalRead(_pinNumber) == HIGH;
 }

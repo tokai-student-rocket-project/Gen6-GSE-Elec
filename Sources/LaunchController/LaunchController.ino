@@ -2,18 +2,18 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
-#include "Control.hpp"
+#include "Input.hpp"
+#include "Output.hpp"
 #include "SemiAutoControl.hpp"
-#include "AccessLED.hpp"
-#include "Button.hpp"
 #include "AmpereMonitor.hpp"
 #include "VoltageMonitor.hpp"
 #include "ThermalMonitor.hpp"
 
 
 namespace power {
-  Button killButton(PIN_PJ1);
-  Control loadSwitch(PIN_PF5);
+  Input killButton(PIN_PJ1);
+  Output loadSwitch(PIN_PF5);
+  Output lowVoltageLamp(PIN_PK7);
 } // namespace power
 
 namespace control {
@@ -21,9 +21,9 @@ namespace control {
   SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3);
   SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4);
 
-  Button confirm1(PIN_PC7);
-  Button confirm2(PIN_PC6);
-  Button confirm3(PIN_PC5);
+  Input confirm1(PIN_PC7);
+  Input confirm2(PIN_PC6);
+  Input confirm3(PIN_PC5);
 
   SemiAutoControl shift(PIN_PD4, PIN_PH5);
   SemiAutoControl fill(PIN_PD5, PIN_PB0);
@@ -39,6 +39,7 @@ namespace control {
   void setChristmasTreeStart();
   void setChristmasTreeStop();
   void setEmergencyStop();
+  void setPeacefulStop();
   void setFillStart();
   void setFillStop();
   void setOxygenStart();
@@ -48,15 +49,10 @@ namespace control {
   void setOpenStart();
 } // namespace control
 
-namespace indicator {
-  AccessLED task(PIN_PK4);
-  // HACK LEDだけでなく処理もする
-  OutputPin caution(PIN_PK6);
-} // namespace indicator
-
 namespace sequence {
   void christmasTree();
   void emergencyStop();
+  void peacefulStop();
   void fill();
   void ignition();
 
@@ -75,14 +71,13 @@ namespace monitor {
 } // namespace monitor
 
 namespace rs485 {
-  Control sendEnableControl(PIN_PA2);
-  Control txLED(PIN_PA4);
-  Control rxLED(PIN_PA3);
+  Output sendEnableControl(PIN_PA2);
+  Output txAccessLamp(PIN_PA4);
+  Output rxAccessLamp(PIN_PA3);
 
   void enableOutput();
   void disableOutput();
 } // namespace rs485
-
 
 namespace task {
   const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
@@ -95,13 +90,25 @@ namespace task {
   const String OPEN_START = "open-start";
   const String PLAY_MUSIC = "play-music";
 
+  Output accessLamp(PIN_PK4);
+
   void monitor();
   void controlSync();
 } // namespace task
 
+namespace caution {
+  // HACK LEDだけでなく処理もする
+  Output statusLamp(PIN_PK6);
+} // namespace caution
+
+
+namespace satelliteController {
+  Output statusLamp(PIN_PK5);
+} // namespace satelliteController
+
 
 void setup() {
-  power::loadSwitch.turnOn();
+  power::loadSwitch.on();
 
   // RS485の送信が終わったら割り込みを発生させる
   UCSR1B |= (1 << TXCIE0);
@@ -154,15 +161,15 @@ ISR(USART1_TX_vect) {
 
 /// @brief 送信を有効にする
 void rs485::enableOutput() {
-  rs485::sendEnableControl.turnOn();
-  rs485::txLED.turnOn();
+  rs485::sendEnableControl.on();
+  rs485::txAccessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
 void rs485::disableOutput() {
-  rs485::sendEnableControl.turnOff();
-  rs485::txLED.turnOff();
+  rs485::sendEnableControl.off();
+  rs485::txAccessLamp.off();
 }
 
 
@@ -199,11 +206,11 @@ void task::controlSync() {
 
 
 void control::handleManualTask() {
-  indicator::task.blink();
+  task::accessLamp.blink();
 
-  if (power::killButton.isPushed()) {
+  if (power::killButton.isHigh()) {
     // 終了処理
-    power::loadSwitch.turnOff();
+    power::loadSwitch.off();
   }
 
   // セーフティー
@@ -225,9 +232,9 @@ void control::handleManualTask() {
   }
 
   // 点火シーケンス
-  if ((control::confirm1.isPushed() && control::confirm2.isPushed())
-    || (control::confirm2.isPushed() && control::confirm3.isPushed())
-    || (control::confirm3.isPushed() && control::confirm1.isPushed())) {
+  if ((control::confirm1.isHigh() && control::confirm2.isHigh())
+    || (control::confirm2.isHigh() && control::confirm3.isHigh())
+    || (control::confirm3.isHigh() && control::confirm1.isHigh())) {
     sequence::ignition();
   }
 
@@ -274,20 +281,38 @@ void sequence::emergencyStop() {
 }
 
 
+void sequence::peacefulStop() {
+  control::sequenceStart.setAutomaticOff();
+
+  Tasks[task::PLAY_MUSIC]->stop();
+  Tasks[task::FILL_START]->stop();
+  Tasks[task::OXYGEN_START]->stop();
+  Tasks[task::IGNITER_START]->stop();
+  Tasks[task::FILL_STOP]->stop();
+  Tasks[task::OPEN_START]->stop();
+  Tasks[task::OXYGEN_STOP]->stop();
+  Tasks[task::IGNITER_STOP]->stop();
+
+  mp3_stop();
+  control::setPeacefulStop();
+}
+
+
 void sequence::fill() {
+  // 重複実行防止
+  if (sequence::fillSequenceIsActive) return;
+  sequence::fillSequenceIsActive = true;
+
   // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
   // シーケンス開始時点で充填確認されていたらエラーを吐く
-  if (control::confirm1.isPushed() || control::confirm2.isPushed() || control::confirm3.isPushed()) {
+  if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh()) {
     // HACK エラー
-    indicator::caution.setHigh();
+    sequence::peacefulStop();
+    caution::statusLamp.on();
     return;
   }
-
-  // 重複実行防止
-  if (sequence::fillSequenceIsActive) return;
-  sequence::fillSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
   mp3_play(10);
@@ -298,6 +323,10 @@ void sequence::fill() {
 
 
 void sequence::ignition() {
+  // 重複実行防止
+  if (sequence::ignitionSequenceIsActive) return;
+  sequence::ignitionSequenceIsActive = true;
+
   // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
@@ -306,10 +335,6 @@ void sequence::ignition() {
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
-
-  // 重複実行防止
-  if (sequence::ignitionSequenceIsActive) return;
-  sequence::ignitionSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
   mp3_play(4); // 0104_ignitionSequenceStart
@@ -327,6 +352,12 @@ void sequence::ignition() {
 
 
 void control::setChristmasTreeStart() {
+  caution::statusLamp.setTestOn();
+  power::lowVoltageLamp.setTestOn();
+  task::accessLamp.setTestOn();
+  satelliteController::statusLamp.setTestOn();
+  rs485::txAccessLamp.setTestOn();
+  rs485::rxAccessLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -342,6 +373,12 @@ void control::setChristmasTreeStart() {
 
 
 void control::setChristmasTreeStop() {
+  caution::statusLamp.setTestOff();
+  power::lowVoltageLamp.setTestOff();
+  task::accessLamp.setTestOff();
+  satelliteController::statusLamp.setTestOff();
+  rs485::txAccessLamp.setTestOff();
+  rs485::rxAccessLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();
@@ -364,6 +401,17 @@ void control::setEmergencyStop() {
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
   control::purge.setAutomaticOn();
+}
+
+
+void control::setPeacefulStop() {
+  control::fill.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::igniter.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOff();
+  control::dump.setAutomaticOff();
+  control::purge.setAutomaticOff();
 }
 
 

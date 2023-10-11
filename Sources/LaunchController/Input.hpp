@@ -3,11 +3,11 @@
 
 
 /// @brief INPUT設定ピンの抽象的なクラス
-class InputPin {
+class Input {
 public:
   /// @brief コンストラクタ
   /// @param pinNumber ピン番号
-  InputPin(uint8_t pinNumber);
+  Input(uint8_t pinNumber);
 
   /// @brief 入力がHIGHかを返す
   /// @return 入力がHIGHか
