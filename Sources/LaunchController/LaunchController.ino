@@ -5,8 +5,7 @@
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
-#include "AmpereMonitor.hpp"
-#include "VoltageMonitor.hpp"
+#include "PowerMonitor.hpp"
 #include "ThermalMonitor.hpp"
 
 
@@ -63,10 +62,8 @@ namespace sequence {
 } // namespace sequence
 
 namespace monitor {
-  AmpereMonitor ampereVSW(0x40);
-  AmpereMonitor ampere12V(0x41);
-  VoltageMonitor voltageVSW(PIN_PF2, 12000.0, 2000.0);
-  VoltageMonitor voltage12V(PIN_PF3, 12000.0, 2000.0);
+  PowerMonitor input(0x40);
+  PowerMonitor bus12(0x41);
   ThermalMonitor thermal(PIN_PF4, 10000.0);
 } // namespace monitor
 
@@ -126,8 +123,8 @@ void setup() {
   mp3_set_volume(20);
 
   Wire.begin();
-  monitor::ampereVSW.begin();
-  monitor::ampere12V.begin();
+  monitor::input.begin();
+  monitor::bus12.begin();
 
   // シーケンス関係のタスクたち
   Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
@@ -174,20 +171,20 @@ void rs485::disableOutput() {
 
 
 void task::monitor() {
-  float ampereVSW_A = monitor::ampereVSW.getAmpere_A();
-  float ampereV12_A = monitor::ampere12V.getAmpere_A();
-  float voltageVSW_V = monitor::voltageVSW.getVoltage_V();
-  float voltage12V_V = monitor::voltage12V.getVoltage_V();
-  float powerDissipation_W = ampereVSW_A * voltageVSW_V;
+  float ampereVSW_A = monitor::input.getAmpere_A();
+  float ampereV12_A = monitor::bus12.getAmpere_A();
+  float voltageVSW_V = monitor::input.getVoltage_V();
+  float voltage12V_V = monitor::bus12.getVoltage_V();
+  float powerDissipation_W = monitor::input.getPower_W();
   float thermal_degC = monitor::thermal.getTemperature_degC();
 
-  Serial.print("IVSW[A]:");
+  Serial.print("INPUT[A]:");
   Serial.print(ampereVSW_A, 3);
-  Serial.print("\tIV12[A]:");
+  Serial.print("\tBUS12[A]:");
   Serial.print(ampereV12_A, 3);
-  Serial.print("\tVVSW[V]:");
+  Serial.print("\tINPUT[V]:");
   Serial.print(voltageVSW_V, 3);
-  Serial.print("\tVV12[V]:");
+  Serial.print("\ttBUS12[V]:");
   Serial.print(voltage12V_V, 3);
   Serial.print("\tPD[W]:");
   Serial.print(powerDissipation_W, 3);
