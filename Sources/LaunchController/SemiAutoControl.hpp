@@ -38,4 +38,5 @@ public:
   void setTestOff();
 
   bool isManualRaised();
+  bool isAutomaticRaised();
 };

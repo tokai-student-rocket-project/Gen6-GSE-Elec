@@ -61,6 +61,7 @@ namespace sequence {
   bool emergencyStopSequenceIsActive = false;
   bool fillSequenceIsActive = false;
   bool ignitionSequenceIsActive = false;
+  bool isReadyToIgnition = false;
 } // namespace sequence
 
 namespace monitor {
@@ -111,7 +112,8 @@ void setup() {
   // DFPlayer
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
-  mp3_set_volume(30);
+  mp3_reset();
+  mp3_set_volume(20);
 
   Wire.begin();
   monitor::ampereVSW.begin();
@@ -126,6 +128,7 @@ void setup() {
   Tasks.add(task::IGNITER_START, &control::setIgniterStart);
   Tasks.add(task::IGNITER_STOP, &control::setIgniterStop);
   Tasks.add(task::OPEN_START, &control::setOpenStart);
+  Tasks.add("audio", [] {mp3_play(9);});
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
@@ -266,20 +269,19 @@ void sequence::fill() {
   sequence::fillSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
-  mp3_play(9); // 0103_fillSequenceStart.mp3
+  mp3_play(10);
 
-  Tasks[task::FILL_START]->startOnceAfterSec(9.0);
+  Tasks["audio"]->startOnceAfterSec(15.0);
+  Tasks[task::FILL_START]->startOnceAfterSec(24.0);
 }
 
 
 void sequence::ignition() {
-  // HACK 充填開始前は点火シーケンスを始めない
-
   // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
-  // 充填シーケンスがすでに進んでいる必要がある
-  if (!sequence::fillSequenceIsActive) return;
+  // 充填開始前は点火シーケンスを始めない
+  if (!control::fill.isAutomaticRaised()) return;
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
