@@ -259,6 +259,15 @@ void sequence::emergencyStop() {
   control::emergencyStop.setAutomaticOn();
   mp3_play(3); // 0102_emergencyStop.mp3
 
+  Tasks[task::PLAY_MUSIC]->stop();
+  Tasks[task::FILL_START]->stop();
+  Tasks[task::OXYGEN_START]->stop();
+  Tasks[task::IGNITER_START]->stop();
+  Tasks[task::FILL_STOP]->stop();
+  Tasks[task::OPEN_START]->stop();
+  Tasks[task::OXYGEN_STOP]->stop();
+  Tasks[task::IGNITER_STOP]->stop();
+
   control::setEmergencyStop();
 }
 
