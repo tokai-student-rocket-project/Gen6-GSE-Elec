@@ -69,8 +69,8 @@ namespace monitor {
 
 namespace rs485 {
   Output sendEnableControl(PIN_PA2);
-  Output txLED(PIN_PA4);
-  Output rxLED(PIN_PA3);
+  Output txAccessLamp(PIN_PA4);
+  Output rxAccessLamp(PIN_PA3);
 
   void enableOutput();
   void disableOutput();
@@ -154,14 +154,14 @@ ISR(USART1_TX_vect) {
 /// @brief 送信を有効にする
 void rs485::enableOutput() {
   rs485::sendEnableControl.on();
-  rs485::txLED.on();
+  rs485::txAccessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
 void rs485::disableOutput() {
   rs485::sendEnableControl.off();
-  rs485::txLED.off();
+  rs485::txAccessLamp.off();
 }
 
 
