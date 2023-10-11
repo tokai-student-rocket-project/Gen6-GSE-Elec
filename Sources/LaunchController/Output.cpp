@@ -17,12 +17,14 @@ Output::Output(uint8_t pinNumber) {
 /// @brief 出力をHIGHにする
 void Output::on() {
   _isHigh = true;
+  updateOutput();
 }
 
 
 /// @brief 出力をLOWにする
 void Output::off() {
   _isHigh = false;
+  updateOutput();
 }
 
 
