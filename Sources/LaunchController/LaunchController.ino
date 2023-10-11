@@ -38,6 +38,7 @@ namespace control {
   void setChristmasTreeStart();
   void setChristmasTreeStop();
   void setEmergencyStop();
+  void setPeacefulStop();
   void setFillStart();
   void setFillStop();
   void setOxygenStart();
@@ -50,6 +51,7 @@ namespace control {
 namespace sequence {
   void christmasTree();
   void emergencyStop();
+  void peacefulStop();
   void fill();
   void ignition();
 
@@ -273,6 +275,23 @@ void sequence::emergencyStop() {
 }
 
 
+void sequence::peacefulStop() {
+  control::sequenceStart.setAutomaticOff();
+
+  Tasks[task::PLAY_MUSIC]->stop();
+  Tasks[task::FILL_START]->stop();
+  Tasks[task::OXYGEN_START]->stop();
+  Tasks[task::IGNITER_START]->stop();
+  Tasks[task::FILL_STOP]->stop();
+  Tasks[task::OPEN_START]->stop();
+  Tasks[task::OXYGEN_STOP]->stop();
+  Tasks[task::IGNITER_STOP]->stop();
+
+  mp3_stop();
+  control::setPeacefulStop();
+}
+
+
 void sequence::fill() {
   // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
@@ -280,6 +299,7 @@ void sequence::fill() {
   // シーケンス開始時点で充填確認されていたらエラーを吐く
   if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh()) {
     // HACK エラー
+    sequence::peacefulStop();
     caution::statusLamp.on();
     return;
   }
@@ -363,6 +383,17 @@ void control::setEmergencyStop() {
   control::close.setAutomaticOn();
   control::dump.setAutomaticOn();
   control::purge.setAutomaticOn();
+}
+
+
+void control::setPeacefulStop() {
+  control::fill.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::igniter.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOff();
+  control::dump.setAutomaticOff();
+  control::purge.setAutomaticOff();
 }
 
 
