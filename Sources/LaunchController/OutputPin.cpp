@@ -6,6 +6,7 @@
 OutputPin::OutputPin(uint8_t pinNumber) {
   _pinNumber = pinNumber;
   pinMode(_pinNumber, OUTPUT);
+  setLow();
 }
 
 

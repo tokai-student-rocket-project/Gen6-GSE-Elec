@@ -11,25 +11,60 @@
 #include "ThermalMonitor.hpp"
 
 
-namespace control {
-  Control power(PIN_PF5);
+namespace power {
+  Button killButton(PIN_PJ1);
+  Control loadSwitch(PIN_PF5);
+} // namespace power
 
-  SemiAutoControl close(PIN_PB4);
-  SemiAutoControl dump(PIN_PB5);
-  SemiAutoControl purge(PIN_PB6);
-}
+namespace control {
+  SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7);
+  SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3);
+  SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4);
+
+  Button confirm1(PIN_PC7);
+  Button confirm2(PIN_PC6);
+  Button confirm3(PIN_PC5);
+
+  SemiAutoControl shift(PIN_PD4, PIN_PH5);
+  SemiAutoControl fill(PIN_PD5, PIN_PB0);
+  SemiAutoControl dump(PIN_PG1, PIN_PB5);
+  SemiAutoControl oxygen(PIN_PC1, PIN_PB7);
+  SemiAutoControl igniter(PIN_PD7, PIN_PH4);
+  SemiAutoControl open(PIN_PD6, PIN_PH6);
+  SemiAutoControl close(PIN_PG0, PIN_PB4);
+  SemiAutoControl purge(PIN_PC0, PIN_PB6);
+
+  void handleManualTask();
+
+  void setChristmasTreeStart();
+  void setChristmasTreeStop();
+  void setEmergencyStop();
+  void setFillStart();
+  void setFillStop();
+  void setOxygenStart();
+  void setOxygenStop();
+  void setIgniterStart();
+  void setIgniterStop();
+  void setOpenStart();
+} // namespace control
 
 namespace indicator {
   AccessLED task(PIN_PK4);
+  // HACK LEDだけでなく処理もする
+  OutputPin caution(PIN_PK6);
+} // namespace indicator
 
-  Control emergencyStop(PIN_PG4);
-}
+namespace sequence {
+  void christmasTree();
+  void emergencyStop();
+  void fill();
+  void ignition();
 
-namespace button {
-  Button kill(PIN_PJ1, false);
-  Button emergencyStop(PIN_PC4, false);
-}
-
+  bool emergencyStopSequenceIsActive = false;
+  bool fillSequenceIsActive = false;
+  bool ignitionSequenceIsActive = false;
+  bool isReadyToIgnition = false;
+} // namespace sequence
 
 namespace monitor {
   AmpereMonitor ampereVSW(0x40);
@@ -37,7 +72,7 @@ namespace monitor {
   VoltageMonitor voltageVSW(PIN_PF2, 12000.0, 2000.0);
   VoltageMonitor voltage12V(PIN_PF3, 12000.0, 2000.0);
   ThermalMonitor thermal(PIN_PF4, 10000.0);
-}
+} // namespace monitor
 
 namespace rs485 {
   Control sendEnableControl(PIN_PA2);
@@ -46,49 +81,63 @@ namespace rs485 {
 
   void enableOutput();
   void disableOutput();
-}
+} // namespace rs485
 
 
 namespace task {
+  const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
+  const String FILL_START = "fill-start";
+  const String FILL_STOP = "fill-stop";
+  const String OXYGEN_START = "oxygen-start";
+  const String OXYGEN_STOP = "oxygen-stop";
+  const String IGNITER_START = "igniter-start";
+  const String IGNITER_STOP = "igniter-stop";
+  const String OPEN_START = "open-start";
+  const String PLAY_MUSIC = "play-music";
+
   void monitor();
   void controlSync();
-  void handleManualControl();
-}
-
-
-bool isBusy = false;
+} // namespace task
 
 
 void setup() {
-  control::power.turnOn();
+  power::loadSwitch.turnOn();
 
   // RS485の送信が終わったら割り込みを発生させる
   UCSR1B |= (1 << TXCIE0);
 
   // FT232RL
   Serial.begin(115200);
+
   // LTC485
   Serial1.begin(115200);
+
   // DFPlayer
   Serial2.begin(9600);
+  mp3_set_serial(Serial2);
+  mp3_stop();
+  mp3_set_volume(10);
 
   Wire.begin();
   monitor::ampereVSW.begin();
   monitor::ampere12V.begin();
 
+  // シーケンス関係のタスクたち
+  Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
+  Tasks.add(task::FILL_START, &control::setFillStart);
+  Tasks.add(task::FILL_STOP, &control::setFillStop);
+  Tasks.add(task::OXYGEN_START, &control::setOxygenStart);
+  Tasks.add(task::OXYGEN_STOP, &control::setOxygenStop);
+  Tasks.add(task::IGNITER_START, &control::setIgniterStart);
+  Tasks.add(task::IGNITER_STOP, &control::setIgniterStop);
+  Tasks.add(task::OPEN_START, &control::setOpenStart);
+  Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
+
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
-  Tasks.add(&task::handleManualControl)->startFps(20);
+  Tasks.add(&control::handleManualTask)->startFps(20);
 
-  // HACK 動作確認用
-  mp3_set_serial(Serial2);
-  mp3_set_volume(15);
-  mp3_play(100);
-
-  // Tasks.add<EmergencyStop>("EmergencyStop")
-  //   ->sync<EmergencyStop>("Dump", [&](TaskRef<EmergencyStop> task) {
-  //   task->dump();
-  //     });
+  sequence::christmasTree();
 }
 
 
@@ -149,22 +198,203 @@ void task::controlSync() {
 }
 
 
-void task::handleManualControl() {
-  if (button::kill.isPushed()) {
-    // 終了処理
-    control::power.turnOff();
-  }
-
-  // HACK 仮エマスト
-  if (!isBusy && button::emergencyStop.isPushed()) {
-    isBusy = true;
-    mp3_set_volume(30);
-    mp3_play(3);
-    indicator::emergencyStop.turnOn();
-    control::close.autoSet(HIGH);
-    control::dump.autoSet(HIGH);
-    control::purge.autoSet(HIGH);
-  }
-
+void control::handleManualTask() {
   indicator::task.blink();
+
+  if (power::killButton.isPushed()) {
+    // 終了処理
+    power::loadSwitch.turnOff();
+  }
+
+  // セーフティー
+  // Armedでなければこの時点で終わり
+  control::safetyArmed.setManual();
+  if (!control::safetyArmed.isManualRaised()) return;
+
+
+  // エマスト
+  control::emergencyStop.setManual();
+  if (control::emergencyStop.isManualRaised()) {
+    sequence::emergencyStop();
+  }
+
+  // 充填シーケンス
+  control::sequenceStart.setManual();
+  if (control::sequenceStart.isManualRaised()) {
+    sequence::fill();
+  }
+
+  // 点火シーケンス
+  if ((control::confirm1.isPushed() && control::confirm2.isPushed())
+    || (control::confirm2.isPushed() && control::confirm3.isPushed())
+    || (control::confirm3.isPushed() && control::confirm1.isPushed())) {
+    sequence::ignition();
+  }
+
+  // 手動制御
+  control::shift.setManual();
+  control::fill.setManual();
+  control::dump.setManual();
+  control::oxygen.setManual();
+  control::igniter.setManual();
+  control::open.setManual();
+  control::close.setManual();
+  control::purge.setManual();
+}
+
+
+void sequence::christmasTree() {
+  // mp3_play(100); // 0100_startup.mp3
+  control::setChristmasTreeStart();
+
+  Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
+}
+
+
+void sequence::emergencyStop() {
+  // 重複実行防止
+  if (sequence::emergencyStopSequenceIsActive) return;
+  sequence::emergencyStopSequenceIsActive = true;
+
+  control::emergencyStop.setAutomaticOn();
+  mp3_play(3); // 0102_emergencyStop.mp3
+
+  Tasks[task::PLAY_MUSIC]->stop();
+  Tasks[task::FILL_START]->stop();
+  Tasks[task::OXYGEN_START]->stop();
+  Tasks[task::IGNITER_START]->stop();
+  Tasks[task::FILL_STOP]->stop();
+  Tasks[task::OPEN_START]->stop();
+  Tasks[task::OXYGEN_STOP]->stop();
+  Tasks[task::IGNITER_STOP]->stop();
+
+  control::setEmergencyStop();
+}
+
+
+void sequence::fill() {
+  // エマスト中は充填シーケンスを始めない
+  if (sequence::emergencyStopSequenceIsActive) return;
+
+  // シーケンス開始時点で充填確認されていたらエラーを吐く
+  if (control::confirm1.isPushed() || control::confirm2.isPushed() || control::confirm3.isPushed()) {
+    // HACK エラー
+    indicator::caution.setHigh();
+    return;
+  }
+
+  // 重複実行防止
+  if (sequence::fillSequenceIsActive) return;
+  sequence::fillSequenceIsActive = true;
+
+  control::sequenceStart.setAutomaticOn();
+  mp3_play(10);
+
+  Tasks[task::PLAY_MUSIC]->startOnceAfterSec(15.0);
+  Tasks[task::FILL_START]->startOnceAfterSec(24.0);
+}
+
+
+void sequence::ignition() {
+  // エマスト中は点火シーケンスを始めない
+  if (sequence::emergencyStopSequenceIsActive) return;
+
+  // 充填開始前は点火シーケンスを始めない
+  if (!control::fill.isAutomaticRaised()) return;
+
+  // 手動のFILLがONの間は点火シーケンスを始めない
+  if (control::fill.isManualRaised()) return;
+
+  // 重複実行防止
+  if (sequence::ignitionSequenceIsActive) return;
+  sequence::ignitionSequenceIsActive = true;
+
+  control::sequenceStart.setAutomaticOn();
+  mp3_play(4); // 0104_ignitionSequenceStart
+
+  Tasks[task::OXYGEN_START]->startOnceAfterSec(3.0);
+
+  Tasks[task::IGNITER_START]->startOnceAfterSec(6.0);
+
+  Tasks[task::FILL_STOP]->startOnceAfterSec(10.0);
+  Tasks[task::OPEN_START]->startOnceAfterSec(10.0);
+
+  Tasks[task::OXYGEN_STOP]->startOnceAfterSec(10.5);
+  Tasks[task::IGNITER_STOP]->startOnceAfterSec(10.5);
+}
+
+
+void control::setChristmasTreeStart() {
+  control::safetyArmed.setTestOn();
+  control::sequenceStart.setTestOn();
+  control::emergencyStop.setTestOn();
+  control::shift.setTestOn();
+  control::fill.setTestOn();
+  control::dump.setTestOn();
+  control::oxygen.setTestOn();
+  control::igniter.setTestOn();
+  control::open.setTestOn();
+  control::close.setTestOn();
+  control::purge.setTestOn();
+}
+
+
+void control::setChristmasTreeStop() {
+  control::safetyArmed.setTestOff();
+  control::sequenceStart.setTestOff();
+  control::emergencyStop.setTestOff();
+  control::shift.setTestOff();
+  control::fill.setTestOff();
+  control::dump.setTestOff();
+  control::oxygen.setTestOff();
+  control::igniter.setTestOff();
+  control::open.setTestOff();
+  control::close.setTestOff();
+  control::purge.setTestOff();
+}
+
+
+void control::setEmergencyStop() {
+  control::fill.setAutomaticOff();
+  control::oxygen.setAutomaticOff();
+  control::igniter.setAutomaticOff();
+  control::open.setAutomaticOff();
+  control::close.setAutomaticOn();
+  control::dump.setAutomaticOn();
+  control::purge.setAutomaticOn();
+}
+
+
+void control::setFillStart() {
+  control::fill.setAutomaticOn();
+}
+
+
+void control::setFillStop() {
+  control::fill.setAutomaticOff();
+}
+
+
+void control::setOxygenStart() {
+  control::oxygen.setAutomaticOn();
+}
+
+
+void control::setOxygenStop() {
+  control::oxygen.setAutomaticOff();
+}
+
+
+void control::setIgniterStart() {
+  control::igniter.setAutomaticOn();
+}
+
+
+void control::setIgniterStop() {
+  control::igniter.setAutomaticOff();
+}
+
+
+void control::setOpenStart() {
+  control::open.setAutomaticOn();
 }
