@@ -299,6 +299,10 @@ void sequence::peacefulStop() {
 
 
 void sequence::fill() {
+  // 重複実行防止
+  if (sequence::fillSequenceIsActive) return;
+  sequence::fillSequenceIsActive = true;
+
   // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
@@ -310,10 +314,6 @@ void sequence::fill() {
     return;
   }
 
-  // 重複実行防止
-  if (sequence::fillSequenceIsActive) return;
-  sequence::fillSequenceIsActive = true;
-
   control::sequenceStart.setAutomaticOn();
   mp3_play(10);
 
@@ -323,6 +323,10 @@ void sequence::fill() {
 
 
 void sequence::ignition() {
+  // 重複実行防止
+  if (sequence::ignitionSequenceIsActive) return;
+  sequence::ignitionSequenceIsActive = true;
+
   // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
 
@@ -331,10 +335,6 @@ void sequence::ignition() {
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
-
-  // 重複実行防止
-  if (sequence::ignitionSequenceIsActive) return;
-  sequence::ignitionSequenceIsActive = true;
 
   control::sequenceStart.setAutomaticOn();
   mp3_play(4); // 0104_ignitionSequenceStart
