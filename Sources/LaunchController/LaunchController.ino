@@ -91,6 +91,7 @@ namespace task {
   const String IGNITER_START = "igniter-start";
   const String IGNITER_STOP = "igniter-stop";
   const String OPEN_START = "open-start";
+  const String PLAY_MUSIC = "play-music";
 
   void monitor();
   void controlSync();
@@ -128,7 +129,7 @@ void setup() {
   Tasks.add(task::IGNITER_START, &control::setIgniterStart);
   Tasks.add(task::IGNITER_STOP, &control::setIgniterStop);
   Tasks.add(task::OPEN_START, &control::setOpenStart);
-  Tasks.add("audio", [] {mp3_play(9);});
+  Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
   Tasks.add(&task::monitor)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
@@ -271,7 +272,7 @@ void sequence::fill() {
   control::sequenceStart.setAutomaticOn();
   mp3_play(10);
 
-  Tasks["audio"]->startOnceAfterSec(15.0);
+  Tasks[task::PLAY_MUSIC]->startOnceAfterSec(15.0);
   Tasks[task::FILL_START]->startOnceAfterSec(24.0);
 }
 
