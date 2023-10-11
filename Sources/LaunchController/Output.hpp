@@ -3,20 +3,23 @@
 
 
 /// @brief OUTPUT設定ピンの抽象的なクラス
-class OutputPin {
+class Output {
 public:
   /// @brief コンストラクタ
   /// @param pinNumber ピン番号
-  OutputPin(uint8_t pinNumber);
+  Output(uint8_t pinNumber);
 
   /// @brief 出力をHIGHにする
-  void setHigh();
+  void on();
 
   /// @brief 出力をLOWにする
-  void setLow();
+  void off();
 
   /// @brief 出力を入れ替える（HIGHならLOW LOWならHIGH）
-  void setToggle();
+  void toggle();
+
+  /// @brief 一瞬だけON
+  void blink();
 
   /// @brief 出力を設定する
   void set(bool isHigh);

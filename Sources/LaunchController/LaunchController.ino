@@ -2,9 +2,8 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
-#include "Control.hpp"
+#include "Output.hpp"
 #include "SemiAutoControl.hpp"
-#include "AccessLED.hpp"
 #include "Button.hpp"
 #include "AmpereMonitor.hpp"
 #include "VoltageMonitor.hpp"
@@ -13,7 +12,7 @@
 
 namespace power {
   Button killButton(PIN_PJ1);
-  Control loadSwitch(PIN_PF5);
+  Output loadSwitch(PIN_PF5);
 } // namespace power
 
 namespace control {
@@ -48,12 +47,6 @@ namespace control {
   void setOpenStart();
 } // namespace control
 
-namespace indicator {
-  AccessLED task(PIN_PK4);
-  // HACK LEDだけでなく処理もする
-  OutputPin caution(PIN_PK6);
-} // namespace indicator
-
 namespace sequence {
   void christmasTree();
   void emergencyStop();
@@ -75,14 +68,13 @@ namespace monitor {
 } // namespace monitor
 
 namespace rs485 {
-  Control sendEnableControl(PIN_PA2);
-  Control txLED(PIN_PA4);
-  Control rxLED(PIN_PA3);
+  Output sendEnableControl(PIN_PA2);
+  Output txLED(PIN_PA4);
+  Output rxLED(PIN_PA3);
 
   void enableOutput();
   void disableOutput();
 } // namespace rs485
-
 
 namespace task {
   const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
@@ -95,13 +87,20 @@ namespace task {
   const String OPEN_START = "open-start";
   const String PLAY_MUSIC = "play-music";
 
+  Output accessLamp(PIN_PK4);
+
   void monitor();
   void controlSync();
 } // namespace task
 
+namespace caution {
+  // HACK LEDだけでなく処理もする
+  Output statusLamp(PIN_PK6);
+}
+
 
 void setup() {
-  power::loadSwitch.turnOn();
+  power::loadSwitch.on();
 
   // RS485の送信が終わったら割り込みを発生させる
   UCSR1B |= (1 << TXCIE0);
@@ -154,15 +153,15 @@ ISR(USART1_TX_vect) {
 
 /// @brief 送信を有効にする
 void rs485::enableOutput() {
-  rs485::sendEnableControl.turnOn();
-  rs485::txLED.turnOn();
+  rs485::sendEnableControl.on();
+  rs485::txLED.on();
 }
 
 
 /// @brief 送信を無効にする
 void rs485::disableOutput() {
-  rs485::sendEnableControl.turnOff();
-  rs485::txLED.turnOff();
+  rs485::sendEnableControl.off();
+  rs485::txLED.off();
 }
 
 
@@ -199,11 +198,11 @@ void task::controlSync() {
 
 
 void control::handleManualTask() {
-  indicator::task.blink();
+  task::accessLamp.blink();
 
   if (power::killButton.isPushed()) {
     // 終了処理
-    power::loadSwitch.turnOff();
+    power::loadSwitch.off();
   }
 
   // セーフティー
@@ -281,7 +280,7 @@ void sequence::fill() {
   // シーケンス開始時点で充填確認されていたらエラーを吐く
   if (control::confirm1.isPushed() || control::confirm2.isPushed() || control::confirm3.isPushed()) {
     // HACK エラー
-    indicator::caution.setHigh();
+    caution::statusLamp.on();
     return;
   }
 
