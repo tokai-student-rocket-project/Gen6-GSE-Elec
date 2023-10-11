@@ -116,7 +116,7 @@ void setup() {
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
   mp3_stop();
-  mp3_set_volume(10);
+  mp3_set_volume(20);
 
   Wire.begin();
   monitor::ampereVSW.begin();
@@ -258,6 +258,8 @@ void sequence::emergencyStop() {
 
   control::emergencyStop.setAutomaticOn();
   mp3_play(3); // 0102_emergencyStop.mp3
+
+  control::sequenceStart.setAutomaticOff();
 
   Tasks[task::PLAY_MUSIC]->stop();
   Tasks[task::FILL_START]->stop();
