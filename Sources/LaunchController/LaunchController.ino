@@ -6,7 +6,7 @@
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
 #include "PowerMonitor.hpp"
-#include "ThermalMonitor.hpp"
+#include "Thermistor.hpp"
 
 
 namespace power {
@@ -64,7 +64,9 @@ namespace sequence {
 namespace monitor {
   PowerMonitor input(0x40);
   PowerMonitor bus12(0x41);
-  ThermalMonitor thermal(PIN_PF4, 10000.0);
+  Thermistor thermal(PIN_PF4, 10000.0);
+
+  void measureTask();
 } // namespace monitor
 
 namespace rs485 {
@@ -89,7 +91,6 @@ namespace task {
 
   Output accessLamp(PIN_PK4);
 
-  void monitor();
   void controlSync();
 } // namespace task
 
@@ -137,7 +138,7 @@ void setup() {
   Tasks.add(task::OPEN_START, &control::setOpenStart);
   Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
-  Tasks.add(&task::monitor)->startFps(10);
+  Tasks.add(&monitor::measureTask)->startFps(10);
   Tasks.add(&task::controlSync)->startFps(5);
   Tasks.add(&control::handleManualTask)->startFps(20);
 
@@ -170,7 +171,7 @@ void rs485::disableOutput() {
 }
 
 
-void task::monitor() {
+void monitor::measureTask() {
   float ampereVSW_A = monitor::input.getAmpere_A();
   float ampereV12_A = monitor::bus12.getAmpere_A();
   float voltageVSW_V = monitor::input.getVoltage_V();
@@ -184,7 +185,7 @@ void task::monitor() {
   Serial.print(ampereV12_A, 3);
   Serial.print("\tINPUT[V]:");
   Serial.print(voltageVSW_V, 3);
-  Serial.print("\ttBUS12[V]:");
+  Serial.print("\tBUS12[V]:");
   Serial.print(voltage12V_V, 3);
   Serial.print("\tPD[W]:");
   Serial.print(powerDissipation_W, 3);

@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 
-class ThermalMonitor {
+class Thermistor {
   uint8_t _pinNumber;
 
   float _lowerResistance;
@@ -12,7 +12,7 @@ class ThermalMonitor {
   const float B = 3380.0;
 
 public:
-  ThermalMonitor(uint8_t pinNumber, float lowerResistance);
+  Thermistor(uint8_t pinNumber, float lowerResistance);
 
   float getTemperature_degC();
 };
