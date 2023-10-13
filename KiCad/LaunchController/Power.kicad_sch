@@ -2728,7 +2728,7 @@
     (property "Reference" "R6" (at 105.41 49.53 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "22kR" (at 105.41 52.07 90)
+    (property "Value" "10kR" (at 105.41 52.07 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (at 105.41 54.61 0)
