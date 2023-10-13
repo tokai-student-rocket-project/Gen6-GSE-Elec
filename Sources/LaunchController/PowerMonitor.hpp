@@ -3,12 +3,14 @@
 #include <Adafruit_INA219.h>
 
 
-class AmpereMonitor {
+class PowerMonitor {
   Adafruit_INA219* _ina219;
 
 public:
-  AmpereMonitor(uint8_t address);
-
+  PowerMonitor(uint8_t address);
   void begin();
+
   float getAmpere_A();
+  float getVoltage_V();
+  float getPower_W();
 };
