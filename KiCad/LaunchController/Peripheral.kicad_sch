@@ -1642,7 +1642,7 @@
     (property "Value" "RJ45" (at 209.55 19.05 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_RJ:RJ45_Wuerth_7499010001A_Horizontal" (at 209.55 32.385 90)
+    (property "Footprint" "TSRP_Connector_Hirose:TM11R-5M2-88" (at 209.55 32.385 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.monotaro.com/p/4743/2638/" (at 209.55 32.385 90)
