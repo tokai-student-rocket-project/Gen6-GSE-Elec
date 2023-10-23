@@ -71,8 +71,7 @@ namespace monitor {
 
 namespace rs485 {
   Output sendEnableControl(PIN_PA2);
-  Output txAccessLamp(PIN_PA4);
-  Output rxAccessLamp(PIN_PA3);
+  Output accessLamp(PIN_PA4);
 
   void enableOutput();
   void disableOutput();
@@ -160,14 +159,14 @@ ISR(USART1_TX_vect) {
 /// @brief 送信を有効にする
 void rs485::enableOutput() {
   rs485::sendEnableControl.on();
-  rs485::txAccessLamp.on();
+  rs485::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
 void rs485::disableOutput() {
   rs485::sendEnableControl.off();
-  rs485::txAccessLamp.off();
+  rs485::accessLamp.off();
 }
 
 
@@ -354,8 +353,7 @@ void control::setChristmasTreeStart() {
   power::lowVoltageLamp.setTestOn();
   task::accessLamp.setTestOn();
   satelliteController::statusLamp.setTestOn();
-  rs485::txAccessLamp.setTestOn();
-  rs485::rxAccessLamp.setTestOn();
+  rs485::accessLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -375,8 +373,7 @@ void control::setChristmasTreeStop() {
   power::lowVoltageLamp.setTestOff();
   task::accessLamp.setTestOff();
   satelliteController::statusLamp.setTestOff();
-  rs485::txAccessLamp.setTestOff();
-  rs485::rxAccessLamp.setTestOff();
+  rs485::accessLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();
