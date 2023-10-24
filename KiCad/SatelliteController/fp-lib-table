@@ -3,4 +3,5 @@
   (lib (name "TSRP_TerminalBlock_Alphaplus")(type "KiCad")(uri "${KIPRJMOD}/../TSRP_Library/TSRP_TerminalBlock_Alphaplus.pretty")(options "")(descr ""))
   (lib (name "TSRP_Connector_Hirose")(type "KiCad")(uri "${KIPRJMOD}/../TSRP_Library/TSRP_Connector_Hirose.pretty")(options "")(descr ""))
   (lib (name "TSRP_Module")(type "KiCad")(uri "${KIPRJMOD}/../TSRP_Library/TSRP_Module.pretty")(options "")(descr ""))
+  (lib (name "TSRP_Button_Switch_SMD")(type "KiCad")(uri "C:/Users/waiwa/Projects/Gen6-GSE-Elec/KiCad/TSRP_Library/TSRP_Button_Switch_SMD.pretty")(options "")(descr ""))
 )
