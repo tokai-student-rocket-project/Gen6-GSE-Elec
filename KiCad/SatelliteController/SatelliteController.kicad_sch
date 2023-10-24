@@ -1647,6 +1647,7 @@
   (no_connect (at 54.61 127) (uuid 409d55ca-975d-4c20-8a2f-b8dde54240df))
   (no_connect (at 95.25 48.26) (uuid 4662588d-b66e-4ddf-ad60-e51bf78ec0e0))
   (no_connect (at 54.61 71.12) (uuid 489f9782-c373-44ba-8df7-95b4f6d67189))
+  (no_connect (at 54.61 139.7) (uuid 4b92aaf0-d0a5-40b4-954a-706c0d35fa0b))
   (no_connect (at 95.25 55.88) (uuid 513f3cde-1d1a-403e-872e-2ad1a350b14e))
   (no_connect (at 199.39 63.5) (uuid 55063b69-c2bf-46d1-9a3c-c466a997ec64))
   (no_connect (at 240.03 71.12) (uuid 551c2cb9-72e7-4720-be22-13afe54d19cf))
@@ -1678,6 +1679,7 @@
   (no_connect (at 95.25 162.56) (uuid edfdb192-c607-40c4-a947-8edc8956f448))
   (no_connect (at 240.03 40.64) (uuid ee218ebc-99e9-4c75-afe1-2114f0f2857d))
   (no_connect (at 95.25 177.8) (uuid f5f34b5c-bc4a-45b8-a38b-214a9952bb41))
+  (no_connect (at 54.61 142.24) (uuid fcd6cfb9-69c3-4ae2-ab0f-ad9b136a9fb7))
   (no_connect (at 54.61 88.9) (uuid fcf25b34-660b-4573-9042-c3eb1d92a647))
 
   (wire (pts (xy 52.07 53.34) (xy 52.07 50.8))
@@ -1716,10 +1718,6 @@
     (stroke (width 0) (type default))
     (uuid 12cf3227-8c6a-42c0-ab13-c5708656b021)
   )
-  (wire (pts (xy 26.67 142.24) (xy 29.21 142.24))
-    (stroke (width 0) (type default))
-    (uuid 12db82e2-f5fd-4969-be44-4f84e80aff31)
-  )
   (wire (pts (xy 257.81 121.92) (xy 257.81 124.46))
     (stroke (width 0) (type default))
     (uuid 13a0410d-d0bd-4c8f-b776-1b3bd94f0d59)
@@ -1735,10 +1733,6 @@
   (wire (pts (xy 170.18 58.42) (xy 172.72 58.42))
     (stroke (width 0) (type default))
     (uuid 14b0af42-34f4-448b-9f69-a17b0f3befbb)
-  )
-  (wire (pts (xy 26.67 139.7) (xy 29.21 139.7))
-    (stroke (width 0) (type default))
-    (uuid 156fa6ba-05e1-4fc8-8cc2-db4323d3bd52)
   )
   (wire (pts (xy 52.07 58.42) (xy 52.07 60.96))
     (stroke (width 0) (type default))
@@ -2108,10 +2102,6 @@
     (stroke (width 0) (type default))
     (uuid 96b4789a-3d9e-432d-8093-7d295e180a21)
   )
-  (wire (pts (xy 34.29 139.7) (xy 54.61 139.7))
-    (stroke (width 0) (type default))
-    (uuid 974789da-bef1-492f-b2e9-5ca2254f39e2)
-  )
   (wire (pts (xy 22.86 50.8) (xy 20.32 50.8))
     (stroke (width 0) (type default))
     (uuid 97cb00e7-0f5f-4110-98a2-50bf26cd6b9c)
@@ -2271,10 +2261,6 @@
   (wire (pts (xy 34.29 86.36) (xy 34.29 83.82))
     (stroke (width 0) (type default))
     (uuid c323bf5a-9c38-47f9-8da8-fd7bcd7096eb)
-  )
-  (wire (pts (xy 34.29 142.24) (xy 54.61 142.24))
-    (stroke (width 0) (type default))
-    (uuid c390bb2a-607e-46d4-8129-576d5316be07)
   )
   (wire (pts (xy 20.32 60.96) (xy 22.86 60.96))
     (stroke (width 0) (type default))
@@ -2876,13 +2862,6 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
-  (global_label "UART2_RX" (shape input) (at 26.67 139.7 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 9e072761-5159-4792-a5cb-0a8cea188f2f)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 14.4509 139.7 0)
-      (effects (font (size 1.27 1.27)) (justify right) hide)
-    )
-  )
   (global_label "CTL_SAFETY" (shape input) (at 97.79 99.06 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 9ead0d5d-7721-4f20-a5db-e3297f849e45)
@@ -3037,13 +3016,6 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "UART2_TX" (shape output) (at 26.67 142.24 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid f49cea4b-0ef0-430e-a660-a7e2ba75bf43)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 14.7533 142.24 0)
-      (effects (font (size 1.27 1.27)) (justify right) hide)
-    )
-  )
   (global_label "7SEG_CLK" (shape input) (at 148.59 187.96 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid f5a20453-ebd0-444c-af9f-1b0f443c01e2)
@@ -3097,7 +3069,7 @@
     )
     (pin "1" (uuid 697f9054-be52-4aaf-9bfd-08bd1daf7e16))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR013") (unit 1)
         )
@@ -3126,7 +3098,7 @@
     (pin "1" (uuid fe647bc9-b710-4a0d-81f3-bf6120cf77f1))
     (pin "2" (uuid 132eef7a-59c7-4589-ba5f-87e60f31c3c0))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R3") (unit 1)
         )
@@ -3155,7 +3127,7 @@
     (pin "1" (uuid 2922cb96-66c4-48ef-91d1-4e1948bc5bec))
     (pin "2" (uuid afc08e16-b60a-4fb9-a803-f51fe7146667))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C2") (unit 1)
         )
@@ -3185,7 +3157,7 @@
     (pin "5" (uuid 0342bc27-c7e8-4b60-9434-bfbb9c5bf166))
     (pin "6" (uuid 29323f36-5ac1-459f-814c-1df0c0cf4595))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "J13") (unit 1)
         )
@@ -3214,7 +3186,7 @@
     (pin "1" (uuid 33f1c9a6-0039-4db0-ba32-81f3f988be53))
     (pin "2" (uuid 7c4944d0-7e03-4c0b-bb0f-3ef1b8b1bfd8))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C10") (unit 1)
         )
@@ -3243,7 +3215,7 @@
     (pin "1" (uuid 4a5989a3-00b7-47f1-b0a7-7e6665520fcd))
     (pin "2" (uuid 04bcc7e7-a326-4497-b793-31c88145936d))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "F1") (unit 1)
         )
@@ -3268,7 +3240,7 @@
     )
     (pin "1" (uuid d887c62e-23d5-4e6c-88bc-2ecd3d0c8c5e))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR017") (unit 1)
         )
@@ -3293,7 +3265,7 @@
     )
     (pin "1" (uuid 036dff33-eddb-4392-92f7-f8b15ab14faf))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR08") (unit 1)
         )
@@ -3318,7 +3290,7 @@
     )
     (pin "1" (uuid 86b1ef40-ac33-4e93-b5cf-282c5c2917b4))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR019") (unit 1)
         )
@@ -3347,7 +3319,7 @@
     (pin "1" (uuid 31b82008-229e-4eb9-a527-4872e0f52d1d))
     (pin "2" (uuid 0fac7720-3dfd-4d7d-9aad-efafb88cf50e))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R19") (unit 1)
         )
@@ -3376,7 +3348,7 @@
     (pin "1" (uuid aef5a713-4c51-4f9b-9559-4967edb867e8))
     (pin "2" (uuid 7571bae9-5b1b-4c3f-8910-dd2e9f34655e))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "D3") (unit 1)
         )
@@ -3401,7 +3373,7 @@
     )
     (pin "1" (uuid bf03d245-60f5-4078-ad96-6cc8272a35eb))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR045") (unit 1)
         )
@@ -3430,7 +3402,7 @@
     (pin "1" (uuid 81c7cea6-9e8b-46f7-a85f-5e51fc8bda9f))
     (pin "2" (uuid 718fc465-c047-47bb-b905-a197e35a465a))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C3") (unit 1)
         )
@@ -3465,7 +3437,7 @@
     (pin "1" (uuid ba597000-9007-41cb-b8d2-18b1632e6e17))
     (pin "2" (uuid 98f12904-24e0-4f4f-8a87-1d1872e58f68))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "D1") (unit 1)
         )
@@ -3494,7 +3466,7 @@
     (pin "1" (uuid 55d15f2a-5547-484b-961d-2ca2e8e43195))
     (pin "2" (uuid 0b001fc1-a752-4bc8-8375-2c745429ecb9))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C6") (unit 1)
         )
@@ -3547,7 +3519,7 @@
     (pin "7" (uuid 4d9b0eec-57b3-45bc-88a4-3a419dcb3a2f))
     (pin "9" (uuid 7aa61c8f-973a-41f8-b015-1a01f7811e39))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "U1") (unit 1)
         )
@@ -3572,7 +3544,7 @@
     )
     (pin "1" (uuid 1b05e103-340a-4c3a-bf97-ee096ad7a920))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR015") (unit 1)
         )
@@ -3597,7 +3569,7 @@
     )
     (pin "1" (uuid 27ec1cf4-0632-4470-98d3-b81898c7e639))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR016") (unit 1)
         )
@@ -3626,7 +3598,7 @@
     (pin "1" (uuid c38cec84-b215-420b-ae8d-884f8a111b28))
     (pin "2" (uuid 5163a68e-fd60-48a4-a0c2-1f626b5955ba))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C1") (unit 1)
         )
@@ -3651,7 +3623,7 @@
     )
     (pin "1" (uuid 586f1b28-b441-4d4b-9a78-081e30fe1771))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR014") (unit 1)
         )
@@ -3676,7 +3648,7 @@
     )
     (pin "1" (uuid 9724eb11-2cd7-44e7-bfd6-a3cbc44c4a68))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR04") (unit 1)
         )
@@ -3705,7 +3677,7 @@
     (pin "1" (uuid b281c1cd-dde2-4cb4-84a3-09883cda5879))
     (pin "2" (uuid 6817c7ff-3288-4f63-b440-43d31722ebdb))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R5") (unit 1)
         )
@@ -3730,7 +3702,7 @@
     )
     (pin "1" (uuid 138d3080-01df-44f8-883c-70fedd0144cd))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR05") (unit 1)
         )
@@ -3761,7 +3733,7 @@
     (pin "3" (uuid 0b238bc8-fb47-4021-b147-d064e8779c96))
     (pin "4" (uuid d43add2d-ae5e-4fc9-a550-8845c7c6d3a0))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "J2") (unit 1)
         )
@@ -3790,7 +3762,7 @@
     (pin "1" (uuid 33d93816-1dd6-4075-a40d-90e849bd30ca))
     (pin "2" (uuid 7d12301a-62f2-4461-b199-0ef4bbb42ffc))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R2") (unit 1)
         )
@@ -3815,7 +3787,7 @@
     )
     (pin "1" (uuid b3ea70de-1e42-41e5-8460-af1b645e935d))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR02") (unit 1)
         )
@@ -3844,7 +3816,7 @@
     (pin "1" (uuid 8cd72b5e-ddaf-46de-9aae-95cbf4f42270))
     (pin "2" (uuid 3522f953-87dd-47ee-95c9-3f41f108c950))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C11") (unit 1)
         )
@@ -3869,7 +3841,7 @@
     )
     (pin "1" (uuid 8fa31f8d-7758-48ff-9119-303058df0cad))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR09") (unit 1)
         )
@@ -3894,7 +3866,7 @@
     )
     (pin "1" (uuid a559d642-9d18-4e2c-ac51-6e646299bf01))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR010") (unit 1)
         )
@@ -3923,7 +3895,7 @@
     (pin "1" (uuid e835d7c3-2d2f-4ec9-b184-3691b3a9bb00))
     (pin "2" (uuid 174695f0-2fed-402b-bbdc-3aaf57dc6370))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R1") (unit 1)
         )
@@ -3948,7 +3920,7 @@
     )
     (pin "1" (uuid f9684096-92d6-4ce7-b16a-65fe6a348235))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR040") (unit 1)
         )
@@ -3973,7 +3945,7 @@
     )
     (pin "1" (uuid 7d940c61-61aa-4f56-ba83-bcff306681ee))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR012") (unit 1)
         )
@@ -4002,7 +3974,7 @@
     (pin "1" (uuid 7343b9c0-46af-4d7a-8d53-accbf8b31b65))
     (pin "2" (uuid 99e4cb9d-a02d-4729-9803-4d0cc2da5b37))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R10") (unit 1)
         )
@@ -4031,7 +4003,7 @@
     (pin "1" (uuid 24fdbab7-2feb-46db-99ac-b36c39cce89f))
     (pin "2" (uuid cd709a2a-366b-4659-b18d-22038b35fe9b))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R20") (unit 1)
         )
@@ -4064,7 +4036,7 @@
     (pin "5" (uuid 55f3684e-dd1a-4808-ad17-b5dc91217c93))
     (pin "6" (uuid 681da21b-2057-4ad7-98c5-f61affeacf06))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "J1") (unit 1)
         )
@@ -4093,7 +4065,7 @@
     (pin "1" (uuid fb7abb2b-7223-4a4c-ba66-b314d21e6bdf))
     (pin "2" (uuid 2563fd59-ae3a-497a-a487-36cd164ceecc))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R9") (unit 1)
         )
@@ -4122,7 +4094,7 @@
     (pin "1" (uuid 1f6889b3-d24a-4541-be5f-0a0d8c6be353))
     (pin "2" (uuid ca96cf75-6ef1-4ec2-833f-c3d23702be84))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C8") (unit 1)
         )
@@ -4147,7 +4119,7 @@
     )
     (pin "1" (uuid 239657fd-1f32-4597-a410-7c72ae1ae7fc))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR018") (unit 1)
         )
@@ -4172,7 +4144,7 @@
     )
     (pin "1" (uuid 606197a1-48dc-4029-aa78-280e4ee0c184))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR044") (unit 1)
         )
@@ -4197,7 +4169,7 @@
     )
     (pin "1" (uuid f021f3b7-fbad-4873-b1f8-6ea37159f8ce))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR03") (unit 1)
         )
@@ -4226,7 +4198,7 @@
     (pin "1" (uuid 1f15efca-82d5-4e5b-b793-3c1e41b882e3))
     (pin "2" (uuid 33db298c-cca2-42c9-93bc-4bb0b5d9dee2))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "D2") (unit 1)
         )
@@ -4255,7 +4227,7 @@
     (pin "1" (uuid 7aeabd04-192e-484e-9d09-294949760539))
     (pin "2" (uuid 3ed672ac-42c9-4e39-984d-4fbecdc371ba))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "L1") (unit 1)
         )
@@ -4382,7 +4354,7 @@
     (pin "98" (uuid eca72283-bb0c-4f6c-818e-96a3e1edcdcb))
     (pin "99" (uuid e39f52b7-9bb5-48fb-bff8-67dea3959457))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "U2") (unit 1)
         )
@@ -4411,7 +4383,7 @@
     (pin "1" (uuid b5e3a303-3c77-4611-a7e2-edfd3333f902))
     (pin "2" (uuid d5edbf9c-8f20-4d43-b0e4-1f86b4626d56))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R6") (unit 1)
         )
@@ -4444,7 +4416,7 @@
     (pin "5" (uuid 8ba12592-e6c3-4dbd-aae4-ed4c4c905cca))
     (pin "6" (uuid 895c7590-ac18-4b0a-a119-1ba277fd3062))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "J3") (unit 1)
         )
@@ -4473,7 +4445,7 @@
     (pin "1" (uuid 2579122a-3fc1-4aba-ae3a-c251137acab4))
     (pin "2" (uuid 587af0ef-5f06-4ac8-ac13-f02f7efc03d3))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C7") (unit 1)
         )
@@ -4498,38 +4470,9 @@
     )
     (pin "1" (uuid 1d6ec927-47f1-463d-8e88-0907bc2e56dd))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR01") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:R_Small") (at 31.75 139.7 90) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid b88c9370-a325-4106-8d10-16f522ed21de)
-    (property "Reference" "R8" (at 31.75 134.62 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "1kR" (at 31.75 137.16 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (at 31.75 139.7 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097" (at 31.75 139.7 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "LCSC" "" (at 31.75 139.7 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid de5c0c12-ade2-4639-a2e6-0c2b6bda8cd8))
-    (pin "2" (uuid 6e4ff6b8-ae8e-424b-aa92-fa4c21e8f1da))
-    (instances
-      (project "LaunchController"
-        (path "/628d040b-43bf-4733-804f-091644a90124"
-          (reference "R8") (unit 1)
         )
       )
     )
@@ -4552,7 +4495,7 @@
     )
     (pin "1" (uuid cc37c15a-c7e0-49a4-b02c-f4c3b6ff27dc))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR07") (unit 1)
         )
@@ -4581,7 +4524,7 @@
     (pin "1" (uuid 07dd43d1-63e4-43ac-8fa1-3c5cf75234ed))
     (pin "2" (uuid 4ac6996e-8fda-4e09-a090-4cb48cafa175))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R7") (unit 1)
         )
@@ -4610,7 +4553,7 @@
     (pin "1" (uuid 88c77689-f9dd-4ea2-b5bf-affd3cdae8da))
     (pin "2" (uuid 2f67827d-e183-4474-bd8f-87ba6c3ecb04))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C5") (unit 1)
         )
@@ -4635,7 +4578,7 @@
     )
     (pin "1" (uuid 5d6698ac-7c0a-46a0-8673-024b27e2b78e))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR011") (unit 1)
         )
@@ -4660,7 +4603,7 @@
     )
     (pin "1" (uuid 6241d2ac-dd95-40eb-b033-befe8c2a2444))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR020") (unit 1)
         )
@@ -4685,7 +4628,7 @@
     )
     (pin "1" (uuid ad028b05-2821-45e0-ac98-f191a30cfc81))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR083") (unit 1)
         )
@@ -4714,7 +4657,7 @@
     (pin "1" (uuid c95f8c50-9cf3-43a6-93e9-970dfe94e90e))
     (pin "2" (uuid 4402ccc2-63df-4d97-8ea1-0931f9a11f2a))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R23") (unit 1)
         )
@@ -4746,7 +4689,7 @@
     (pin "1" (uuid 52166ae2-6bca-485c-bc9e-bfb97d1caece))
     (pin "2" (uuid 55a35eb3-4f3d-4e02-a134-307b82fa5279))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "Y1") (unit 1)
         )
@@ -4775,7 +4718,7 @@
     (pin "1" (uuid 1a4f8534-26eb-42f7-95ec-d04ddacbe61d))
     (pin "2" (uuid 0c0d3821-dcef-488b-9557-3ee837a70de4))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "D30") (unit 1)
         )
@@ -4807,38 +4750,9 @@
     (pin "1" (uuid 4fac20d3-43d4-4ca9-b019-fe8b4e6f6ac5))
     (pin "2" (uuid 9d208337-89bf-443f-8257-8ed6d5f766c2))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "R4") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:R_Small") (at 31.75 142.24 270) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid f293bc1a-2b4f-412c-a3e0-52b2143f2a58)
-    (property "Reference" "R27" (at 31.75 147.32 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "1kR" (at 31.75 144.78 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (at 31.75 142.24 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097" (at 31.75 142.24 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "LCSC" "" (at 31.75 142.24 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid a05d99c0-a25e-4385-903c-9d506908865f))
-    (pin "2" (uuid 0d2117a3-5458-44a8-895b-0cc04bdd731d))
-    (instances
-      (project "LaunchController"
-        (path "/628d040b-43bf-4733-804f-091644a90124"
-          (reference "R27") (unit 1)
         )
       )
     )
@@ -4865,7 +4779,7 @@
     (pin "1" (uuid c829330e-3643-49da-b9a8-decd48e8e44d))
     (pin "2" (uuid e22812d0-490f-49e0-99af-95300d942863))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "C9") (unit 1)
         )
@@ -4890,7 +4804,7 @@
     )
     (pin "1" (uuid 82af5fc1-320d-4e5d-8997-93eab11f42f4))
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124"
           (reference "#PWR039") (unit 1)
         )
@@ -4909,7 +4823,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124" (page "4"))
       )
     )
@@ -4926,7 +4840,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124" (page "6"))
       )
     )
@@ -4943,7 +4857,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124" (page "2"))
       )
     )
@@ -4960,7 +4874,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124" (page "3"))
       )
     )
@@ -4977,7 +4891,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "LaunchController"
+      (project "SatelliteController"
         (path "/628d040b-43bf-4733-804f-091644a90124" (page "5"))
       )
     )
