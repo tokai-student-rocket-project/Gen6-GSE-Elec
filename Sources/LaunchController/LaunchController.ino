@@ -71,8 +71,7 @@ namespace monitor {
 
 namespace rs485 {
   Output sendEnableControl(PIN_PA2);
-  Output txAccessLamp(PIN_PA4);
-  Output rxAccessLamp(PIN_PA3);
+  Output accessLamp(PIN_PA4);
 
   void enableOutput();
   void disableOutput();
@@ -94,7 +93,7 @@ namespace task {
   void controlSync();
 } // namespace task
 
-namespace caution {
+namespace error {
   // HACK LEDだけでなく処理もする
   Output statusLamp(PIN_PK6);
 } // namespace caution
@@ -160,14 +159,14 @@ ISR(USART1_TX_vect) {
 /// @brief 送信を有効にする
 void rs485::enableOutput() {
   rs485::sendEnableControl.on();
-  rs485::txAccessLamp.on();
+  rs485::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
 void rs485::disableOutput() {
   rs485::sendEnableControl.off();
-  rs485::txAccessLamp.off();
+  rs485::accessLamp.off();
 }
 
 
@@ -308,7 +307,7 @@ void sequence::fill() {
   if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh()) {
     // HACK エラー
     sequence::peacefulStop();
-    caution::statusLamp.on();
+    error::statusLamp.on();
     return;
   }
 
@@ -350,12 +349,11 @@ void sequence::ignition() {
 
 
 void control::setChristmasTreeStart() {
-  caution::statusLamp.setTestOn();
+  error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
   task::accessLamp.setTestOn();
   satelliteController::statusLamp.setTestOn();
-  rs485::txAccessLamp.setTestOn();
-  rs485::rxAccessLamp.setTestOn();
+  rs485::accessLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -371,12 +369,11 @@ void control::setChristmasTreeStart() {
 
 
 void control::setChristmasTreeStop() {
-  caution::statusLamp.setTestOff();
+  error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
   task::accessLamp.setTestOff();
   satelliteController::statusLamp.setTestOff();
-  rs485::txAccessLamp.setTestOff();
-  rs485::rxAccessLamp.setTestOff();
+  rs485::accessLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();
