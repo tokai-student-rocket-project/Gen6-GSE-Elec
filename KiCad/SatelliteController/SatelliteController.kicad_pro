@@ -45,10 +45,16 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.5
+          "min_clearance": 0.0
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "version": 2
@@ -112,7 +118,7 @@
         "min_hole_to_hole": 0.25,
         "min_microvia_diameter": 0.19999999999999998,
         "min_microvia_drill": 0.09999999999999999,
-        "min_resolved_spokes": 2,
+        "min_resolved_spokes": 1,
         "min_silk_clearance": 0.0,
         "min_text_height": 0.7999999999999999,
         "min_text_thickness": 0.08,
@@ -132,7 +138,7 @@
           "td_on_pad_in_zone": false,
           "td_onpadsmd": true,
           "td_onroundshapesonly": false,
-          "td_ontrackend": false,
+          "td_ontrackend": true,
           "td_onviapad": true
         }
       ],
@@ -165,8 +171,31 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
-      "track_widths": [],
-      "via_dimensions": [],
+      "track_widths": [
+        0.0,
+        0.0,
+        0.2,
+        0.25,
+        0.4,
+        0.5,
+        1.0,
+        2.0,
+        3.0
+      ],
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        },
+        {
+          "diameter": 0.5,
+          "drill": 0.3
+        },
+        {
+          "diameter": 1.0,
+          "drill": 0.75
+        }
+      ],
       "zones_allow_external_fillets": false
     },
     "layer_presets": [],
@@ -377,7 +406,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "simulation_model_issue": "error",
@@ -420,7 +449,12 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Default",
+        "pattern": "SW_RESET"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -428,7 +462,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "LaunchController.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -457,6 +491,14 @@
       "version": 1
     },
     "net_format_name": "",
+    "ngspice": {
+      "fix_include_paths": true,
+      "meta": {
+        "version": 0
+      },
+      "model_mode": 0,
+      "workbook_filename": ""
+    },
     "page_layout_descr_file": "",
     "plot_directory": "",
     "spice_current_sheet_as_root": false,
@@ -469,28 +511,28 @@
   },
   "sheets": [
     [
-      "f622750d-f4bf-457c-82b1-70a9e5ca5ffd",
+      "628d040b-43bf-4733-804f-091644a90124",
       ""
     ],
     [
-      "56b562b2-bbec-433a-a580-f39594e32dda",
-      "Indicator"
+      "71498f40-b941-4f92-ab65-d7917868d6fa",
+      "Power"
     ],
     [
-      "88b92098-a5b2-4eff-8877-bcfe0b705985",
-      "Peripheral"
-    ],
-    [
-      "e688fabf-aa3c-4f51-997c-7ab23abed06f",
-      "Switch"
-    ],
-    [
-      "ab0a0e1c-ef9a-4fc7-946a-8d0d659586d1",
+      "7294b7f8-79a7-4ea3-8687-92a673d94882",
       "Extension"
     ],
     [
-      "76086738-d4ac-4b1c-8ac1-67d57a882e75",
-      "Power"
+      "092bb5f6-479a-4342-8285-14bd550a4a8c",
+      "Peripheral"
+    ],
+    [
+      "e0707eae-5795-481d-8074-cd2b21e2c883",
+      "Indicator"
+    ],
+    [
+      "50cfa140-fcaf-4528-b6e7-da7a529677fd",
+      "Switch"
     ]
   ],
   "text_variables": {}
