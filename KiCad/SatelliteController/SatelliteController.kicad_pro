@@ -453,6 +453,10 @@
       {
         "netclass": "Default",
         "pattern": "SW_RESET"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "+12V"
       }
     ]
   },
@@ -533,6 +537,10 @@
     [
       "50cfa140-fcaf-4528-b6e7-da7a529677fd",
       "Switch"
+    ],
+    [
+      "00dde40e-a748-45c0-b568-e59daee433cf",
+      "Relay"
     ]
   ],
   "text_variables": {}
