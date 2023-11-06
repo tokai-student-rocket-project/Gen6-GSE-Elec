@@ -954,7 +954,7 @@
     (property "Reference" "R8" (at 142.24 42.545 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "240R" (at 142.24 45.085 0)
+    (property "Value" "270R" (at 142.24 45.085 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" (at 139.7 43.18 0)
