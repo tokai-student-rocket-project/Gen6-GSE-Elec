@@ -2139,7 +2139,7 @@
     (property "Value" "CONN_SORENOID_VALVE" (at 62.23 62.23 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TSRP_Connector_Hirose:DF11B-8DP-2DS" (at 62.23 74.93 0)
+    (property "Footprint" "TSRP_Connector_Hirose:DF51A-8DP-2DS" (at 62.23 74.93 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 62.23 74.93 0)
