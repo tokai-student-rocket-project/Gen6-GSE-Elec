@@ -120,7 +120,7 @@ void setup() {
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
   mp3_stop();
-  mp3_set_volume(20);
+  mp3_set_volume(30);
 
   Wire.begin();
   monitor::input.begin();
