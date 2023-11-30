@@ -27,7 +27,7 @@ namespace control {
   SemiAutoControl shift(PIN_PD4, PIN_PH5);
   SemiAutoControl fill(PIN_PD5, PIN_PB0);
   SemiAutoControl dump(PIN_PG1, PIN_PB5);
-  SemiAutoControl oxygen(PIN_PC1, PIN_PB7);
+  SemiAutoControl oxygen(PIN_PC1, PIN_PL4);
   SemiAutoControl igniter(PIN_PD7, PIN_PH4);
   SemiAutoControl open(PIN_PD6, PIN_PH6);
   SemiAutoControl close(PIN_PG0, PIN_PB4);
