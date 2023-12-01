@@ -26,7 +26,7 @@ void setup() {
   // FT232RL
   Serial.begin(115200);
 
-  Tasks.add(&control::handleManualTask)->startFps(20);
+  Tasks.add(&handleManualTask)->startFps(20);
 }
 
 
@@ -35,12 +35,12 @@ void loop() {
 }
 
 
-void control::handleManualTask() {
+void handleManualTask() {
   if (power::killButton.isHigh()) {
     // 終了処理
     power::loadSwitch.off();
   }
 
-  umbilical::flightMode.set(umbilical::openSwitch.igniterSwitch());
+  umbilical::flightMode.set(umbilical::igniterSwitch.isHigh());
   umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
 }
