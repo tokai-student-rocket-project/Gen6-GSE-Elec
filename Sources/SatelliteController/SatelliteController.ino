@@ -10,6 +10,15 @@ namespace power {
   Output loadSwitch(PIN_PF5);
 } // namespace power
 
+namespace umbilical {
+  Input igniterSwitch(PIN_PD7);
+  Input openSwitch(PIN_PD6);
+  Input closeSwitch(PIN_PG0);
+
+  Output flightMode(PIN_PH3);
+  Output valveMode(PIN_PH2);
+} // namespace umbilical
+
 
 void setup() {
   power::loadSwitch.on();
@@ -31,4 +40,7 @@ void control::handleManualTask() {
     // 終了処理
     power::loadSwitch.off();
   }
+
+  umbilical::flightMode.set(umbilical::openSwitch.igniterSwitch());
+  umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
 }
