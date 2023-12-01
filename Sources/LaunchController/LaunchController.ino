@@ -269,6 +269,10 @@ void sequence::emergencyStop() {
   if (sequence::emergencyStopSequenceIsActive) return;
   sequence::emergencyStopSequenceIsActive = true;
 
+  sequence::emergencyStopSequenceIsActive = false;
+  sequence::fillSequenceIsActive = false;
+  sequence::ignitionSequenceIsActive = false;
+
   control::emergencyStop.setAutomaticOn();
   mp3_play(3); // 0102_emergencyStop.mp3
 
@@ -289,6 +293,10 @@ void sequence::emergencyStop() {
 
 void sequence::peacefulStop() {
   control::sequenceStart.setAutomaticOff();
+
+  sequence::emergencyStopSequenceIsActive = false;
+  sequence::fillSequenceIsActive = false;
+  sequence::ignitionSequenceIsActive = false;
 
   Tasks[task::PLAY_MUSIC]->stop();
   Tasks[task::FILL_START]->stop();
