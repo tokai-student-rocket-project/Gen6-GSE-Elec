@@ -10,6 +10,15 @@ namespace power {
   Output loadSwitch(PIN_PF5);
 } // namespace power
 
+namespace umbilical {
+  Input igniterSwitch(PIN_PD7);
+  Input openSwitch(PIN_PD6);
+  Input closeSwitch(PIN_PG0);
+
+  Output flightMode(PIN_PH3);
+  Output valveMode(PIN_PH2);
+} // namespace umbilical
+
 
 void setup() {
   power::loadSwitch.on();
@@ -17,7 +26,7 @@ void setup() {
   // FT232RL
   Serial.begin(115200);
 
-  Tasks.add(&control::handleManualTask)->startFps(20);
+  Tasks.add(&handleManualTask)->startFps(20);
 }
 
 
@@ -26,9 +35,12 @@ void loop() {
 }
 
 
-void control::handleManualTask() {
+void handleManualTask() {
   if (power::killButton.isHigh()) {
     // 終了処理
     power::loadSwitch.off();
   }
+
+  umbilical::flightMode.set(umbilical::igniterSwitch.isHigh());
+  umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
 }
