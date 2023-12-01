@@ -269,7 +269,6 @@ void sequence::emergencyStop() {
   if (sequence::emergencyStopSequenceIsActive) return;
   sequence::emergencyStopSequenceIsActive = true;
 
-  sequence::emergencyStopSequenceIsActive = false;
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
 
@@ -297,6 +296,9 @@ void sequence::peacefulStop() {
   sequence::emergencyStopSequenceIsActive = false;
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
+
+  control::sequenceStart.setAutomaticOff();
+  control::emergencyStop.setAutomaticOff();
 
   Tasks[task::PLAY_MUSIC]->stop();
   Tasks[task::FILL_START]->stop();
