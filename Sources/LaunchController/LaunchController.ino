@@ -213,7 +213,16 @@ void control::handleManualTask() {
   // セーフティー
   // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  if (!control::safetyArmed.isManualRaised()) return;
+  if (!control::safetyArmed.isManualRaised()) {
+    // シーケンスが進行中なら穏便ストップ
+    if (sequence::emergencyStopSequenceIsActive
+      || sequence::fillSequenceIsActive
+      || sequence::ignitionSequenceIsActive) {
+      sequence::peacefulStop();
+    }
+
+    return;
+  }
 
 
   // エマスト
@@ -260,6 +269,9 @@ void sequence::emergencyStop() {
   if (sequence::emergencyStopSequenceIsActive) return;
   sequence::emergencyStopSequenceIsActive = true;
 
+  sequence::fillSequenceIsActive = false;
+  sequence::ignitionSequenceIsActive = false;
+
   control::emergencyStop.setAutomaticOn();
   mp3_play(3); // 0102_emergencyStop.mp3
 
@@ -280,6 +292,13 @@ void sequence::emergencyStop() {
 
 void sequence::peacefulStop() {
   control::sequenceStart.setAutomaticOff();
+
+  sequence::emergencyStopSequenceIsActive = false;
+  sequence::fillSequenceIsActive = false;
+  sequence::ignitionSequenceIsActive = false;
+
+  control::sequenceStart.setAutomaticOff();
+  control::emergencyStop.setAutomaticOff();
 
   Tasks[task::PLAY_MUSIC]->stop();
   Tasks[task::FILL_START]->stop();
