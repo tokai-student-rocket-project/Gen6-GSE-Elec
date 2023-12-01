@@ -213,7 +213,16 @@ void control::handleManualTask() {
   // セーフティー
   // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  if (!control::safetyArmed.isManualRaised()) return;
+  if (!control::safetyArmed.isManualRaised()) {
+    // シーケンスが進行中なら穏便ストップ
+    if (sequence::emergencyStopSequenceIsActive
+      || sequence::fillSequenceIsActive
+      || sequence::ignitionSequenceIsActive) {
+      sequence::peacefulStop();
+    }
+
+    return;
+  }
 
 
   // エマスト
