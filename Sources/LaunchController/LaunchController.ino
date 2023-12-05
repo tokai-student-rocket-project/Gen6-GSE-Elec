@@ -2,7 +2,7 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
-#include <TM1637.h>
+#include "TM1637.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
@@ -128,10 +128,8 @@ void setup() {
   mp3_set_volume(30);
 
   // TM1637 (7SEG)
-  n2o::tm1637.init();
-  n2o::tm1637.set(BRIGHT_TYPICAL);
-  n2o::tm1637.clearDisplay();
-  n2o::tm1637.displayNum(5.5, 1);
+  n2o::tm1637.initialize();
+  n2o::tm1637.displayNumber(5.5);
 
   Wire.begin();
   monitor::input.begin();
