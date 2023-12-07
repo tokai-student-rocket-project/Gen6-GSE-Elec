@@ -2,6 +2,7 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include <DFPlayer_Mini_Mp3.h>
+#include "TM1637.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
@@ -69,6 +70,10 @@ namespace monitor {
   void measureTask();
 } // namespace monitor
 
+namespace n2o {
+  TM1637 tm1637(PIN_PK0, PIN_PK1);
+} // namespace n2o
+
 namespace rs485 {
   Output sendEnableControl(PIN_PA2);
   Output accessLamp(PIN_PA4);
@@ -121,6 +126,10 @@ void setup() {
   mp3_set_serial(Serial2);
   mp3_stop();
   mp3_set_volume(30);
+
+  // TM1637 (7SEG)
+  n2o::tm1637.initialize();
+  n2o::tm1637.displayNumber(5.5);
 
   Wire.begin();
   monitor::input.begin();
