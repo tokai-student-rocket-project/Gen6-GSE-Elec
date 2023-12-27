@@ -19,8 +19,11 @@ Output purge(PIN_PB6);
 
 Output sendEnableControl(PIN_PA2);
 
-SolenoidMonitor solenoidMonitor(PIN_PC4);
+enum class Id : uint8_t {
+  CONTROL
+};
 
+SolenoidMonitor solenoidMonitor(PIN_PC4);
 
 namespace power {
   Input killButton(PIN_PJ1);
@@ -50,12 +53,7 @@ void setup() {
 
   armed.on();
 
-  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(0xAA),
-    [](bool fillIsRaised) {
-      Serial.println(fillIsRaised);
-      fill.set(fillIsRaised);
-    }
-  );
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(Id::CONTROL), &onControlReceived);
 }
 
 
@@ -65,12 +63,24 @@ void loop() {
 }
 
 
+void onControlReceived(uint8_t state) {
+  shift.set(state & (1 << 0));
+  fill.set(state & (1 << 1));
+  dump.set(state & (1 << 2));
+  // oxygen.set(state & (1 << 3));
+  igniter.set(state & (1 << 4));
+  open.set(state & (1 << 5));
+  close.set(state & (1 << 6));
+  purge.set(state & (1 << 7));
+}
+
+
 void handleManualTask() {
   if (power::killButton.isHigh()) {
     // 終了処理
     power::loadSwitch.off();
   }
 
-  // umbilical::flightMode.set(umbilical::igniterSwitch.isHigh());
-  // umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
+  umbilical::flightMode.set(igniter.isHigh());
+  umbilical::valveMode.set(open.isHigh() && !close.isHigh());
 }

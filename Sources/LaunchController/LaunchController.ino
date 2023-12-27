@@ -75,6 +75,10 @@ namespace n2o {
 } // namespace n2o
 
 namespace rs485 {
+  enum class Id : uint8_t {
+    CONTROL
+  };
+
   Output sendEnableControl(PIN_PA2);
   Output accessLamp(PIN_PA4);
 
@@ -186,28 +190,14 @@ void monitor::measureTask() {
   float voltage12V_V = monitor::bus12.getVoltage_V();
   float powerDissipation_W = monitor::input.getPower_W();
   float thermal_degC = monitor::thermal.getTemperature_degC();
-
-  Serial.print("INPUT[A]:");
-  Serial.print(ampereVSW_A, 3);
-  Serial.print("\tBUS12[A]:");
-  Serial.print(ampereV12_A, 3);
-  Serial.print("\tINPUT[V]:");
-  Serial.print(voltageVSW_V, 3);
-  Serial.print("\tBUS12[V]:");
-  Serial.print(voltage12V_V, 3);
-  Serial.print("\tPD[W]:");
-  Serial.print(powerDissipation_W, 3);
-  Serial.print("\tTEMP[degC]:");
-  Serial.print(thermal_degC, 3);
-  Serial.println();
 }
 
 
 void task::controlSync() {
+  uint8_t state = (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) | (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) | (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) | (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+
   rs485::enableOutput();
-  //HACK テストパケット
-  float value = (float)millis() / 1000.0;
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(0xAA), control::fill.isRaised());
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(rs485::Id::CONTROL), state);
 }
 
 

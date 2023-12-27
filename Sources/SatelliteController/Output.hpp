@@ -29,6 +29,8 @@ public:
   /// @brief 出力を設定する
   void set(bool isHigh);
 
+  bool isHigh();
+
   /// @brief テストの出力を設定する
   void setTestOn();
   void setTestOff();

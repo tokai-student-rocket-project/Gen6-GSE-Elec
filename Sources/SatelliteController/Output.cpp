@@ -50,6 +50,11 @@ void Output::set(bool isHigh) {
 }
 
 
+bool Output::isHigh() {
+  return _isHigh;
+}
+
+
 /// @brief テストの出力をオンに設定する
 void Output::setTestOn() {
   _testIsHigh = true;
