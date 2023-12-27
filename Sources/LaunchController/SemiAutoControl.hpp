@@ -39,4 +39,5 @@ public:
 
   bool isManualRaised();
   bool isAutomaticRaised();
+  bool isRaised();
 };

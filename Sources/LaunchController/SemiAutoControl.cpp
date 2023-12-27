@@ -59,3 +59,8 @@ bool SemiAutoControl::isManualRaised() {
 bool SemiAutoControl::isAutomaticRaised() {
   return _autoIsHigh;
 }
+
+
+bool SemiAutoControl::isRaised() {
+  return _autoIsHigh || _manualIsHigh || _testIsHigh;
+}

@@ -5,16 +5,26 @@
 #include "Output.hpp"
 
 
+Output armed(PIN_PH7);
+
+Output shift(PIN_PD4);
+Output fill(PIN_PD5);
+Output dump(PIN_PG1);
+// Output oxygen(PIN_PD5);
+Output igniter(PIN_PD7);
+Output open(PIN_PD6);
+Output close(PIN_PG0);
+Output purge(PIN_PB6);
+
+Output sendEnableControl(PIN_PA2);
+
+
 namespace power {
   Input killButton(PIN_PJ1);
   Output loadSwitch(PIN_PF5);
 } // namespace power
 
 namespace umbilical {
-  Input igniterSwitch(PIN_PD7);
-  Input openSwitch(PIN_PD6);
-  Input closeSwitch(PIN_PG0);
-
   Output flightMode(PIN_PH3);
   Output valveMode(PIN_PH2);
 } // namespace umbilical
@@ -26,12 +36,29 @@ void setup() {
   // FT232RL
   Serial.begin(115200);
 
+  // LTC485
+  Serial1.begin(115200);
+
   Tasks.add(&handleManualTask)->startFps(20);
+
+  armed.on();
+
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(0xAA),
+    [](bool fillIsRaised) {
+      Serial.println(fillIsRaised);
+      fill.set(fillIsRaised);
+    }
+  );
 }
 
 
 void loop() {
+  MsgPacketizer::parse();
   Tasks.update();
+
+  // while (Serial1.available()) {
+  //   Serial.print(Serial1.read());
+  // }
 }
 
 
@@ -41,6 +68,6 @@ void handleManualTask() {
     power::loadSwitch.off();
   }
 
-  umbilical::flightMode.set(umbilical::igniterSwitch.isHigh());
-  umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
+  // umbilical::flightMode.set(umbilical::igniterSwitch.isHigh());
+  // umbilical::valveMode.set(umbilical::openSwitch.isHigh() && !umbilical::closeSwitch.isHigh());
 }

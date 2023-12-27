@@ -207,7 +207,7 @@ void task::controlSync() {
   rs485::enableOutput();
   //HACK テストパケット
   float value = (float)millis() / 1000.0;
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(0xAA), value);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(0xAA), control::fill.isRaised());
 }
 
 
