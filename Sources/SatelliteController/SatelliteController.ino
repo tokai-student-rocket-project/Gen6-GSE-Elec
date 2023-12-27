@@ -3,6 +3,7 @@
 #include <MsgPacketizer.h>
 #include "Input.hpp"
 #include "Output.hpp"
+#include "SolenoidMonitor.hpp"
 
 
 Output armed(PIN_PH7);
@@ -17,6 +18,8 @@ Output close(PIN_PG0);
 Output purge(PIN_PB6);
 
 Output sendEnableControl(PIN_PA2);
+
+SolenoidMonitor solenoidMonitor(PIN_PC4);
 
 
 namespace power {
@@ -39,6 +42,10 @@ void setup() {
   // LTC485
   Serial1.begin(115200);
 
+  // MCP3208
+  SPI.begin();
+  solenoidMonitor.setDividerResistance(5600, 3300);
+
   Tasks.add(&handleManualTask)->startFps(20);
 
   armed.on();
@@ -55,10 +62,6 @@ void setup() {
 void loop() {
   MsgPacketizer::parse();
   Tasks.update();
-
-  // while (Serial1.available()) {
-  //   Serial.print(Serial1.read());
-  // }
 }
 
 
