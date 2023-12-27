@@ -36,13 +36,13 @@ namespace umbilical {
 void setup() {
   power::loadSwitch.on();
 
-  // FT232RL
+  // FT232RL (USB)
   Serial.begin(115200);
 
-  // LTC485
+  // LTC485 (RS485)
   Serial1.begin(115200);
 
-  // MCP3208
+  // MCP3208 (ADC)
   SPI.begin();
   solenoidMonitor.setDividerResistance(5600, 3300);
 

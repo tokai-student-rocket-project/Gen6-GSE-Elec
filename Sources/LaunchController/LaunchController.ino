@@ -115,13 +115,13 @@ void setup() {
   // RS485の送信が終わったら割り込みを発生させる
   UCSR1B |= (1 << TXCIE0);
 
-  // FT232RL
+  // FT232RL (USB)
   Serial.begin(115200);
 
-  // LTC485
+  // LTC485 (RS485)
   Serial1.begin(115200);
 
-  // DFPlayer
+  // DFPlayer (Audio)
   Serial2.begin(9600);
   mp3_set_serial(Serial2);
   mp3_stop();
@@ -147,8 +147,8 @@ void setup() {
   Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
   Tasks.add(&monitor::measureTask)->startFps(10);
-  Tasks.add(&task::controlSync)->startFps(5);
-  Tasks.add(&control::handleManualTask)->startFps(20);
+  Tasks.add(&task::controlSync)->startFps(20);
+  Tasks.add(&control::handleManualTask)->startFps(50);
 
   sequence::christmasTree();
 }
