@@ -11,28 +11,28 @@
 
 
 namespace power {
-  Input killButton(PIN_PJ1);
+  Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
   Output lowVoltageLamp(PIN_PK7);
 } // namespace power
 
 namespace control {
-  SemiAutoControl safetyArmed(PIN_PC2, PIN_PH7);
-  SemiAutoControl sequenceStart(PIN_PC3, PIN_PG3);
-  SemiAutoControl emergencyStop(PIN_PC4, PIN_PG4);
+  SemiAutoControl safetyArmed(PIN_PC2, false, PIN_PH7);
+  SemiAutoControl sequenceStart(PIN_PC3, false, PIN_PG3);
+  SemiAutoControl emergencyStop(PIN_PC4, false, PIN_PG4);
 
-  Input confirm1(PIN_PC7);
-  Input confirm2(PIN_PC6);
-  Input confirm3(PIN_PC5);
+  Input confirm1(PIN_PC7, false);
+  Input confirm2(PIN_PC6, false);
+  Input confirm3(PIN_PC5, false);
 
-  SemiAutoControl shift(PIN_PD4, PIN_PH5);
-  SemiAutoControl fill(PIN_PD5, PIN_PB0);
-  SemiAutoControl dump(PIN_PG1, PIN_PB5);
-  SemiAutoControl oxygen(PIN_PC1, PIN_PL4);
-  SemiAutoControl igniter(PIN_PD7, PIN_PH4);
-  SemiAutoControl open(PIN_PD6, PIN_PH6);
-  SemiAutoControl close(PIN_PG0, PIN_PB4);
-  SemiAutoControl purge(PIN_PC0, PIN_PB6);
+  SemiAutoControl shift(PIN_PD4, false, PIN_PH5);
+  SemiAutoControl fill(PIN_PD5, false, PIN_PB0);
+  SemiAutoControl dump(PIN_PG1, false, PIN_PB5);
+  SemiAutoControl oxygen(PIN_PC1, false, PIN_PL4);
+  SemiAutoControl igniter(PIN_PD7, false, PIN_PH4);
+  SemiAutoControl open(PIN_PD6, false, PIN_PH6);
+  SemiAutoControl close(PIN_PG0, false, PIN_PB4);
+  SemiAutoControl purge(PIN_PC0, false, PIN_PB6);
 
   void handleManualTask();
 
@@ -159,6 +159,7 @@ void setup() {
 
 
 void loop() {
+  MsgPacketizer::parse();
   Tasks.update();
 }
 

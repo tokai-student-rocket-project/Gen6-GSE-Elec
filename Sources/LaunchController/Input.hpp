@@ -7,7 +7,7 @@ class Input {
 public:
   /// @brief コンストラクタ
   /// @param pinNumber ピン番号
-  Input(uint8_t pinNumber);
+  Input(uint8_t pinNumber, bool hasExternalPullup);
 
   /// @brief 入力がHIGHかを返す
   /// @return 入力がHIGHか
@@ -15,4 +15,5 @@ public:
 
 private:
   uint8_t _pinNumber;
+  bool _hasExternalPullup;
 };
