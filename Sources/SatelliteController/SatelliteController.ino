@@ -32,10 +32,6 @@ namespace control {
   void setChristmasTreeStop();
 } // namespace control
 
-namespace sequence {
-  void christmasTree();
-} // namespace sequence
-
 namespace rs485 {
   enum class Id : uint8_t {
     CONTROL
@@ -51,8 +47,6 @@ namespace rs485 {
 } // namespace rs485
 
 namespace task {
-  const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
-
   Output accessLamp(PIN_PK4);
 } // namespace task
 
@@ -92,13 +86,14 @@ void setup() {
   SPI.begin();
   solenoid::monitor.setDividerResistance(5600, 3300);
 
-  Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
+
 
   Tasks.add(&control::handleManualTask)->startFps(50);
 
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(rs485::Id::CONTROL), &rs485::onControlReceived);
 
-  sequence::christmasTree();
+  control::setChristmasTreeStart();
+  Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 }
 
 
@@ -162,13 +157,6 @@ void control::handleManualTask() {
   // アンビリカル
   umbilical::flightMode.set(control::igniter.isRaised());
   umbilical::valveMode.set(control::open.isRaised() && !control::close.isRaised());
-}
-
-
-void sequence::christmasTree() {
-  control::setChristmasTreeStart();
-
-  Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
 }
 
 

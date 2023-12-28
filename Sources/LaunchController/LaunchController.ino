@@ -50,7 +50,6 @@ namespace control {
 } // namespace control
 
 namespace sequence {
-  void christmasTree();
   void emergencyStop();
   void peacefulStop();
   void fill();
@@ -87,7 +86,6 @@ namespace rs485 {
 } // namespace rs485
 
 namespace task {
-  const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
   const String FILL_START = "fill-start";
   const String FILL_STOP = "fill-stop";
   const String OXYGEN_START = "oxygen-start";
@@ -140,7 +138,6 @@ void setup() {
   monitor::bus12.begin();
 
   // シーケンス関係のタスクたち
-  Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
   Tasks.add(task::FILL_START, &control::setFillStart);
   Tasks.add(task::FILL_STOP, &control::setFillStop);
   Tasks.add(task::OXYGEN_START, &control::setOxygenStart);
@@ -154,7 +151,8 @@ void setup() {
   Tasks.add(&task::controlSync)->startFps(20);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
-  sequence::christmasTree();
+  control::setChristmasTreeStart();
+  Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 }
 
 
@@ -253,14 +251,6 @@ void control::handleManualTask() {
   control::open.setManual();
   control::close.setManual();
   control::purge.setManual();
-}
-
-
-void sequence::christmasTree() {
-  // mp3_play(100); // 0100_startup.mp3
-  control::setChristmasTreeStart();
-
-  Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
 }
 
 
