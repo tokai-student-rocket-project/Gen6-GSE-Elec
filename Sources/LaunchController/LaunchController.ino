@@ -40,7 +40,17 @@ namespace control {
   SemiAutoControl close(PIN_PG0, false, PIN_PB4);
   SemiAutoControl purge(PIN_PC0, false, PIN_PB6);
 
+  Output statusLamp(PIN_PK4);
   void handleManualTask();
+
+  const String FILL_START = "fill-start";
+  const String FILL_STOP = "fill-stop";
+  const String OXYGEN_START = "oxygen-start";
+  const String OXYGEN_STOP = "oxygen-stop";
+  const String IGNITER_START = "igniter-start";
+  const String IGNITER_STOP = "igniter-stop";
+  const String OPEN_START = "open-start";
+  const String PLAY_MUSIC = "play-music";
 
   void setChristmasTreeStart();
   void setChristmasTreeStop();
@@ -70,19 +80,6 @@ namespace sequence {
 namespace n2o {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
 } // namespace n2o
-
-namespace task {
-  const String FILL_START = "fill-start";
-  const String FILL_STOP = "fill-stop";
-  const String OXYGEN_START = "oxygen-start";
-  const String OXYGEN_STOP = "oxygen-stop";
-  const String IGNITER_START = "igniter-start";
-  const String IGNITER_STOP = "igniter-stop";
-  const String OPEN_START = "open-start";
-  const String PLAY_MUSIC = "play-music";
-
-  Output statusLamp(PIN_PK4);
-} // namespace task
 
 namespace error {
   // HACK LEDだけでなく処理もする
@@ -147,14 +144,14 @@ void setup() {
 
 
   // シーケンス関係のタスクたち
-  Tasks.add(task::FILL_START, &control::setFillStart);
-  Tasks.add(task::FILL_STOP, &control::setFillStop);
-  Tasks.add(task::OXYGEN_START, &control::setOxygenStart);
-  Tasks.add(task::OXYGEN_STOP, &control::setOxygenStop);
-  Tasks.add(task::IGNITER_START, &control::setIgniterStart);
-  Tasks.add(task::IGNITER_STOP, &control::setIgniterStop);
-  Tasks.add(task::OPEN_START, &control::setOpenStart);
-  Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
+  Tasks.add(control::FILL_START, &control::setFillStart);
+  Tasks.add(control::FILL_STOP, &control::setFillStop);
+  Tasks.add(control::OXYGEN_START, &control::setOxygenStart);
+  Tasks.add(control::OXYGEN_STOP, &control::setOxygenStop);
+  Tasks.add(control::IGNITER_START, &control::setIgniterStart);
+  Tasks.add(control::IGNITER_STOP, &control::setIgniterStop);
+  Tasks.add(control::OPEN_START, &control::setOpenStart);
+  Tasks.add(control::PLAY_MUSIC, [] {mp3_play(9);});
 
 
   control::setChristmasTreeStart();
@@ -221,7 +218,7 @@ void communication::onComCheckReceived() {
 
 
 void control::handleManualTask() {
-  task::statusLamp.blink();
+  control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
     // 終了処理
@@ -287,14 +284,14 @@ void sequence::emergencyStop() {
 
   control::sequenceStart.setAutomaticOff();
 
-  Tasks[task::PLAY_MUSIC]->stop();
-  Tasks[task::FILL_START]->stop();
-  Tasks[task::OXYGEN_START]->stop();
-  Tasks[task::IGNITER_START]->stop();
-  Tasks[task::FILL_STOP]->stop();
-  Tasks[task::OPEN_START]->stop();
-  Tasks[task::OXYGEN_STOP]->stop();
-  Tasks[task::IGNITER_STOP]->stop();
+  Tasks[control::PLAY_MUSIC]->stop();
+  Tasks[control::FILL_START]->stop();
+  Tasks[control::OXYGEN_START]->stop();
+  Tasks[control::IGNITER_START]->stop();
+  Tasks[control::FILL_STOP]->stop();
+  Tasks[control::OPEN_START]->stop();
+  Tasks[control::OXYGEN_STOP]->stop();
+  Tasks[control::IGNITER_STOP]->stop();
 
   control::setEmergencyStop();
 }
@@ -310,14 +307,14 @@ void sequence::peacefulStop() {
   control::sequenceStart.setAutomaticOff();
   control::emergencyStop.setAutomaticOff();
 
-  Tasks[task::PLAY_MUSIC]->stop();
-  Tasks[task::FILL_START]->stop();
-  Tasks[task::OXYGEN_START]->stop();
-  Tasks[task::IGNITER_START]->stop();
-  Tasks[task::FILL_STOP]->stop();
-  Tasks[task::OPEN_START]->stop();
-  Tasks[task::OXYGEN_STOP]->stop();
-  Tasks[task::IGNITER_STOP]->stop();
+  Tasks[control::PLAY_MUSIC]->stop();
+  Tasks[control::FILL_START]->stop();
+  Tasks[control::OXYGEN_START]->stop();
+  Tasks[control::IGNITER_START]->stop();
+  Tasks[control::FILL_STOP]->stop();
+  Tasks[control::OPEN_START]->stop();
+  Tasks[control::OXYGEN_STOP]->stop();
+  Tasks[control::IGNITER_STOP]->stop();
 
   mp3_stop();
   control::setPeacefulStop();
@@ -343,8 +340,8 @@ void sequence::fill() {
   control::sequenceStart.setAutomaticOn();
   mp3_play(10);
 
-  Tasks[task::PLAY_MUSIC]->startOnceAfterSec(15.0);
-  Tasks[task::FILL_START]->startOnceAfterSec(24.0);
+  Tasks[control::PLAY_MUSIC]->startOnceAfterSec(15.0);
+  Tasks[control::FILL_START]->startOnceAfterSec(24.0);
 }
 
 
@@ -365,22 +362,22 @@ void sequence::ignition() {
   control::sequenceStart.setAutomaticOn();
   mp3_play(4); // 0104_ignitionSequenceStart
 
-  Tasks[task::OXYGEN_START]->startOnceAfterSec(3.0);
+  Tasks[control::OXYGEN_START]->startOnceAfterSec(3.0);
 
-  Tasks[task::IGNITER_START]->startOnceAfterSec(6.0);
+  Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
 
-  Tasks[task::FILL_STOP]->startOnceAfterSec(10.0);
-  Tasks[task::OPEN_START]->startOnceAfterSec(10.0);
+  Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
+  Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
 
-  Tasks[task::OXYGEN_STOP]->startOnceAfterSec(10.5);
-  Tasks[task::IGNITER_STOP]->startOnceAfterSec(10.5);
+  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
+  Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
 }
 
 
 void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
-  task::statusLamp.setTestOn();
+  control::statusLamp.setTestOn();
   communication::accessLamp.setTestOn();
   communication::statusLamp.setTestOn();
   control::safetyArmed.setTestOn();
@@ -400,7 +397,7 @@ void control::setChristmasTreeStart() {
 void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
-  task::statusLamp.setTestOff();
+  control::statusLamp.setTestOff();
   communication::accessLamp.setTestOff();
   communication::statusLamp.setTestOff();
   control::safetyArmed.setTestOff();

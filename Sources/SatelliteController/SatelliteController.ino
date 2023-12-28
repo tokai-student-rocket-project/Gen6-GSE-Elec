@@ -33,15 +33,12 @@ namespace control {
   Output close(PIN_PG0);
   SemiAutoControl purge(PIN_PC0, true, PIN_PB6);
 
+  Output statusLamp(PIN_PK4);
   void handleManualTask();
 
   void setChristmasTreeStart();
   void setChristmasTreeStop();
 } // namespace control
-
-namespace task {
-  Output statusLamp(PIN_PK4);
-} // namespace task
 
 namespace error {
   // HACK LEDだけでなく処理もする
@@ -174,7 +171,7 @@ void communication::onComCheckReceived() {
 
 
 void control::handleManualTask() {
-  task::statusLamp.blink();
+  control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
     // 終了処理
@@ -201,7 +198,7 @@ void control::handleManualTask() {
 void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
-  task::statusLamp.setTestOn();
+  control::statusLamp.setTestOn();
   communication::accessLamp.setTestOn();
   communication::statusLamp.setTestOn();
   control::safetyArmed.setTestOn();
@@ -219,7 +216,7 @@ void control::setChristmasTreeStart() {
 void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
-  task::statusLamp.setTestOff();
+  control::statusLamp.setTestOff();
   communication::accessLamp.setTestOff();
   communication::statusLamp.setTestOff();
   control::safetyArmed.setTestOff();
