@@ -4,7 +4,6 @@
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
-#include "AutoControl.hpp"
 #include "SolenoidMonitor.hpp"
 #include "PowerMonitor.hpp"
 #include "Thermistor.hpp"
@@ -25,13 +24,13 @@ namespace power {
 namespace control {
   SemiAutoControl safetyArmed(PIN_PC2, true, PIN_PH7);
 
-  AutoControl shift(PIN_PD4);
-  AutoControl fill(PIN_PD5);
-  AutoControl dump(PIN_PG1);
-  // AutoControl oxygen(PIN_PD5);
-  AutoControl igniter(PIN_PD7);
-  AutoControl open(PIN_PD6);
-  AutoControl close(PIN_PG0);
+  Output shift(PIN_PD4);
+  Output fill(PIN_PD5);
+  Output dump(PIN_PG1);
+  // Output oxygen(PIN_PD5);
+  Output igniter(PIN_PD7);
+  Output open(PIN_PD6);
+  Output close(PIN_PG0);
   SemiAutoControl purge(PIN_PC0, true, PIN_PB6);
 
   void handleManualTask();
@@ -150,13 +149,13 @@ void power::measureTask() {
 
 
 void launchController::onControlReceived(uint8_t state) {
-  control::shift.setAutomatic(state & (1 << 0) && control::safetyArmed.isManualRaised());
-  control::fill.setAutomatic(state & (1 << 1) && control::safetyArmed.isManualRaised());
-  control::dump.setAutomatic(state & (1 << 2) && control::safetyArmed.isManualRaised());
-  // control::oxygen.setAutomatic(state & (1 << 3) && control::safetyArmed.isManualRaised());
-  control::igniter.setAutomatic(state & (1 << 4) && control::safetyArmed.isManualRaised());
-  control::open.setAutomatic(state & (1 << 5) && control::safetyArmed.isManualRaised());
-  control::close.setAutomatic(state & (1 << 6) && control::safetyArmed.isManualRaised());
+  control::shift.set(state & (1 << 0) && control::safetyArmed.isManualRaised());
+  control::fill.set(state & (1 << 1) && control::safetyArmed.isManualRaised());
+  control::dump.set(state & (1 << 2) && control::safetyArmed.isManualRaised());
+  // control::oxygen.set(state & (1 << 3) && control::safetyArmed.isManualRaised());
+  control::igniter.set(state & (1 << 4) && control::safetyArmed.isManualRaised());
+  control::open.set(state & (1 << 5) && control::safetyArmed.isManualRaised());
+  control::close.set(state & (1 << 6) && control::safetyArmed.isManualRaised());
   control::purge.setAutomatic(state & (1 << 7) && control::safetyArmed.isManualRaised());
 }
 
@@ -181,8 +180,8 @@ void control::handleManualTask() {
   control::purge.setManual();
 
   // アンビリカル
-  umbilical::flightMode.set(control::igniter.isRaised());
-  umbilical::valveMode.set(control::open.isRaised() && !control::close.isRaised());
+  umbilical::flightMode.set(control::igniter.isHigh());
+  umbilical::valveMode.set(control::open.isHigh() && !control::close.isHigh());
 }
 
 
