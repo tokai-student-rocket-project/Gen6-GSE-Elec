@@ -6,12 +6,20 @@
 #include "SemiAutoControl.hpp"
 #include "AutoControl.hpp"
 #include "SolenoidMonitor.hpp"
+#include "PowerMonitor.hpp"
+#include "Thermistor.hpp"
 
 
 namespace power {
   Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
   Output lowVoltageLamp(PIN_PK7);
+
+  PowerMonitor input(0x40);
+  PowerMonitor bus12(0x41);
+  Thermistor thermal(PIN_PF4, 10000.0);
+
+  void measureTask();
 } // namespace power
 
 namespace control {
@@ -84,7 +92,13 @@ void setup() {
   SPI.begin();
   solenoid::monitor.setDividerResistance(5600, 3300);
 
+  // INA219 (Power)
+  Wire.begin();
+  power::input.begin();
+  power::bus12.begin();
 
+
+  Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(launchController::Packet::CONTROL_SYNC), &launchController::onControlReceived);
@@ -117,6 +131,21 @@ void launchController::enableOutput() {
 void launchController::disableOutput() {
   launchController::sendEnableControl.off();
   launchController::accessLamp.off();
+}
+
+
+void power::measureTask() {
+  bool isLowVoltage = power::input.getVoltage_V() < 17.0;
+  bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
+  bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
+  bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
+
+  power::lowVoltageLamp.set(isLowVoltage);
+
+  if (isOverloadedInput || isOverloadedBus || isOverheated) {
+    // HACK エラー
+    error::statusLamp.on();
+  }
 }
 
 

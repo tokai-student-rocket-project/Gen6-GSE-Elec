@@ -14,6 +14,12 @@ namespace power {
   Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
   Output lowVoltageLamp(PIN_PK7);
+
+  PowerMonitor input(0x40);
+  PowerMonitor bus12(0x41);
+  Thermistor thermal(PIN_PF4, 10000.0);
+
+  void measureTask();
 } // namespace power
 
 namespace control {
@@ -60,14 +66,6 @@ namespace sequence {
   bool ignitionSequenceIsActive = false;
   bool isReadyToIgnition = false;
 } // namespace sequence
-
-namespace monitor {
-  PowerMonitor input(0x40);
-  PowerMonitor bus12(0x41);
-  Thermistor thermal(PIN_PF4, 10000.0);
-
-  void measureTask();
-} // namespace monitor
 
 namespace n2o {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
@@ -131,9 +129,10 @@ void setup() {
   n2o::tm1637.initialize();
   n2o::tm1637.displayNumber(5.5);
 
+  // INA219 (Power)
   Wire.begin();
-  monitor::input.begin();
-  monitor::bus12.begin();
+  power::input.begin();
+  power::bus12.begin();
 
 
   // シーケンス関係のタスクたち
@@ -146,7 +145,7 @@ void setup() {
   Tasks.add(task::OPEN_START, &control::setOpenStart);
   Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
-  Tasks.add(&monitor::measureTask)->startFps(10);
+  Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&satelliteController::controlSync)->startFps(20);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
@@ -181,13 +180,18 @@ void satelliteController::disableOutput() {
 }
 
 
-void monitor::measureTask() {
-  float ampereVSW_A = monitor::input.getAmpere_A();
-  float ampereV12_A = monitor::bus12.getAmpere_A();
-  float voltageVSW_V = monitor::input.getVoltage_V();
-  float voltage12V_V = monitor::bus12.getVoltage_V();
-  float powerDissipation_W = monitor::input.getPower_W();
-  float thermal_degC = monitor::thermal.getTemperature_degC();
+void power::measureTask() {
+  bool isLowVoltage = power::input.getVoltage_V() < 17.0;
+  bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
+  bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
+  bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
+
+  power::lowVoltageLamp.set(isLowVoltage);
+
+  if (isOverloadedInput || isOverloadedBus || isOverheated) {
+    // HACK エラー
+    error::statusLamp.on();
+  }
 }
 
 
