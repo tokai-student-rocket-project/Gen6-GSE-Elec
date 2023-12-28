@@ -11,6 +11,7 @@
 namespace power {
   Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
+  Output lowVoltageLamp(PIN_PK7);
 } // namespace power
 
 namespace control {
@@ -26,7 +27,14 @@ namespace control {
   SemiAutoControl purge(PIN_PC0, true, PIN_PB6);
 
   void handleManualTask();
+
+  void setChristmasTreeStart();
+  void setChristmasTreeStop();
 } // namespace control
+
+namespace sequence {
+  void christmasTree();
+} // namespace sequence
 
 namespace rs485 {
   enum class Id : uint8_t {
@@ -43,19 +51,29 @@ namespace rs485 {
 } // namespace rs485
 
 namespace task {
+  const String CHRISTMAS_TREE_STOP = "christmas-tree-stop";
+
   Output accessLamp(PIN_PK4);
 } // namespace task
+
+namespace error {
+  // HACK LEDだけでなく処理もする
+  Output statusLamp(PIN_PK6);
+} // namespace caution
 
 namespace solenoid {
   SolenoidMonitor monitor(PIN_PC4);
 
 } // namespace solenoid
 
-
 namespace umbilical {
   Output flightMode(PIN_PH3);
   Output valveMode(PIN_PH2);
 } // namespace umbilical
+
+namespace launchController {
+  Output statusLamp(PIN_PK5);
+} // namespace launchController
 
 
 void setup() {
@@ -74,9 +92,13 @@ void setup() {
   SPI.begin();
   solenoid::monitor.setDividerResistance(5600, 3300);
 
+  Tasks.add(task::CHRISTMAS_TREE_STOP, &control::setChristmasTreeStop);
+
   Tasks.add(&control::handleManualTask)->startFps(50);
 
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(rs485::Id::CONTROL), &rs485::onControlReceived);
+
+  sequence::christmasTree();
 }
 
 
@@ -140,4 +162,47 @@ void control::handleManualTask() {
   // アンビリカル
   umbilical::flightMode.set(control::igniter.isRaised());
   umbilical::valveMode.set(control::open.isRaised() && !control::close.isRaised());
+}
+
+
+void sequence::christmasTree() {
+  control::setChristmasTreeStart();
+
+  Tasks[task::CHRISTMAS_TREE_STOP]->startOnceAfterSec(3.0);
+}
+
+
+void control::setChristmasTreeStart() {
+  error::statusLamp.setTestOn();
+  power::lowVoltageLamp.setTestOn();
+  task::accessLamp.setTestOn();
+  launchController::statusLamp.setTestOn();
+  rs485::accessLamp.setTestOn();
+  control::safetyArmed.setTestOn();
+  control::shift.setTestOn();
+  control::fill.setTestOn();
+  control::dump.setTestOn();
+  // control::oxygen.setTestOn();
+  control::igniter.setTestOn();
+  control::open.setTestOn();
+  control::close.setTestOn();
+  control::purge.setTestOn();
+}
+
+
+void control::setChristmasTreeStop() {
+  error::statusLamp.setTestOff();
+  power::lowVoltageLamp.setTestOff();
+  task::accessLamp.setTestOff();
+  launchController::statusLamp.setTestOff();
+  rs485::accessLamp.setTestOff();
+  control::safetyArmed.setTestOff();
+  control::shift.setTestOff();
+  control::fill.setTestOff();
+  control::dump.setTestOff();
+  // control::oxygen.setTestOff();
+  control::igniter.setTestOff();
+  control::open.setTestOff();
+  control::close.setTestOff();
+  control::purge.setTestOff();
 }
