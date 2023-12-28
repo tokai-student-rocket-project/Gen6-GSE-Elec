@@ -40,7 +40,7 @@ namespace control {
 } // namespace control
 
 namespace task {
-  Output accessLamp(PIN_PK4);
+  Output statusLamp(PIN_PK4);
 } // namespace task
 
 namespace error {
@@ -58,9 +58,11 @@ namespace umbilical {
   Output valveMode(PIN_PH2);
 } // namespace umbilical
 
-namespace launchController {
+namespace communication {
   enum class Packet : uint8_t {
-    CONTROL_SYNC
+    CONTROL_SYNC,
+    COM_CHECK_L_TO_S,
+    COM_CHECK_S_TO_L
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -69,17 +71,17 @@ namespace launchController {
   void enableOutput();
   void disableOutput();
 
-  void onControlReceived(uint8_t state);
+  void sendComCheck();
+  void onControlSyncReceived(uint8_t state);
+  void onComCheckReceived();
 
-  Output comLamp(PIN_PK5);
-} // namespace launchController
+  Output statusLamp(PIN_PK5);
+} // namespace communication
 
 
 void setup() {
   power::loadSwitch.on();
 
-  // RS485の送信が終わったら割り込みを発生させる
-  UCSR1B |= (1 << TXCIE0);
 
   // FT232RL (USB)
   Serial.begin(115200);
@@ -100,7 +102,11 @@ void setup() {
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
-  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(launchController::Packet::CONTROL_SYNC), &launchController::onControlReceived);
+
+  Tasks.add(&communication::sendComCheck)->startFps(2);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
+
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
@@ -113,23 +119,17 @@ void loop() {
 }
 
 
-/// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
-ISR(USART1_TX_vect) {
-  launchController::disableOutput();
-}
-
-
 /// @brief 送信を有効にする
-void launchController::enableOutput() {
-  launchController::sendEnableControl.on();
-  launchController::accessLamp.on();
+void communication::enableOutput() {
+  communication::sendEnableControl.on();
+  communication::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
-void launchController::disableOutput() {
-  launchController::sendEnableControl.off();
-  launchController::accessLamp.off();
+void communication::disableOutput() {
+  communication::sendEnableControl.off();
+  communication::accessLamp.off();
 }
 
 
@@ -148,7 +148,15 @@ void power::measureTask() {
 }
 
 
-void launchController::onControlReceived(uint8_t state) {
+void communication::sendComCheck() {
+  communication::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
+  Serial1.flush();
+  communication::disableOutput();
+}
+
+
+void communication::onControlSyncReceived(uint8_t state) {
   control::shift.set(state & (1 << 0) && control::safetyArmed.isManualRaised());
   control::fill.set(state & (1 << 1) && control::safetyArmed.isManualRaised());
   control::dump.set(state & (1 << 2) && control::safetyArmed.isManualRaised());
@@ -160,8 +168,13 @@ void launchController::onControlReceived(uint8_t state) {
 }
 
 
+void communication::onComCheckReceived() {
+  communication::statusLamp.blink();
+}
+
+
 void control::handleManualTask() {
-  task::accessLamp.blink();
+  task::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
     // 終了処理
@@ -188,9 +201,9 @@ void control::handleManualTask() {
 void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
-  task::accessLamp.setTestOn();
-  launchController::accessLamp.setTestOn();
-  launchController::comLamp.setTestOn();
+  task::statusLamp.setTestOn();
+  communication::accessLamp.setTestOn();
+  communication::statusLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::shift.setTestOn();
   control::fill.setTestOn();
@@ -206,9 +219,9 @@ void control::setChristmasTreeStart() {
 void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
-  task::accessLamp.setTestOff();
-  launchController::accessLamp.setTestOff();
-  launchController::comLamp.setTestOff();
+  task::statusLamp.setTestOff();
+  communication::accessLamp.setTestOff();
+  communication::statusLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::shift.setTestOff();
   control::fill.setTestOff();

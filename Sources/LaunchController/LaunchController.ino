@@ -81,7 +81,7 @@ namespace task {
   const String OPEN_START = "open-start";
   const String PLAY_MUSIC = "play-music";
 
-  Output accessLamp(PIN_PK4);
+  Output statusLamp(PIN_PK4);
 } // namespace task
 
 namespace error {
@@ -90,9 +90,11 @@ namespace error {
 } // namespace caution
 
 
-namespace satelliteController {
+namespace communication {
   enum class Packet : uint8_t {
-    CONTROL_SYNC
+    CONTROL_SYNC,
+    COM_CHECK_L_TO_S,
+    COM_CHECK_S_TO_L
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -101,17 +103,17 @@ namespace satelliteController {
   void enableOutput();
   void disableOutput();
 
-  void controlSync();
+  void sendControlSync();
+  void sendComCheck();
+  void onComCheckReceived();
 
-  Output comLamp(PIN_PK5);
-} // namespace satelliteController
+  Output statusLamp(PIN_PK5);
+} // namespace communication
 
 
 void setup() {
   power::loadSwitch.on();
 
-  // RS485の送信が終わったら割り込みを発生させる
-  UCSR1B |= (1 << TXCIE0);
 
   // FT232RL (USB)
   Serial.begin(115200);
@@ -135,6 +137,15 @@ void setup() {
   power::bus12.begin();
 
 
+  Tasks.add(&power::measureTask)->startFps(10);
+  Tasks.add(&control::handleManualTask)->startFps(50);
+
+
+  Tasks.add(&communication::sendControlSync)->startFps(20);
+  Tasks.add(&communication::sendComCheck)->startFps(2);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L), &communication::onComCheckReceived);
+
+
   // シーケンス関係のタスクたち
   Tasks.add(task::FILL_START, &control::setFillStart);
   Tasks.add(task::FILL_STOP, &control::setFillStop);
@@ -145,9 +156,6 @@ void setup() {
   Tasks.add(task::OPEN_START, &control::setOpenStart);
   Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
-  Tasks.add(&power::measureTask)->startFps(10);
-  Tasks.add(&satelliteController::controlSync)->startFps(20);
-  Tasks.add(&control::handleManualTask)->startFps(50);
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
@@ -160,23 +168,17 @@ void loop() {
 }
 
 
-/// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
-ISR(USART1_TX_vect) {
-  satelliteController::disableOutput();
-}
-
-
 /// @brief 送信を有効にする
-void satelliteController::enableOutput() {
-  satelliteController::sendEnableControl.on();
-  satelliteController::accessLamp.on();
+void communication::enableOutput() {
+  communication::sendEnableControl.on();
+  communication::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
-void satelliteController::disableOutput() {
-  satelliteController::sendEnableControl.off();
-  satelliteController::accessLamp.off();
+void communication::disableOutput() {
+  communication::sendEnableControl.off();
+  communication::accessLamp.off();
 }
 
 
@@ -195,16 +197,31 @@ void power::measureTask() {
 }
 
 
-void satelliteController::controlSync() {
+void communication::sendControlSync() {
   uint8_t state = (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) | (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) | (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) | (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
 
-  satelliteController::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(satelliteController::Packet::CONTROL_SYNC), state);
+  communication::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), state);
+  Serial1.flush();
+  communication::disableOutput();
+}
+
+
+void communication::sendComCheck() {
+  communication::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
+  Serial1.flush();
+  communication::disableOutput();
+}
+
+
+void communication::onComCheckReceived() {
+  communication::statusLamp.blink();
 }
 
 
 void control::handleManualTask() {
-  task::accessLamp.blink();
+  task::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
     // 終了処理
@@ -363,9 +380,9 @@ void sequence::ignition() {
 void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
-  task::accessLamp.setTestOn();
-  satelliteController::accessLamp.setTestOn();
-  satelliteController::comLamp.setTestOn();
+  task::statusLamp.setTestOn();
+  communication::accessLamp.setTestOn();
+  communication::statusLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -383,9 +400,9 @@ void control::setChristmasTreeStart() {
 void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
-  task::accessLamp.setTestOff();
-  satelliteController::accessLamp.setTestOff();
-  satelliteController::comLamp.setTestOff();
+  task::statusLamp.setTestOff();
+  communication::accessLamp.setTestOff();
+  communication::statusLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();
