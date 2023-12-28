@@ -73,18 +73,6 @@ namespace n2o {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
 } // namespace n2o
 
-namespace rs485 {
-  enum class Id : uint8_t {
-    CONTROL
-  };
-
-  Output sendEnableControl(PIN_PA2);
-  Output accessLamp(PIN_PA4);
-
-  void enableOutput();
-  void disableOutput();
-} // namespace rs485
-
 namespace task {
   const String FILL_START = "fill-start";
   const String FILL_STOP = "fill-stop";
@@ -96,8 +84,6 @@ namespace task {
   const String PLAY_MUSIC = "play-music";
 
   Output accessLamp(PIN_PK4);
-
-  void controlSync();
 } // namespace task
 
 namespace error {
@@ -107,7 +93,19 @@ namespace error {
 
 
 namespace satelliteController {
-  Output statusLamp(PIN_PK5);
+  enum class Packet : uint8_t {
+    CONTROL_SYNC
+  };
+
+  Output sendEnableControl(PIN_PA2);
+  Output accessLamp(PIN_PA4);
+
+  void enableOutput();
+  void disableOutput();
+
+  void controlSync();
+
+  Output comLamp(PIN_PK5);
 } // namespace satelliteController
 
 
@@ -137,6 +135,7 @@ void setup() {
   monitor::input.begin();
   monitor::bus12.begin();
 
+
   // シーケンス関係のタスクたち
   Tasks.add(task::FILL_START, &control::setFillStart);
   Tasks.add(task::FILL_STOP, &control::setFillStop);
@@ -148,7 +147,7 @@ void setup() {
   Tasks.add(task::PLAY_MUSIC, [] {mp3_play(9);});
 
   Tasks.add(&monitor::measureTask)->startFps(10);
-  Tasks.add(&task::controlSync)->startFps(20);
+  Tasks.add(&satelliteController::controlSync)->startFps(20);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
   control::setChristmasTreeStart();
@@ -164,21 +163,21 @@ void loop() {
 
 /// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
 ISR(USART1_TX_vect) {
-  rs485::disableOutput();
+  satelliteController::disableOutput();
 }
 
 
 /// @brief 送信を有効にする
-void rs485::enableOutput() {
-  rs485::sendEnableControl.on();
-  rs485::accessLamp.on();
+void satelliteController::enableOutput() {
+  satelliteController::sendEnableControl.on();
+  satelliteController::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
-void rs485::disableOutput() {
-  rs485::sendEnableControl.off();
-  rs485::accessLamp.off();
+void satelliteController::disableOutput() {
+  satelliteController::sendEnableControl.off();
+  satelliteController::accessLamp.off();
 }
 
 
@@ -192,11 +191,11 @@ void monitor::measureTask() {
 }
 
 
-void task::controlSync() {
+void satelliteController::controlSync() {
   uint8_t state = (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) | (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) | (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) | (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
 
-  rs485::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(rs485::Id::CONTROL), state);
+  satelliteController::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(satelliteController::Packet::CONTROL_SYNC), state);
 }
 
 
@@ -361,8 +360,8 @@ void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
   task::accessLamp.setTestOn();
-  satelliteController::statusLamp.setTestOn();
-  rs485::accessLamp.setTestOn();
+  satelliteController::accessLamp.setTestOn();
+  satelliteController::comLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::sequenceStart.setTestOn();
   control::emergencyStop.setTestOn();
@@ -381,8 +380,8 @@ void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
   task::accessLamp.setTestOff();
-  satelliteController::statusLamp.setTestOff();
-  rs485::accessLamp.setTestOff();
+  satelliteController::accessLamp.setTestOff();
+  satelliteController::comLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::sequenceStart.setTestOff();
   control::emergencyStop.setTestOff();

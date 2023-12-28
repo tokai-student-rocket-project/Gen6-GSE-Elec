@@ -32,20 +32,6 @@ namespace control {
   void setChristmasTreeStop();
 } // namespace control
 
-namespace rs485 {
-  enum class Id : uint8_t {
-    CONTROL
-  };
-
-  Output sendEnableControl(PIN_PA2);
-  Output accessLamp(PIN_PA4);
-
-  void enableOutput();
-  void disableOutput();
-
-  void onControlReceived(uint8_t state);
-} // namespace rs485
-
 namespace task {
   Output accessLamp(PIN_PK4);
 } // namespace task
@@ -66,7 +52,19 @@ namespace umbilical {
 } // namespace umbilical
 
 namespace launchController {
-  Output statusLamp(PIN_PK5);
+  enum class Packet : uint8_t {
+    CONTROL_SYNC
+  };
+
+  Output sendEnableControl(PIN_PA2);
+  Output accessLamp(PIN_PA4);
+
+  void enableOutput();
+  void disableOutput();
+
+  void onControlReceived(uint8_t state);
+
+  Output comLamp(PIN_PK5);
 } // namespace launchController
 
 
@@ -87,10 +85,9 @@ void setup() {
   solenoid::monitor.setDividerResistance(5600, 3300);
 
 
-
   Tasks.add(&control::handleManualTask)->startFps(50);
 
-  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(rs485::Id::CONTROL), &rs485::onControlReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(launchController::Packet::CONTROL_SYNC), &launchController::onControlReceived);
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
@@ -105,25 +102,25 @@ void loop() {
 
 /// @brief RS485の送信が終わったら送信を無効にするイベントハンドラ
 ISR(USART1_TX_vect) {
-  rs485::disableOutput();
+  launchController::disableOutput();
 }
 
 
 /// @brief 送信を有効にする
-void rs485::enableOutput() {
-  rs485::sendEnableControl.on();
-  rs485::accessLamp.on();
+void launchController::enableOutput() {
+  launchController::sendEnableControl.on();
+  launchController::accessLamp.on();
 }
 
 
 /// @brief 送信を無効にする
-void rs485::disableOutput() {
-  rs485::sendEnableControl.off();
-  rs485::accessLamp.off();
+void launchController::disableOutput() {
+  launchController::sendEnableControl.off();
+  launchController::accessLamp.off();
 }
 
 
-void rs485::onControlReceived(uint8_t state) {
+void launchController::onControlReceived(uint8_t state) {
   control::shift.setAutomatic(state & (1 << 0) && control::safetyArmed.isManualRaised());
   control::fill.setAutomatic(state & (1 << 1) && control::safetyArmed.isManualRaised());
   control::dump.setAutomatic(state & (1 << 2) && control::safetyArmed.isManualRaised());
@@ -164,8 +161,8 @@ void control::setChristmasTreeStart() {
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
   task::accessLamp.setTestOn();
-  launchController::statusLamp.setTestOn();
-  rs485::accessLamp.setTestOn();
+  launchController::accessLamp.setTestOn();
+  launchController::comLamp.setTestOn();
   control::safetyArmed.setTestOn();
   control::shift.setTestOn();
   control::fill.setTestOn();
@@ -182,8 +179,8 @@ void control::setChristmasTreeStop() {
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
   task::accessLamp.setTestOff();
-  launchController::statusLamp.setTestOff();
-  rs485::accessLamp.setTestOff();
+  launchController::accessLamp.setTestOff();
+  launchController::comLamp.setTestOff();
   control::safetyArmed.setTestOff();
   control::shift.setTestOff();
   control::fill.setTestOff();
