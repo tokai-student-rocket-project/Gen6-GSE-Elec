@@ -18,11 +18,19 @@ public:
     IGNITER = MCP320xTypes::MCP3208::Channel::SINGLE_7
   };
 
+  enum class Status : uint8_t {
+    OPEN_FAILURE,
+    CLOSE_FAILURE,
+    ON,
+    OFF,
+  };
+
   SolenoidMonitor(uint8_t cs);
 
   void setDividerResistance(float upperResistance, float lowerResistance);
 
-  float getVoltage(Solenoid solenoid);
+  uint16_t getVoltage_mV(Solenoid solenoid);
+  SolenoidMonitor::Status getStatus(Solenoid solenoid);
 
 private:
   SPISettings _setting;

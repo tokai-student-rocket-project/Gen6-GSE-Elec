@@ -27,7 +27,7 @@ namespace control {
   Output shift(PIN_PD4);
   Output fill(PIN_PD5);
   Output dump(PIN_PG1);
-  // Output oxygen(PIN_PD5);
+  Output oxygen(PIN_PL6);
   Output igniter(PIN_PD7);
   Output open(PIN_PD6);
   Output close(PIN_PG0);
@@ -48,6 +48,7 @@ namespace error {
 namespace solenoid {
   SolenoidMonitor monitor(PIN_PC4);
 
+  void measureTask();
 } // namespace solenoid
 
 namespace umbilical {
@@ -97,6 +98,7 @@ void setup() {
 
 
   Tasks.add(&power::measureTask)->startFps(10);
+  Tasks.add(&solenoid::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
 
@@ -145,6 +147,10 @@ void power::measureTask() {
 }
 
 
+void solenoid::measureTask() {
+}
+
+
 void communication::sendComCheck() {
   communication::enableOutput();
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
@@ -157,7 +163,7 @@ void communication::onControlSyncReceived(uint8_t state) {
   control::shift.set(state & (1 << 0) && control::safetyArmed.isManualRaised());
   control::fill.set(state & (1 << 1) && control::safetyArmed.isManualRaised());
   control::dump.set(state & (1 << 2) && control::safetyArmed.isManualRaised());
-  // control::oxygen.set(state & (1 << 3) && control::safetyArmed.isManualRaised());
+  control::oxygen.set(state & (1 << 3) && control::safetyArmed.isManualRaised());
   control::igniter.set(state & (1 << 4) && control::safetyArmed.isManualRaised());
   control::open.set(state & (1 << 5) && control::safetyArmed.isManualRaised());
   control::close.set(state & (1 << 6) && control::safetyArmed.isManualRaised());
@@ -205,7 +211,7 @@ void control::setChristmasTreeStart() {
   control::shift.setTestOn();
   control::fill.setTestOn();
   control::dump.setTestOn();
-  // control::oxygen.setTestOn();
+  control::oxygen.setTestOn();
   control::igniter.setTestOn();
   control::open.setTestOn();
   control::close.setTestOn();
@@ -223,7 +229,7 @@ void control::setChristmasTreeStop() {
   control::shift.setTestOff();
   control::fill.setTestOff();
   control::dump.setTestOff();
-  // control::oxygen.setTestOff();
+  control::oxygen.setTestOff();
   control::igniter.setTestOff();
   control::open.setTestOff();
   control::close.setTestOff();
