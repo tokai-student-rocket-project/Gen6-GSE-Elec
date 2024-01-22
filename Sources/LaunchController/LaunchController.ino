@@ -13,6 +13,7 @@
 namespace power {
   Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
+  Output powerLamp(PIN_PG5);
   Output lowVoltageLamp(PIN_PK7);
 
   PowerMonitor input(0x40);
@@ -25,7 +26,7 @@ namespace power {
 namespace control {
   SemiAutoControl safetyArmed(PIN_PC2, false, PIN_PH7);
   SemiAutoControl sequenceStart(PIN_PC3, false, PIN_PG3);
-  SemiAutoControl emergencyStop(PIN_PC4, false, PIN_PG4);
+  SemiAutoControl emergencyStop(PIN_PC4, true, PIN_PG4);
 
   Input confirm1(PIN_PC7, false);
   Input confirm2(PIN_PC6, false);
@@ -110,6 +111,7 @@ namespace communication {
 
 void setup() {
   power::loadSwitch.on();
+  power::powerLamp.on();
 
 
   // FT232RL (USB)
@@ -222,6 +224,7 @@ void control::handleManualTask() {
 
   if (power::killButton.isHigh()) {
     // 終了処理
+    power::powerLamp.off();
     power::loadSwitch.off();
   }
 
