@@ -155,9 +155,12 @@ void setup() {
   Tasks.add(control::OPEN_START, &control::setOpenStart);
   Tasks.add(control::PLAY_MUSIC, [] {mp3_play(9);});
 
+  Tasks.add("IGNITION", [] {sequence::ignition();});
+
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
+  mp3_play(11);
 }
 
 
@@ -188,6 +191,8 @@ void power::measureTask() {
   bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
 
   power::lowVoltageLamp.set(isLowVoltage);
+
+  Serial.println(power::thermal.getTemperature_degC());
 
   if (isOverloadedInput || isOverloadedBus || isOverheated) {
     // HACK エラー
@@ -223,8 +228,21 @@ void control::handleManualTask() {
   control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
-    // 終了処理
+    mp3_play(12);
     power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
     power::loadSwitch.off();
   }
 
@@ -345,6 +363,8 @@ void sequence::fill() {
 
   Tasks[control::PLAY_MUSIC]->startOnceAfterSec(15.0);
   Tasks[control::FILL_START]->startOnceAfterSec(24.0);
+
+  Tasks["IGNITION"]->startOnceAfterSec(34.0);
 }
 
 
