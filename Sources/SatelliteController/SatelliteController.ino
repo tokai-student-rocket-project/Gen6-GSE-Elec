@@ -51,6 +51,10 @@ namespace solenoid {
   void measureTask();
 } // namespace solenoid
 
+namespace pressure {
+  void measureTask();
+} // namespace pressure
+
 namespace umbilical {
   Output flightMode(PIN_PH3);
   Output valveMode(PIN_PH2);
@@ -99,6 +103,7 @@ void setup() {
 
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&solenoid::measureTask)->startFps(10);
+  Tasks.add(&pressure::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
 
@@ -107,8 +112,9 @@ void setup() {
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
 
 
-  control::setChristmasTreeStart();
-  Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
+  // Build3 はLEDと電磁弁が共有なので，電磁弁が動いてしまうことを防止するために無効化
+  // control::setChristmasTreeStart();
+  // Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 }
 
 
@@ -148,6 +154,12 @@ void power::measureTask() {
 
 
 void solenoid::measureTask() {
+}
+
+
+void pressure::measureTask() {
+  float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
+  Serial.println(voltage);
 }
 
 
