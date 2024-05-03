@@ -12,6 +12,7 @@
 namespace power {
   Input killButton(PIN_PJ1, false);
   Output loadSwitch(PIN_PF5);
+  Output powerLamp(PIN_PG5);
   Output lowVoltageLamp(PIN_PK7);
 
   PowerMonitor input(0x40);
@@ -31,7 +32,8 @@ namespace control {
   Output igniter(PIN_PD7);
   Output open(PIN_PD6);
   Output close(PIN_PG0);
-  SemiAutoControl purge(PIN_PC0, true, PIN_PB6);
+  // Output purge(PIN_PB6);
+  SemiAutoControl check(PIN_PC0, true, PIN_PB6);
 
   Output statusLamp(PIN_PK4);
   void handleManualTask();
@@ -83,6 +85,7 @@ namespace communication {
 
 void setup() {
   power::loadSwitch.on();
+  power::powerLamp.on();
 
 
   // FT232RL (USB)
@@ -159,7 +162,7 @@ void solenoid::measureTask() {
 
 void pressure::measureTask() {
   float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
-  Serial.println(voltage);
+  // Serial.println(voltage);
 }
 
 
@@ -172,14 +175,16 @@ void communication::sendComCheck() {
 
 
 void communication::onControlSyncReceived(uint8_t state) {
-  control::shift.set(state & (1 << 0) && control::safetyArmed.isManualRaised());
-  control::fill.set(state & (1 << 1) && control::safetyArmed.isManualRaised());
-  control::dump.set(state & (1 << 2) && control::safetyArmed.isManualRaised());
-  control::oxygen.set(state & (1 << 3) && control::safetyArmed.isManualRaised());
-  control::igniter.set(state & (1 << 4) && control::safetyArmed.isManualRaised());
-  control::open.set(state & (1 << 5) && control::safetyArmed.isManualRaised());
-  control::close.set(state & (1 << 6) && control::safetyArmed.isManualRaised());
-  control::purge.setAutomatic(state & (1 << 7) && control::safetyArmed.isManualRaised());
+  bool isArmed = control::safetyArmed.isManualRaised();
+
+  control::shift.set(state & (1 << 0) && isArmed);
+  control::fill.set(state & (1 << 1) && isArmed);
+  control::dump.set(state & (1 << 2) && isArmed);
+  control::oxygen.set(state & (1 << 3) && isArmed);
+  control::igniter.set(state & (1 << 4) && isArmed);
+  control::open.set(state & (1 << 5) && isArmed);
+  control::close.set(state & (1 << 6) && isArmed);
+  // control::purge.set(state & (1 << 7) && isArmed);
 }
 
 
@@ -192,7 +197,21 @@ void control::handleManualTask() {
   control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
-    // 終了処理
+    mp3_play(12);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
     power::loadSwitch.off();
   }
 
@@ -203,9 +222,10 @@ void control::handleManualTask() {
     return;
   }
 
-
   // 手動制御
-  control::purge.setManual();
+  control::check.setManual();
+
+  Serial.println(control::check.isRaised());
 
   // アンビリカル
   umbilical::flightMode.set(control::igniter.isHigh());
@@ -227,7 +247,8 @@ void control::setChristmasTreeStart() {
   control::igniter.setTestOn();
   control::open.setTestOn();
   control::close.setTestOn();
-  control::purge.setTestOn();
+  // control::purge.setTestOn();
+  control::check.setTestOn();
 }
 
 
@@ -245,5 +266,6 @@ void control::setChristmasTreeStop() {
   control::igniter.setTestOff();
   control::open.setTestOff();
   control::close.setTestOff();
-  control::purge.setTestOff();
+  // control::purge.setTestOff();
+  control::check.setTestOff();
 }
