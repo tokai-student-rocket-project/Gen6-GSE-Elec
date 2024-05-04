@@ -178,14 +178,26 @@ void power::measureTask() {
 void solenoid::measureTask() {
   // 仮の振る舞い
   bool isArmed = control::safetyArmed.isManualRaised();
-  control::shiftFB.set(control::shift.isHigh() && isArmed ? !control::shiftFB.isHigh() : LOW);
-  control::fillFB.set(control::fill.isHigh() && isArmed ? !control::fillFB.isHigh() : LOW);
-  control::dumpFB.set(control::dump.isHigh() && isArmed ? !control::dumpFB.isHigh() : LOW);
-  control::oxygenFB.set(control::oxygen.isHigh() && isArmed ? !control::oxygenFB.isHigh() : LOW);
-  control::igniterFB.set(control::igniter.isHigh() && isArmed ? !control::igniterFB.isHigh() : LOW);
-  control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
-  control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
-  control::purgeFB.set(control::purge.isRaised() && isArmed ? !control::purgeFB.isHigh() : LOW);
+
+  // 正常
+  control::shiftFB.set(control::shift.isHigh() && isArmed);
+  control::fillFB.set(control::fill.isHigh() && isArmed);
+  control::dumpFB.set(control::dump.isHigh() && isArmed);
+  control::oxygenFB.set(control::oxygen.isHigh() && isArmed);
+  control::igniterFB.set(control::igniter.isHigh() && isArmed);
+  control::openFB.set(control::open.isHigh() && isArmed);
+  control::closeFB.set(control::close.isHigh() && isArmed);
+  control::purgeFB.set(control::purge.isRaised() && isArmed);
+
+  // 故障
+  // control::shiftFB.set(control::shift.isHigh() && isArmed ? !control::shiftFB.isHigh() : LOW);
+  // control::fillFB.set(control::fill.isHigh() && isArmed ? !control::fillFB.isHigh() : LOW);
+  // control::dumpFB.set(control::dump.isHigh() && isArmed ? !control::dumpFB.isHigh() : LOW);
+  // control::oxygenFB.set(control::oxygen.isHigh() && isArmed ? !control::oxygenFB.isHigh() : LOW);
+  // control::igniterFB.set(control::igniter.isHigh() && isArmed ? !control::igniterFB.isHigh() : LOW);
+  // control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
+  // control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
+  // control::purgeFB.set(control::purge.isRaised() && isArmed ? !control::purgeFB.isHigh() : LOW);
 }
 
 
