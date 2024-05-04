@@ -453,6 +453,7 @@ void sequence::ignition() {
 
 
 void control::setChristmasTreeStart() {
+  n2o::tm1637.displayNumber(8.8);
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
   control::statusLamp.setTestOn();
@@ -469,10 +470,19 @@ void control::setChristmasTreeStart() {
   control::open.setTestOn();
   control::close.setTestOn();
   control::purge.setTestOn();
+  control::shiftFB.setTestOn();
+  control::fillFB.setTestOn();
+  control::dumpFB.setTestOn();
+  control::oxygenFB.setTestOn();
+  control::igniterFB.setTestOn();
+  control::openFB.setTestOn();
+  control::closeFB.setTestOn();
+  control::purgeFB.setTestOn();
 }
 
 
 void control::setChristmasTreeStop() {
+  n2o::tm1637.initialize();
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
   control::statusLamp.setTestOff();
@@ -489,6 +499,14 @@ void control::setChristmasTreeStop() {
   control::open.setTestOff();
   control::close.setTestOff();
   control::purge.setTestOff();
+  control::shiftFB.setTestOff();
+  control::fillFB.setTestOff();
+  control::dumpFB.setTestOff();
+  control::oxygenFB.setTestOff();
+  control::igniterFB.setTestOff();
+  control::openFB.setTestOff();
+  control::closeFB.setTestOff();
+  control::purgeFB.setTestOff();
 }
 
 
