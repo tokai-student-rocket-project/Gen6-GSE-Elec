@@ -202,14 +202,20 @@ void solenoid::measureTask() {
 
 
 void n2o::measureTask() {
-  float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
-  Serial.println(voltage, 3);
+  float voltage_V = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
+  float current_mA = voltage_V / 240.0 * 1000.0;
 
-  // 仮の振る舞い
-  n2o::pressure += 0.1;
-  if (n2o::pressure >= 6.0) n2o::pressure = 0.0;
-  n2o::tm1637.displayNumber(n2o::pressure);
+  if (current_mA < 1) {
+    n2o::tm1637.clearDisplay();
+  }
+  else {
+    n2o::tm1637.displayNumber(current_mA / 10.0);
+  }
+
+  n2o::pressure = current_mA;
+  Serial.println(pressure, 3);
 }
+
 
 void communication::sendFeedbackSync() {
   uint8_t state = (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) | (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) | (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) | (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);

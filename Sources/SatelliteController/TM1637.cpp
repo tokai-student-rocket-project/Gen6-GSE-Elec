@@ -98,8 +98,12 @@ void TM1637::display(uint8_t address, int8_t data) {
 void TM1637::displayNumber(float value) {
   int number = round(fabs(value) * 10);
 
-  display(0, segment((number % 10), false));
-  display(1, segment(((number / 10) % 10), true));
+  int8_t dataL = number % 10;
+  int8_t dataH = (number / 10) % 10;
+
+  // display(0, segment(dataH, true)); // MPa用
+  display(1, dataH == 0 ? 0b0000'0000 : segment(dataH, false)); // mA用
+  display(0, segment(dataL, false));
 }
 
 

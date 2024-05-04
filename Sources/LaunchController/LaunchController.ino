@@ -482,7 +482,7 @@ void control::setChristmasTreeStart() {
 
 
 void control::setChristmasTreeStop() {
-  n2o::tm1637.initialize();
+  n2o::tm1637.clearDisplay();();
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
   control::statusLamp.setTestOff();
