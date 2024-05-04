@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
+#include "TM1637.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
@@ -64,6 +65,8 @@ namespace solenoid {
 } // namespace solenoid
 
 namespace pressure {
+  TM1637 tm1637(PIN_PK0, PIN_PK1);
+
   void measureTask();
 } // namespace pressure
 
@@ -107,6 +110,9 @@ void setup() {
   // MCP3208 (ADC)
   SPI.begin();
   solenoid::monitor.setDividerResistance(5600, 3300);
+
+  // TM1637 (7SEG)
+  pressure::tm1637.initialize();
 
   // INA219 (Power)
   Wire.begin();
@@ -175,7 +181,9 @@ void solenoid::measureTask() {
 
 void pressure::measureTask() {
   float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
-  // Serial.println(voltage);
+
+  Serial.println(voltage, 3);
+  pressure::tm1637.displayNumber(voltage);
 }
 
 
