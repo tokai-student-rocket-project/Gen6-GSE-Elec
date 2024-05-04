@@ -67,6 +67,8 @@ namespace solenoid {
 namespace pressure {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
 
+  float pressure = 0.0;
+
   void measureTask();
 } // namespace pressure
 
@@ -187,8 +189,16 @@ void solenoid::measureTask() {
 void pressure::measureTask() {
   float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
 
+  pressure::pressure += 0.1;
+
+  if (pressure::pressure >= 6.0) {
+    pressure::pressure = 0.0;
+  }
+
+  pressure::tm1637.displayNumber(pressure::pressure);
+
   Serial.println(voltage, 3);
-  pressure::tm1637.displayNumber(voltage);
+  // pressure::tm1637.displayNumber(voltage);
 }
 
 void communication::sendFeedbackSync() {

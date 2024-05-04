@@ -139,7 +139,6 @@ void setup() {
 
   // TM1637 (7SEG)
   n2o::tm1637.initialize();
-  n2o::tm1637.displayNumber(5.5);
 
   // INA219 (Power)
   Wire.begin();
