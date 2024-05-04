@@ -81,10 +81,12 @@ namespace sequence {
   void fill();
   void ignition();
 
+  uint32_t sequenceStartRiseCount = 0;
+
   bool emergencyStopSequenceIsActive = false;
   bool fillSequenceIsActive = false;
   bool ignitionSequenceIsActive = false;
-  bool isReadyToIgnition = false;
+  bool canConfirm = false;
 } // namespace sequence
 
 namespace n2o {
@@ -167,8 +169,6 @@ void setup() {
   Tasks.add(control::IGNITER_STOP, &control::setIgniterStop);
   Tasks.add(control::OPEN_START, &control::setOpenStart);
   Tasks.add(control::PLAY_MUSIC, [] {mp3_play(9);});
-
-  Tasks.add("IGNITION", [] {sequence::ignition();});
 
 
   control::setChristmasTreeStart();
@@ -304,7 +304,23 @@ void control::handleManualTask() {
   // 充填シーケンス
   control::sequenceStart.setManual();
   if (control::sequenceStart.isManualRaised()) {
-    sequence::fill();
+    if (sequence::sequenceStartRiseCount == 0) {
+      if (!(sequence::emergencyStopSequenceIsActive || sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)) {
+        sequence::fill();
+      }
+      // 充填確認スイッチの代替
+      else if (sequence::canConfirm) {
+        sequence::ignition();
+      }
+      else {
+        sequence::peacefulStop();
+      }
+    }
+
+    sequence::sequenceStartRiseCount++;
+  }
+  else {
+    sequence::sequenceStartRiseCount = 0;
   }
 
   // 点火シーケンス
@@ -333,6 +349,7 @@ void sequence::emergencyStop() {
 
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
+  sequence::canConfirm = false;
 
   control::emergencyStop.setAutomaticOn();
   mp3_play(3); // 0102_emergencyStop.mp3
@@ -358,6 +375,7 @@ void sequence::peacefulStop() {
   sequence::emergencyStopSequenceIsActive = false;
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
+  sequence::canConfirm = false;
 
   control::sequenceStart.setAutomaticOff();
   control::emergencyStop.setAutomaticOff();
@@ -392,13 +410,13 @@ void sequence::fill() {
     return;
   }
 
+  sequence::canConfirm = false;
+
   control::sequenceStart.setAutomaticOn();
   mp3_play(10);
 
   Tasks[control::PLAY_MUSIC]->startOnceAfterSec(15.0);
   Tasks[control::FILL_START]->startOnceAfterSec(24.0);
-
-  Tasks["IGNITION"]->startOnceAfterSec(34.0);
 }
 
 
@@ -415,6 +433,8 @@ void sequence::ignition() {
 
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
+
+  sequence::canConfirm = false;
 
   control::sequenceStart.setAutomaticOn();
   mp3_play(4); // 0104_ignitionSequenceStart
@@ -495,6 +515,7 @@ void control::setPeacefulStop() {
 
 void control::setFillStart() {
   control::fill.setAutomaticOn();
+  sequence::canConfirm = true;
 }
 
 
