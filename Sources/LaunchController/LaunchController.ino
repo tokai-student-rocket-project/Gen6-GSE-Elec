@@ -345,6 +345,7 @@ void control::handleManualTask() {
 void sequence::emergencyStop() {
   // 重複実行防止
   if (sequence::emergencyStopSequenceIsActive) return;
+
   sequence::emergencyStopSequenceIsActive = true;
 
   sequence::fillSequenceIsActive = false;
@@ -397,7 +398,6 @@ void sequence::peacefulStop() {
 void sequence::fill() {
   // 重複実行防止
   if (sequence::fillSequenceIsActive) return;
-  sequence::fillSequenceIsActive = true;
 
   // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
@@ -410,6 +410,7 @@ void sequence::fill() {
     return;
   }
 
+  sequence::fillSequenceIsActive = true;
   sequence::canConfirm = false;
 
   control::sequenceStart.setAutomaticOn();
@@ -423,7 +424,6 @@ void sequence::fill() {
 void sequence::ignition() {
   // 重複実行防止
   if (sequence::ignitionSequenceIsActive) return;
-  sequence::ignitionSequenceIsActive = true;
 
   // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive) return;
@@ -434,6 +434,7 @@ void sequence::ignition() {
   // 手動のFILLがONの間は点火シーケンスを始めない
   if (control::fill.isManualRaised()) return;
 
+  sequence::ignitionSequenceIsActive = true;
   sequence::canConfirm = false;
 
   control::sequenceStart.setAutomaticOn();
