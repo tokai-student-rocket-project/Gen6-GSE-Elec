@@ -101,6 +101,7 @@ namespace communication {
   enum class Packet : uint8_t {
     CONTROL_SYNC,
     FEEDBACK_SYNC,
+    PRESSURE_SYNC,
     COM_CHECK_L_TO_S,
     COM_CHECK_S_TO_L
   };
@@ -114,6 +115,7 @@ namespace communication {
   void sendControlSync();
   void sendComCheck();
   void onFeedbackSyncReceived(uint8_t state);
+  void onPressureSyncReceived(float pressure);
   void onComCheckReceived();
 
   Output statusLamp(PIN_PK5);
@@ -153,6 +155,7 @@ void setup() {
   Tasks.add(&communication::sendControlSync)->startFps(50);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), &communication::onFeedbackSyncReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), &communication::onPressureSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L), &communication::onComCheckReceived);
 
   // シーケンス関係のタスクたち
@@ -238,6 +241,13 @@ void communication::onFeedbackSyncReceived(uint8_t state) {
   control::openFB.set(state & (1 << 5));
   control::closeFB.set(state & (1 << 6));
   control::purgeFB.set(state & (1 << 7));
+
+  communication::statusLamp.blink();
+}
+
+
+void communication::onPressureSyncReceived(float pressure) {
+  n2o::tm1637.displayNumber(pressure);
 
   communication::statusLamp.blink();
 }

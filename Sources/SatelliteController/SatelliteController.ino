@@ -64,13 +64,13 @@ namespace solenoid {
   void measureTask();
 } // namespace solenoid
 
-namespace pressure {
+namespace n2o {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
 
   float pressure = 0.0;
 
   void measureTask();
-} // namespace pressure
+} // namespace n2o
 
 namespace umbilical {
   Output flightMode(PIN_PH3);
@@ -81,8 +81,9 @@ namespace communication {
   enum class Packet : uint8_t {
     CONTROL_SYNC,
     FEEDBACK_SYNC,
+    PRESSURE_SYNC,
     COM_CHECK_L_TO_S,
-    COM_CHECK_S_TO_L
+    COM_CHECK_S_TO_L,
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -92,6 +93,7 @@ namespace communication {
   void disableOutput();
 
   void sendFeedbackSync();
+  void sendPressureSync();
   void sendComCheck();
   void onControlSyncReceived(uint8_t state);
   void onComCheckReceived();
@@ -116,7 +118,7 @@ void setup() {
   solenoid::monitor.setDividerResistance(5600, 3300);
 
   // TM1637 (7SEG)
-  pressure::tm1637.initialize();
+  n2o::tm1637.initialize();
 
   // INA219 (Power)
   Wire.begin();
@@ -126,11 +128,12 @@ void setup() {
 
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&solenoid::measureTask)->startFps(10);
-  Tasks.add(&pressure::measureTask)->startFps(2);
+  Tasks.add(&n2o::measureTask)->startFps(2);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
 
   Tasks.add(&communication::sendFeedbackSync)->startFps(10);
+  Tasks.add(&communication::sendPressureSync)->startFps(2);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
@@ -186,19 +189,14 @@ void solenoid::measureTask() {
 }
 
 
-void pressure::measureTask() {
+void n2o::measureTask() {
   float voltage = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
-
-  pressure::pressure += 0.1;
-
-  if (pressure::pressure >= 6.0) {
-    pressure::pressure = 0.0;
-  }
-
-  pressure::tm1637.displayNumber(pressure::pressure);
-
   Serial.println(voltage, 3);
-  // pressure::tm1637.displayNumber(voltage);
+
+  // 仮の振る舞い
+  n2o::pressure += 0.1;
+  if (n2o::pressure >= 6.0) n2o::pressure = 0.0;
+  n2o::tm1637.displayNumber(n2o::pressure);
 }
 
 void communication::sendFeedbackSync() {
@@ -206,6 +204,14 @@ void communication::sendFeedbackSync() {
 
   communication::enableOutput();
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+  Serial1.flush();
+  communication::disableOutput();
+}
+
+
+void communication::sendPressureSync() {
+  communication::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure);
   Serial1.flush();
   communication::disableOutput();
 }
