@@ -41,6 +41,15 @@ namespace control {
   SemiAutoControl close(PIN_PG0, false, PIN_PB4);
   SemiAutoControl purge(PIN_PC0, false, PIN_PB6);
 
+  Output shiftFB(PIN_PE3);
+  Output fillFB(PIN_PE5);
+  Output dumpFB(PIN_PE7);
+  Output oxygenFB(PIN_PH3);
+  Output igniterFB(PIN_PE2);
+  Output openFB(PIN_PE4);
+  Output closeFB(PIN_PE6);
+  Output purgeFB(PIN_PH2);
+
   Output statusLamp(PIN_PK4);
   void handleManualTask();
 
@@ -91,6 +100,7 @@ namespace error {
 namespace communication {
   enum class Packet : uint8_t {
     CONTROL_SYNC,
+    FEEDBACK_SYNC,
     COM_CHECK_L_TO_S,
     COM_CHECK_S_TO_L
   };
@@ -103,6 +113,7 @@ namespace communication {
 
   void sendControlSync();
   void sendComCheck();
+  void onFeedbackSyncReceived(uint8_t state);
   void onComCheckReceived();
 
   Output statusLamp(PIN_PK5);
@@ -140,10 +151,10 @@ void setup() {
   Tasks.add(&control::handleManualTask)->startFps(50);
 
 
-  Tasks.add(&communication::sendControlSync)->startFps(20);
+  Tasks.add(&communication::sendControlSync)->startFps(50);
   Tasks.add(&communication::sendComCheck)->startFps(2);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), &communication::onFeedbackSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L), &communication::onComCheckReceived);
-
 
   // シーケンス関係のタスクたち
   Tasks.add(control::FILL_START, &control::setFillStart);
@@ -216,6 +227,20 @@ void communication::sendComCheck() {
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
   Serial1.flush();
   communication::disableOutput();
+}
+
+
+void communication::onFeedbackSyncReceived(uint8_t state) {
+  control::shiftFB.set(state & (1 << 0));
+  control::fillFB.set(state & (1 << 1));
+  control::dumpFB.set(state & (1 << 2));
+  control::oxygenFB.set(state & (1 << 3));
+  control::igniterFB.set(state & (1 << 4));
+  control::openFB.set(state & (1 << 5));
+  control::closeFB.set(state & (1 << 6));
+  control::purgeFB.set(state & (1 << 7));
+
+  communication::statusLamp.blink();
 }
 
 

@@ -78,6 +78,7 @@ namespace umbilical {
 namespace communication {
   enum class Packet : uint8_t {
     CONTROL_SYNC,
+    FEEDBACK_SYNC,
     COM_CHECK_L_TO_S,
     COM_CHECK_S_TO_L
   };
@@ -88,6 +89,7 @@ namespace communication {
   void enableOutput();
   void disableOutput();
 
+  void sendFeedbackSync();
   void sendComCheck();
   void onControlSyncReceived(uint8_t state);
   void onComCheckReceived();
@@ -122,10 +124,11 @@ void setup() {
 
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&solenoid::measureTask)->startFps(10);
-  Tasks.add(&pressure::measureTask)->startFps(10);
+  Tasks.add(&pressure::measureTask)->startFps(2);
   Tasks.add(&control::handleManualTask)->startFps(50);
 
 
+  Tasks.add(&communication::sendFeedbackSync)->startFps(10);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
@@ -168,9 +171,8 @@ void power::measureTask() {
 
 
 void solenoid::measureTask() {
-  bool isArmed = control::safetyArmed.isManualRaised();
-
   // 仮の振る舞い
+  bool isArmed = control::safetyArmed.isManualRaised();
   control::shiftFB.set(control::shift.isHigh() && isArmed ? !control::shiftFB.isHigh() : LOW);
   control::fillFB.set(control::fill.isHigh() && isArmed ? !control::fillFB.isHigh() : LOW);
   control::dumpFB.set(control::dump.isHigh() && isArmed ? !control::dumpFB.isHigh() : LOW);
@@ -187,6 +189,15 @@ void pressure::measureTask() {
 
   Serial.println(voltage, 3);
   pressure::tm1637.displayNumber(voltage);
+}
+
+void communication::sendFeedbackSync() {
+  uint8_t state = (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) | (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) | (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) | (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
+
+  communication::enableOutput();
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+  Serial1.flush();
+  communication::disableOutput();
 }
 
 
@@ -209,6 +220,8 @@ void communication::onControlSyncReceived(uint8_t state) {
   control::open.set(state & (1 << 5) && isArmed);
   control::close.set(state & (1 << 6) && isArmed);
   control::purge.setAutomatic(state & (1 << 7) && isArmed);
+
+  communication::statusLamp.blink();
 }
 
 
