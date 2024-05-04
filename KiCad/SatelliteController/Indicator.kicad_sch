@@ -2329,7 +2329,7 @@
 			)
 		)
 	)
-	(global_label "LED_SHIFT"
+	(global_label "LED_FB_SHIFT"
 		(shape input)
 		(at 204.47 35.56 90)
 		(fields_autoplaced yes)
@@ -2341,7 +2341,7 @@
 		)
 		(uuid "669ca3cd-3968-4527-9dc1-275fbfb0ce97")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 204.47 23.0385 90)
+			(at 204.47 19.6329 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2461,7 +2461,7 @@
 			)
 		)
 	)
-	(global_label "CONN_LED_SHIFT"
+	(global_label "CONN_LED_FB_SHIFT"
 		(shape output)
 		(at 204.47 40.64 270)
 		(fields_autoplaced yes)
@@ -2473,7 +2473,7 @@
 		)
 		(uuid "8aa0eb68-bf6a-4bc3-8262-74cb7a4e8964")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 204.47 59.3906 90)
+			(at 204.47 62.7962 90)
 			(effects
 				(font
 					(size 1.27 1.27)
