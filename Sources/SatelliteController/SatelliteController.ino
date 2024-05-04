@@ -32,8 +32,8 @@ namespace control {
   Output igniter(PIN_PD7);
   Output open(PIN_PD6);
   Output close(PIN_PG0);
-  // Output purge(PIN_PB6);
-  SemiAutoControl check(PIN_PC0, true, PIN_PB6);
+  Output purge(PIN_PB6);
+  // SemiAutoControl check(PIN_PC0, true, PIN_PB6);
 
   Output statusLamp(PIN_PK4);
   void handleManualTask();
