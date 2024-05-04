@@ -168,14 +168,17 @@ void power::measureTask() {
 
 
 void solenoid::measureTask() {
-  control::shiftFB.toggle();
-  control::fillFB.toggle();
-  control::dumpFB.toggle();
-  control::oxygenFB.toggle();
-  control::igniterFB.toggle();
-  control::openFB.toggle();
-  control::closeFB.toggle();
-  control::purgeFB.toggle();
+  bool isArmed = control::safetyArmed.isManualRaised();
+
+  // 仮の振る舞い
+  control::shiftFB.set(control::shift.isHigh() && isArmed ? !control::shiftFB.isHigh() : LOW);
+  control::fillFB.set(control::fill.isHigh() && isArmed ? !control::fillFB.isHigh() : LOW);
+  control::dumpFB.set(control::dump.isHigh() && isArmed ? !control::dumpFB.isHigh() : LOW);
+  control::oxygenFB.set(control::oxygen.isHigh() && isArmed ? !control::oxygenFB.isHigh() : LOW);
+  control::igniterFB.set(control::igniter.isHigh() && isArmed ? !control::igniterFB.isHigh() : LOW);
+  control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
+  control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
+  control::purgeFB.set(control::purge.isRaised() && isArmed ? !control::purgeFB.isHigh() : LOW);
 }
 
 
