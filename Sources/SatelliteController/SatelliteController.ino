@@ -113,11 +113,6 @@ void setup() {
   Tasks.add(&communication::sendComCheck)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
-
-
-  // Build3 はLEDと電磁弁が共有なので，電磁弁が動いてしまうことを防止するために無効化
-  // control::setChristmasTreeStart();
-  // Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 }
 
 
@@ -184,7 +179,7 @@ void communication::onControlSyncReceived(uint8_t state) {
   control::igniter.set(state & (1 << 4) && isArmed);
   control::open.set(state & (1 << 5) && isArmed);
   control::close.set(state & (1 << 6) && isArmed);
-  // control::purge.set(state & (1 << 7) && isArmed);
+  control::purge.set(state & (1 << 7) && isArmed);
 }
 
 
@@ -197,7 +192,6 @@ void control::handleManualTask() {
   control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
-    mp3_play(12);
     power::powerLamp.off();
     delay(500);
     power::powerLamp.on();
@@ -223,49 +217,9 @@ void control::handleManualTask() {
   }
 
   // 手動制御
-  control::check.setManual();
-
-  Serial.println(control::check.isRaised());
+  control::purge.setManual();
 
   // アンビリカル
   umbilical::flightMode.set(control::igniter.isHigh());
   umbilical::valveMode.set(control::open.isHigh() && !control::close.isHigh());
-}
-
-
-void control::setChristmasTreeStart() {
-  error::statusLamp.setTestOn();
-  power::lowVoltageLamp.setTestOn();
-  control::statusLamp.setTestOn();
-  communication::accessLamp.setTestOn();
-  communication::statusLamp.setTestOn();
-  control::safetyArmed.setTestOn();
-  control::shift.setTestOn();
-  control::fill.setTestOn();
-  control::dump.setTestOn();
-  control::oxygen.setTestOn();
-  control::igniter.setTestOn();
-  control::open.setTestOn();
-  control::close.setTestOn();
-  // control::purge.setTestOn();
-  control::check.setTestOn();
-}
-
-
-void control::setChristmasTreeStop() {
-  error::statusLamp.setTestOff();
-  power::lowVoltageLamp.setTestOff();
-  control::statusLamp.setTestOff();
-  communication::accessLamp.setTestOff();
-  communication::statusLamp.setTestOff();
-  control::safetyArmed.setTestOff();
-  control::shift.setTestOff();
-  control::fill.setTestOff();
-  control::dump.setTestOff();
-  control::oxygen.setTestOff();
-  control::igniter.setTestOff();
-  control::open.setTestOff();
-  control::close.setTestOff();
-  // control::purge.setTestOff();
-  control::check.setTestOff();
 }
