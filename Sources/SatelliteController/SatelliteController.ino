@@ -32,8 +32,18 @@ namespace control {
   Output igniter(PIN_PD7);
   Output open(PIN_PD6);
   Output close(PIN_PG0);
-  Output purge(PIN_PB6);
+  SemiAutoControl purge(PIN_PC0, true, PIN_PB6);
+  // Output purge(PIN_PB6);
   // SemiAutoControl check(PIN_PC0, true, PIN_PB6);
+
+  Output shiftFB(PIN_PH5);
+  Output fillFB(PIN_PB0);
+  Output dumpFB(PIN_PB5);
+  Output oxygenFB(PIN_PL4);
+  Output igniterFB(PIN_PH4);
+  Output openFB(PIN_PH6);
+  Output closeFB(PIN_PB4);
+  Output purgeFB(PIN_PH1);
 
   Output statusLamp(PIN_PK4);
   void handleManualTask();
@@ -152,6 +162,14 @@ void power::measureTask() {
 
 
 void solenoid::measureTask() {
+  control::shiftFB.toggle();
+  control::fillFB.toggle();
+  control::dumpFB.toggle();
+  control::oxygenFB.toggle();
+  control::igniterFB.toggle();
+  control::openFB.toggle();
+  control::closeFB.toggle();
+  control::purgeFB.toggle();
 }
 
 
@@ -179,7 +197,7 @@ void communication::onControlSyncReceived(uint8_t state) {
   control::igniter.set(state & (1 << 4) && isArmed);
   control::open.set(state & (1 << 5) && isArmed);
   control::close.set(state & (1 << 6) && isArmed);
-  control::purge.set(state & (1 << 7) && isArmed);
+  control::purge.setAutomatic(state & (1 << 7) && isArmed);
 }
 
 
