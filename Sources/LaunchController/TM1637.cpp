@@ -101,8 +101,7 @@ void TM1637::displayNumber(float value) {
   int8_t dataL = number % 10;
   int8_t dataH = (number / 10) % 10;
 
-  // display(0, segment(dataH, true)); // MPa用
-  display(1, dataH == 0 ? 0b0000'0000 : segment(dataH, false)); // mA用
+  display(1, segment(dataH, true));
   display(0, segment(dataL, false));
 }
 

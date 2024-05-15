@@ -2,6 +2,7 @@
 #include <TaskManager.h>
 #include <MsgPacketizer.h>
 #include "TM1637.hpp"
+#include "VESIM10.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "SemiAutoControl.hpp"
@@ -66,8 +67,9 @@ namespace solenoid {
 
 namespace n2o {
   TM1637 tm1637(PIN_PK0, PIN_PK1);
+  VESIM10 vesim10(PIN_PK2, 240.0, 10.0);
 
-  float pressure = 0.0;
+  float pressure_MPa = 0.0;
 
   void measureTask();
 } // namespace n2o
@@ -124,6 +126,9 @@ void setup() {
   Wire.begin();
   power::input.begin();
   power::bus12.begin();
+
+  // VESIM10 (N2O Pressure Sensor)
+  n2o::vesim10.calibrateBlocking(10);
 
 
   Tasks.add(&power::measureTask)->startFps(10);
@@ -202,18 +207,15 @@ void solenoid::measureTask() {
 
 
 void n2o::measureTask() {
-  float voltage_V = (float)analogRead(PIN_PK2) * 5.0 / 1024.0;
-  float current_mA = voltage_V / 240.0 * 1000.0;
+  float current_mA = n2o::vesim10.getCurrent_mA();
 
-  if (current_mA < 1) {
+  if (current_mA < 0.1) {
     n2o::tm1637.clearDisplay();
   }
   else {
-    n2o::tm1637.displayNumber(current_mA / 10.0);
+    n2o::pressure_MPa = n2o::vesim10.getPressure_MPa();
+    n2o::tm1637.displayNumber(abs(n2o::pressure_MPa));
   }
-
-  n2o::pressure = current_mA;
-  Serial.println(pressure, 3);
 }
 
 
@@ -229,7 +231,7 @@ void communication::sendFeedbackSync() {
 
 void communication::sendPressureSync() {
   communication::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
   Serial1.flush();
   communication::disableOutput();
 }
@@ -268,20 +270,6 @@ void control::handleManualTask() {
   control::statusLamp.blink();
 
   if (power::killButton.isHigh()) {
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
     power::loadSwitch.off();
   }
 
