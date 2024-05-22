@@ -592,6 +592,171 @@
 				)
 			)
 		)
+		(symbol "Device:D_Small"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0.254) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at -1.27 2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "D_Small"
+				(at -3.81 -2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Diode, small symbol"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Sim.Device" "D"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "D_Small_0_1"
+				(polyline
+					(pts
+						(xy -0.762 -1.016) (xy -0.762 1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.762 0) (xy 0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.016) (xy -0.762 0) (xy 0.762 1.016) (xy 0.762 -1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "D_Small_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 1.778)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 1.778)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Device:R_Small"
 			(pin_numbers hide)
 			(pin_names
@@ -1714,6 +1879,12 @@
 		(uuid "09004456-adb3-4aec-b24d-20f5f629a8c0")
 	)
 	(junction
+		(at 214.63 140.97)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "0b7bfb9e-c277-4140-9c69-f8a345dfa107")
+	)
+	(junction
 		(at 146.05 175.26)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1766,6 +1937,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "65872c39-ca8d-4e27-8752-efd6de432071")
+	)
+	(junction
+		(at 224.79 133.35)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7151f578-6b4b-463b-a163-a88b2998e4a1")
 	)
 	(junction
 		(at 50.8 125.73)
@@ -1901,6 +2078,16 @@
 	)
 	(wire
 		(pts
+			(xy 220.98 133.35) (xy 224.79 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "025f1a50-cb4c-4b86-aa8c-f7e6ea8a69a0")
+	)
+	(wire
+		(pts
 			(xy 233.68 33.02) (xy 248.92 33.02)
 		)
 		(stroke
@@ -1948,6 +2135,16 @@
 			(type default)
 		)
 		(uuid "0fa32df3-e2b3-4bcb-bcff-19db29bcf926")
+	)
+	(wire
+		(pts
+			(xy 212.09 140.97) (xy 214.63 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0ff4d80f-78c0-4591-9750-6dc63f561543")
 	)
 	(wire
 		(pts
@@ -2121,6 +2318,16 @@
 	)
 	(wire
 		(pts
+			(xy 57.15 160.02) (xy 60.96 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2df36377-a2e2-47b6-b002-c19a4a8ed1e8")
+	)
+	(wire
+		(pts
 			(xy 78.74 175.26) (xy 76.2 175.26)
 		)
 		(stroke
@@ -2238,6 +2445,16 @@
 			(type default)
 		)
 		(uuid "4482f2f9-f287-4bff-82f1-27e587874c5d")
+	)
+	(wire
+		(pts
+			(xy 113.03 100.33) (xy 116.84 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "46d35587-8c8b-4ec5-b18b-67cf8c2bebaf")
 	)
 	(wire
 		(pts
@@ -2381,6 +2598,26 @@
 	)
 	(wire
 		(pts
+			(xy 236.22 96.52) (xy 238.76 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "562bace8-0968-47fc-85d9-75e82003810e")
+	)
+	(wire
+		(pts
+			(xy 105.41 100.33) (xy 107.95 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "565c5070-72a7-41b6-8a01-4710729f2546")
+	)
+	(wire
+		(pts
 			(xy 38.1 114.3) (xy 40.64 114.3)
 		)
 		(stroke
@@ -2431,6 +2668,16 @@
 	)
 	(wire
 		(pts
+			(xy 49.53 160.02) (xy 52.07 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5e987065-0244-4748-a5ff-d99272dd11b8")
+	)
+	(wire
+		(pts
 			(xy 237.49 111.76) (xy 237.49 114.3)
 		)
 		(stroke
@@ -2451,6 +2698,16 @@
 	)
 	(wire
 		(pts
+			(xy 125.73 160.02) (xy 129.54 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "62bd0f94-c28b-4a0a-bb16-f7fed3807681")
+	)
+	(wire
+		(pts
 			(xy 116.84 100.33) (xy 116.84 102.87)
 		)
 		(stroke
@@ -2458,6 +2715,16 @@
 			(type default)
 		)
 		(uuid "67120f99-31d2-41fe-b49b-c37fe14cf67b")
+	)
+	(wire
+		(pts
+			(xy 35.56 82.55) (xy 38.1 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67dd8ff7-9d69-49b5-a3a6-f9dda82afc0a")
 	)
 	(wire
 		(pts
@@ -2521,6 +2788,16 @@
 	)
 	(wire
 		(pts
+			(xy 224.79 133.35) (xy 224.79 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d0f2803-3f0f-4021-8dd5-4271386561dc")
+	)
+	(wire
+		(pts
 			(xy 176.53 96.52) (xy 176.53 99.06)
 		)
 		(stroke
@@ -2548,6 +2825,16 @@
 			(type default)
 		)
 		(uuid "6e7e9146-501b-498c-9cc2-ce7be0323f24")
+	)
+	(wire
+		(pts
+			(xy 213.36 133.35) (xy 215.9 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "70923c27-91b3-4efb-b041-a94dcc6146e0")
 	)
 	(wire
 		(pts
@@ -2651,6 +2938,16 @@
 	)
 	(wire
 		(pts
+			(xy 157.48 33.02) (xy 160.02 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "838e8366-d080-463e-804e-f720ddaba513")
+	)
+	(wire
+		(pts
 			(xy 67.31 77.47) (xy 69.85 77.47)
 		)
 		(stroke
@@ -2661,6 +2958,16 @@
 	)
 	(wire
 		(pts
+			(xy 95.25 33.02) (xy 97.79 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "874214aa-900e-42cf-b98e-6c66e24b9942")
+	)
+	(wire
+		(pts
 			(xy 38.1 104.14) (xy 40.64 104.14)
 		)
 		(stroke
@@ -2668,6 +2975,16 @@
 			(type default)
 		)
 		(uuid "8ac2d408-8c17-40c7-aece-306199d8f5be")
+	)
+	(wire
+		(pts
+			(xy 118.11 160.02) (xy 120.65 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8b22f812-4a68-4bd6-a82f-a937ed051b8e")
 	)
 	(wire
 		(pts
@@ -2791,6 +3108,16 @@
 	)
 	(wire
 		(pts
+			(xy 229.87 33.02) (xy 233.68 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9e7bf19e-955a-4dbe-b692-ef905d207271")
+	)
+	(wire
+		(pts
 			(xy 35.56 72.39) (xy 38.1 72.39)
 		)
 		(stroke
@@ -2801,6 +3128,16 @@
 	)
 	(wire
 		(pts
+			(xy 214.63 140.97) (xy 217.17 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9fbc9572-f6a0-49bf-ab00-d791d6d0b900")
+	)
+	(wire
+		(pts
 			(xy 50.8 175.26) (xy 50.8 177.8)
 		)
 		(stroke
@@ -2808,6 +3145,16 @@
 			(type default)
 		)
 		(uuid "a0fbbd64-acf9-4408-97fa-aca99754a29e")
+	)
+	(wire
+		(pts
+			(xy 214.63 148.59) (xy 214.63 151.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a2e3f85c-3104-4652-b23b-fc278657e00a")
 	)
 	(wire
 		(pts
@@ -2931,6 +3278,16 @@
 	)
 	(wire
 		(pts
+			(xy 165.1 96.52) (xy 167.64 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2b54161-5462-4f9c-9666-6aba5e7217e1")
+	)
+	(wire
+		(pts
 			(xy 44.45 46.99) (xy 44.45 49.53)
 		)
 		(stroke
@@ -2938,6 +3295,16 @@
 			(type default)
 		)
 		(uuid "b56fcc40-1fd1-4b8a-94cc-45dbaef43438")
+	)
+	(wire
+		(pts
+			(xy 214.63 143.51) (xy 214.63 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5da360a-19ba-42a4-b3d7-dcebfc832098")
 	)
 	(wire
 		(pts
@@ -2971,6 +3338,16 @@
 	)
 	(wire
 		(pts
+			(xy 224.79 130.81) (xy 224.79 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be04288b-3eb7-4680-8224-50abfb1a952d")
+	)
+	(wire
+		(pts
 			(xy 158.75 48.26) (xy 158.75 50.8)
 		)
 		(stroke
@@ -2998,6 +3375,16 @@
 			(type default)
 		)
 		(uuid "c0dc5e0a-1fd2-4d84-8231-48fb65db9902")
+	)
+	(wire
+		(pts
+			(xy 243.84 96.52) (xy 247.65 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c115ced4-510b-4ae8-b82b-e54dee6dcf9e")
 	)
 	(wire
 		(pts
@@ -3051,16 +3438,6 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 69.85) (xy 69.85 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c49f7553-a7ca-43d8-bf0b-d1d07e054bda")
-	)
-	(wire
-		(pts
 			(xy 41.91 39.37) (xy 44.45 39.37)
 		)
 		(stroke
@@ -3078,6 +3455,16 @@
 			(type default)
 		)
 		(uuid "c7c95bd1-909c-457b-bfee-9efae8bf8d6f")
+	)
+	(wire
+		(pts
+			(xy 222.25 33.02) (xy 224.79 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c920fa79-9fdc-4bc4-a5bc-76f44f37c2b0")
 	)
 	(wire
 		(pts
@@ -3118,6 +3505,16 @@
 			(type default)
 		)
 		(uuid "ccd2e9db-a867-4fe3-871c-3233efa5dd48")
+	)
+	(wire
+		(pts
+			(xy 204.47 140.97) (xy 207.01 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ccfaacbd-8e31-4b93-a770-a56fe312ffd3")
 	)
 	(wire
 		(pts
@@ -3221,6 +3618,16 @@
 	)
 	(wire
 		(pts
+			(xy 172.72 96.52) (xy 176.53 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6d67ca7-892f-4ec9-803d-d221895b469e")
+	)
+	(wire
+		(pts
 			(xy 76.2 175.26) (xy 76.2 177.8)
 		)
 		(stroke
@@ -3268,6 +3675,16 @@
 			(type default)
 		)
 		(uuid "db0ad5a6-ba7c-46e5-aaa0-b3d7581743de")
+	)
+	(wire
+		(pts
+			(xy 102.87 33.02) (xy 106.68 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dbd67cfc-d07c-480a-bb5a-ff6809beefc0")
 	)
 	(wire
 		(pts
@@ -3321,6 +3738,16 @@
 	)
 	(wire
 		(pts
+			(xy 165.1 33.02) (xy 168.91 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e7951289-c81b-4532-a407-628a7d1209ad")
+	)
+	(wire
+		(pts
 			(xy 62.23 106.68) (xy 64.77 106.68)
 		)
 		(stroke
@@ -3371,6 +3798,16 @@
 	)
 	(wire
 		(pts
+			(xy 224.79 146.05) (xy 224.79 148.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ef255a0b-4c63-477f-b902-5445cc5db1c9")
+	)
+	(wire
+		(pts
 			(xy 116.84 113.03) (xy 116.84 115.57)
 		)
 		(stroke
@@ -3388,6 +3825,16 @@
 			(type default)
 		)
 		(uuid "f0ae3c5f-58ed-45ef-852a-6f3379cf78c6")
+	)
+	(wire
+		(pts
+			(xy 35.56 80.01) (xy 38.1 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0b7d3f3-b85d-4480-9f09-381be5871e9b")
 	)
 	(wire
 		(pts
@@ -3674,6 +4121,28 @@
 		(uuid "40ad6f05-607e-4803-9a21-34573409716d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 247.65 82.7285 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SV_IGNITOR"
+		(shape output)
+		(at 38.1 82.55 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "428b123c-6620-4033-af5d-10f9b2f561f3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 51.6497 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4013,7 +4482,7 @@
 			)
 		)
 	)
-	(global_label "LED_PURGE"
+	(global_label "CTL_PURGE"
 		(shape input)
 		(at 109.22 167.64 180)
 		(fields_autoplaced yes)
@@ -4025,7 +4494,7 @@
 		)
 		(uuid "7b0d43e1-996f-46bf-acbb-cd06d84dfaab")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 95.61 167.64 0)
+			(at 95.712 167.64 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4167,6 +4636,28 @@
 			)
 		)
 	)
+	(global_label "SAFETY_12V"
+		(shape output)
+		(at 224.79 148.59 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9302c332-f1f9-45f4-b2b3-7cc583878342")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 224.79 162.5629 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SV_FILL"
 		(shape output)
 		(at 69.85 82.55 0)
@@ -4207,28 +4698,6 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "SV_IGNITOR"
-		(shape output)
-		(at 69.85 69.85 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9a1d4c36-9159-4c1a-a939-654823deae6f")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 83.3997 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 				(hide yes)
 			)
 		)
@@ -4497,6 +4966,50 @@
 			)
 		)
 	)
+	(global_label "SV_CHECK"
+		(shape input)
+		(at 224.79 130.81 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d86a1859-7580-4a66-88da-4a3208a21d5f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 224.79 118.2696 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SV_CHECK"
+		(shape output)
+		(at 95.25 69.85 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d8ecc5d9-65e1-4f60-b444-5f7bce50bd3f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 107.7904 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "CTL_IGNITOR"
 		(shape input)
 		(at 156.21 104.14 180)
@@ -4563,6 +5076,28 @@
 			)
 		)
 	)
+	(global_label "CTL_CHECK"
+		(shape input)
+		(at 204.47 140.97 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f48cf7a1-27b0-43df-96c8-6dab0d17cddf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 190.962 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SAFETY_12V"
 		(shape output)
 		(at 60.96 175.26 270)
@@ -4617,7 +5152,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "016759c3-acf8-460e-8363-46c69d79a8f7")
-		(property "Reference" "Q10"
+		(property "Reference" "Q13"
 			(at 251.46 103.505 0)
 			(effects
 				(font
@@ -4677,7 +5212,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q10")
+					(reference "Q13")
 					(unit 1)
 				)
 			)
@@ -4692,7 +5227,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "018fa5e4-435e-4802-b522-8f67bcf3f560")
-		(property "Reference" "R77"
+		(property "Reference" "R80"
 			(at 238.76 107.95 0)
 			(effects
 				(font
@@ -4755,7 +5290,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R77")
+					(reference "R80")
 					(unit 1)
 				)
 			)
@@ -4770,7 +5305,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "03cfbde5-8727-4a42-9334-0bbcfdc393ab")
-		(property "Reference" "R40"
+		(property "Reference" "R62"
 			(at 123.19 52.07 0)
 			(effects
 				(font
@@ -4833,7 +5368,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R40")
+					(reference "R62")
 					(unit 1)
 				)
 			)
@@ -4849,7 +5384,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "03fcf59e-d5d7-49f0-8c5a-2ae5f08504bb")
-		(property "Reference" "Q12"
+		(property "Reference" "Q8"
 			(at 133.35 167.005 0)
 			(effects
 				(font
@@ -4909,7 +5444,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q12")
+					(reference "Q8")
 					(unit 1)
 				)
 			)
@@ -4924,7 +5459,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "069bd878-e0a1-46f6-9eb8-f0128f3f61bf")
-		(property "Reference" "R79"
+		(property "Reference" "R84"
 			(at 264.16 115.57 0)
 			(effects
 				(font
@@ -4987,7 +5522,102 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R79")
+					(reference "R84")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 241.3 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "08fe98a8-c903-40a6-b98b-578f6a6936b2")
+		(property "Reference" "D35"
+			(at 241.3 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 241.3 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 241.3 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 241.3 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 241.3 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 241.3 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 241.3 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 241.3 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "48422532-720c-47cc-abfd-3f661a325b38")
+		)
+		(pin "2"
+			(uuid "8eff42cb-1ac2-4507-a95b-08507db11de1")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D35")
 					(unit 1)
 				)
 			)
@@ -5002,7 +5632,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0dbe37f1-fa31-43d7-a5ba-7ef1e4cd61e4")
-		(property "Reference" "R52"
+		(property "Reference" "R68"
 			(at 160.02 44.45 0)
 			(effects
 				(font
@@ -5065,7 +5695,102 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R52")
+					(reference "R68")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 100.33 33.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "14d870f7-bb3c-4620-8ef9-ef0fd5116534")
+		(property "Reference" "D28"
+			(at 100.33 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 100.33 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 100.33 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 100.33 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 100.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 100.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 100.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 100.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5a72ab44-64c4-4f5b-a536-2b28d0a27a6e")
+		)
+		(pin "2"
+			(uuid "8075f3f2-bc63-4877-a386-589ff9a723d5")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D28")
 					(unit 1)
 				)
 			)
@@ -5080,7 +5805,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "14dfec9c-0ea6-427b-a1f6-f8941c2bf989")
-		(property "Reference" "#PWR074"
+		(property "Reference" "#PWR096"
 			(at 106.68 124.46 0)
 			(effects
 				(font
@@ -5130,7 +5855,74 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR074")
+					(reference "#PWR096")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 157.48 33.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "14f4a77a-cdda-462c-aaf3-7216e951f50c")
+		(property "Reference" "#PWR0102"
+			(at 161.29 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 153.67 33.0199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 157.48 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 157.48 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 157.48 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a0128d20-6bc9-453e-985a-7a795b7f1c75")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0102")
 					(unit 1)
 				)
 			)
@@ -5145,7 +5937,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "16f8cdcf-4660-4b76-b58f-4f3c774a8936")
-		(property "Reference" "#PWR098"
+		(property "Reference" "#PWR085"
 			(at 33.02 95.25 0)
 			(effects
 				(font
@@ -5195,7 +5987,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR098")
+					(reference "#PWR085")
 					(unit 1)
 				)
 			)
@@ -5210,7 +6002,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "206cae17-a021-41b3-bf84-7919e08fcba0")
-		(property "Reference" "R69"
+		(property "Reference" "R58"
 			(at 107.95 111.76 0)
 			(effects
 				(font
@@ -5273,7 +6065,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R69")
+					(reference "R58")
 					(unit 1)
 				)
 			)
@@ -5289,7 +6081,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "20e8ecbe-8257-4412-b1a1-543e60d9a352")
-		(property "Reference" "#PWR097"
+		(property "Reference" "#PWR088"
 			(at 50.8 97.79 0)
 			(effects
 				(font
@@ -5339,7 +6131,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR097")
+					(reference "#PWR088")
 					(unit 1)
 				)
 			)
@@ -5354,7 +6146,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "26127687-e8b2-42ba-9527-0479e995ee53")
-		(property "Reference" "R53"
+		(property "Reference" "R71"
 			(at 185.42 41.91 0)
 			(effects
 				(font
@@ -5417,7 +6209,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R53")
+					(reference "R71")
 					(unit 1)
 				)
 			)
@@ -5432,7 +6224,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2706c595-0a5a-4773-ab79-16776e726723")
-		(property "Reference" "J11"
+		(property "Reference" "J14"
 			(at 62.23 59.69 0)
 			(effects
 				(font
@@ -5502,7 +6294,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "J11")
+					(reference "J14")
 					(unit 1)
 				)
 			)
@@ -5517,7 +6309,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2959d455-2e29-400e-910b-d198e80d896a")
-		(property "Reference" "R86"
+		(property "Reference" "R65"
 			(at 147.32 168.91 0)
 			(effects
 				(font
@@ -5580,7 +6372,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R86")
+					(reference "R65")
 					(unit 1)
 				)
 			)
@@ -5596,7 +6388,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2c1a14c1-3a01-4849-97c6-6f0e7758ba69")
-		(property "Reference" "R24"
+		(property "Reference" "R49"
 			(at 39.37 34.29 90)
 			(effects
 				(font
@@ -5657,7 +6449,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R24")
+					(reference "R49")
 					(unit 1)
 				)
 			)
@@ -5672,7 +6464,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2c712e8a-b28f-4aa7-a81e-87822e4fe895")
-		(property "Reference" "#PWR060"
+		(property "Reference" "#PWR0106"
 			(at 184.15 64.77 0)
 			(effects
 				(font
@@ -5722,7 +6514,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR060")
+					(reference "#PWR0106")
 					(unit 1)
 				)
 			)
@@ -5737,7 +6529,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2d151898-0027-4b97-893d-73ecfdf88eaf")
-		(property "Reference" "#PWR086"
+		(property "Reference" "#PWR098"
 			(at 119.38 184.15 0)
 			(effects
 				(font
@@ -5787,7 +6579,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR086")
+					(reference "#PWR098")
 					(unit 1)
 				)
 			)
@@ -5802,7 +6594,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "32fe3457-9da5-4c3f-96ee-b7a2edf04616")
-		(property "Reference" "#PWR095"
+		(property "Reference" "#PWR0101"
 			(at 146.05 191.77 0)
 			(effects
 				(font
@@ -5852,7 +6644,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR095")
+					(reference "#PWR0101")
 					(unit 1)
 				)
 			)
@@ -5867,7 +6659,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4620dfa9-8ef2-4cae-b6a5-50fcf24633b3")
-		(property "Reference" "#PWR096"
+		(property "Reference" "#PWR089"
 			(at 50.8 133.35 0)
 			(effects
 				(font
@@ -5917,7 +6709,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR096")
+					(reference "#PWR089")
 					(unit 1)
 				)
 			)
@@ -5932,7 +6724,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "46ac5d10-6248-420c-9297-f01834e70c15")
-		(property "Reference" "R87"
+		(property "Reference" "R66"
 			(at 147.32 179.07 0)
 			(effects
 				(font
@@ -5995,7 +6787,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R87")
+					(reference "R66")
 					(unit 1)
 				)
 			)
@@ -6010,7 +6802,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "48a99ff3-98a4-48db-bcaa-0b8b0b2062f8")
-		(property "Reference" "#PWR052"
+		(property "Reference" "#PWR091"
 			(at 54.61 53.34 0)
 			(effects
 				(font
@@ -6060,7 +6852,72 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR052")
+					(reference "#PWR091")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 214.63 151.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4ad8fe79-b456-4ab3-b200-dedf6729780f")
+		(property "Reference" "#PWR0109"
+			(at 214.63 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 214.63 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 214.63 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 214.63 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 214.63 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "13c6a866-cb54-4bac-9133-5f7bfdf093f5")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0109")
 					(unit 1)
 				)
 			)
@@ -6075,7 +6932,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4c9d0f65-ceb2-4806-a872-4d538f3a193c")
-		(property "Reference" "R83"
+		(property "Reference" "R54"
 			(at 77.47 179.07 0)
 			(effects
 				(font
@@ -6138,7 +6995,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R83")
+					(reference "R54")
 					(unit 1)
 				)
 			)
@@ -6153,7 +7010,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4fad07ec-f946-4540-884a-c2ae2bfd0aad")
-		(property "Reference" "R48"
+		(property "Reference" "R61"
 			(at 123.19 41.91 0)
 			(effects
 				(font
@@ -6216,7 +7073,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R48")
+					(reference "R61")
 					(unit 1)
 				)
 			)
@@ -6232,7 +7089,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5152753c-a803-49f6-9704-7ca76cb9dd26")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR083"
 			(at 38.1 69.85 0)
 			(effects
 				(font
@@ -6282,7 +7139,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR068")
+					(reference "#PWR083")
 					(unit 1)
 				)
 			)
@@ -6297,7 +7154,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "516fe3dc-a0a9-4838-9916-193ee363f17c")
-		(property "Reference" "R73"
+		(property "Reference" "R70"
 			(at 167.64 107.95 0)
 			(effects
 				(font
@@ -6360,7 +7217,141 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R73")
+					(reference "R70")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 213.36 133.35 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "58758e0d-1680-4b69-a5de-55e3658f1eb2")
+		(property "Reference" "#PWR0108"
+			(at 217.17 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 209.55 133.3499 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 213.36 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 213.36 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 213.36 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f86aca73-3fec-4642-845e-9a207ba0bf82")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0108")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 49.53 160.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "595b9683-1fb0-4bcb-b01b-74a24c261a92")
+		(property "Reference" "#PWR087"
+			(at 53.34 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 45.72 160.0199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 49.53 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 49.53 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 49.53 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ef4721b5-94d2-4006-a109-c9638376c502")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR087")
 					(unit 1)
 				)
 			)
@@ -6375,7 +7366,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5ba4a10a-46df-4b91-828d-4aff2b185c8f")
-		(property "Reference" "#PWR078"
+		(property "Reference" "#PWR0107"
 			(at 193.04 128.27 0)
 			(effects
 				(font
@@ -6425,7 +7416,380 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR078")
+					(reference "#PWR0107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 209.55 140.97 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5c47c34d-a191-4b8e-b287-faba6bdbe54d")
+		(property "Reference" "R75"
+			(at 209.55 135.89 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "120R"
+			(at 209.55 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 209.55 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+			(at 209.55 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 209.55 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 209.55 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "20d17fc3-2fce-498a-b9d4-6c29a4354bab")
+		)
+		(pin "2"
+			(uuid "11009701-0484-484a-a9c0-21e4873ec698")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "R75")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 105.41 100.33 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5e31b03b-f05d-41c5-ab57-1c54bf791ccb")
+		(property "Reference" "#PWR095"
+			(at 109.22 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 101.6 100.3299 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 105.41 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 105.41 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 105.41 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1722ad7e-6a38-42ec-86a2-3d648cfa2715")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR095")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 218.44 133.35 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5f69ebe0-14ce-4023-a0dc-2bddea9e69d8")
+		(property "Reference" "D33"
+			(at 218.44 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 218.44 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 218.44 133.35 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 218.44 133.35 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 218.44 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 218.44 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 218.44 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 218.44 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b8e9657b-1bdd-4dc4-a2f4-af5cf24fc824")
+		)
+		(pin "2"
+			(uuid "b20aedfa-4065-47e9-b79b-86b26e6836dc")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D33")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 236.22 96.52 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6073cffa-16f7-4d3b-bfb4-e1d9f5bbaa9a")
+		(property "Reference" "#PWR0112"
+			(at 240.03 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 232.41 96.5199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 236.22 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 236.22 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 236.22 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "99044140-6f73-4764-b900-e116f899ec60")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0112")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 38.1 80.01 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "62d8f368-fb38-4356-bfe3-3838687d0181")
+		(property "Reference" "#PWR084"
+			(at 34.29 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 41.91 80.0099 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a8647e85-4a8c-4e05-a554-7f8e622ca452")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -6440,7 +7804,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6a9f605b-0bc1-441c-9644-ad31ddbdbdb5")
-		(property "Reference" "R74"
+		(property "Reference" "R73"
 			(at 194.31 105.41 0)
 			(effects
 				(font
@@ -6503,7 +7867,102 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R74")
+					(reference "R73")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 123.19 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6f234921-9b04-4add-9470-296c19166b8c")
+		(property "Reference" "D30"
+			(at 123.19 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 123.19 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 123.19 160.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 123.19 160.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 123.19 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 123.19 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 123.19 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 123.19 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3f792b84-14ac-476b-9fea-4386f8ef194e")
+		)
+		(pin "2"
+			(uuid "b3fdb075-cbd5-42dc-808e-f8a2f1197a94")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D30")
 					(unit 1)
 				)
 			)
@@ -6518,7 +7977,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "75e4b7c1-8557-4c58-8654-6dd23c051be8")
-		(property "Reference" "R85"
+		(property "Reference" "R60"
 			(at 120.65 171.45 0)
 			(effects
 				(font
@@ -6581,7 +8040,74 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R85")
+					(reference "R60")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 118.11 160.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7903f654-fbac-4c10-adc7-5682207810ff")
+		(property "Reference" "#PWR097"
+			(at 121.92 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 114.3 160.0199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 118.11 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 118.11 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 118.11 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1def8166-8be8-41c6-ae15-34f6d766f489")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR097")
 					(unit 1)
 				)
 			)
@@ -6596,7 +8122,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "804ffd8b-e20e-4487-a50f-c34256382921")
-		(property "Reference" "R54"
+		(property "Reference" "R72"
 			(at 185.42 52.07 0)
 			(effects
 				(font
@@ -6659,7 +8185,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R54")
+					(reference "R72")
 					(unit 1)
 				)
 			)
@@ -6674,7 +8200,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8575e03a-3bd7-4a8d-ae13-16e370041d1d")
-		(property "Reference" "R75"
+		(property "Reference" "R74"
 			(at 194.31 115.57 0)
 			(effects
 				(font
@@ -6737,7 +8263,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R75")
+					(reference "R74")
 					(unit 1)
 				)
 			)
@@ -6752,7 +8278,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "891abb35-874a-4496-a404-e3c2ce533eee")
-		(property "Reference" "R71"
+		(property "Reference" "R64"
 			(at 133.35 119.38 0)
 			(effects
 				(font
@@ -6815,7 +8341,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R71")
+					(reference "R64")
 					(unit 1)
 				)
 			)
@@ -6831,7 +8357,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "90dcb46f-859b-4541-82ba-5045796f289d")
-		(property "Reference" "C4"
+		(property "Reference" "C18"
 			(at 44.4563 90.17 90)
 			(effects
 				(font
@@ -6892,7 +8418,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "C4")
+					(reference "C18")
 					(unit 1)
 				)
 			)
@@ -6908,7 +8434,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "91e8a9e9-e153-48f2-8cff-258ab8fe5ac8")
-		(property "Reference" "R72"
+		(property "Reference" "R69"
 			(at 161.29 99.06 90)
 			(effects
 				(font
@@ -6969,7 +8495,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R72")
+					(reference "R69")
 					(unit 1)
 				)
 			)
@@ -6984,7 +8510,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "91f77e2c-eed8-4a14-bc8c-312ebfdd3c4c")
-		(property "Reference" "R82"
+		(property "Reference" "R53"
 			(at 77.47 168.91 0)
 			(effects
 				(font
@@ -7047,7 +8573,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R82")
+					(reference "R53")
 					(unit 1)
 				)
 			)
@@ -7063,7 +8589,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9aa3349c-1203-454d-8d9e-3689e3dd30ee")
-		(property "Reference" "Q8"
+		(property "Reference" "Q7"
 			(at 120.65 107.315 0)
 			(effects
 				(font
@@ -7123,7 +8649,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q8")
+					(reference "Q7")
 					(unit 1)
 				)
 			)
@@ -7139,7 +8665,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9c0209f3-01b2-4b16-b4b8-2870eeb80dbb")
-		(property "Reference" "R31"
+		(property "Reference" "R55"
 			(at 91.44 35.56 90)
 			(effects
 				(font
@@ -7200,7 +8726,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R31")
+					(reference "R55")
 					(unit 1)
 				)
 			)
@@ -7216,7 +8742,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9deee165-1a3f-4dc8-be05-445dc587fbc5")
-		(property "Reference" "R49"
+		(property "Reference" "R67"
 			(at 153.67 35.56 90)
 			(effects
 				(font
@@ -7277,7 +8803,178 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R49")
+					(reference "R67")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:AO3400A")
+		(at 222.25 140.97 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9e7ebab9-db94-43de-a07e-a9acab72c4eb")
+		(property "Reference" "Q11"
+			(at 228.6 140.335 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AO3400A"
+			(at 228.6 142.875 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 227.33 142.875 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3400A.pdf"
+			(at 222.25 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 222.25 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4ae28548-6dbc-4eb6-a62b-2e997815a5ea")
+		)
+		(pin "2"
+			(uuid "82767e3d-a443-4480-9b7f-5918d97ae4a3")
+		)
+		(pin "3"
+			(uuid "dad55261-c913-4119-b4d0-5fd6ac851c33")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "Q11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 54.61 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a24add1f-b0e0-4fa7-91f3-46bfadb0db73")
+		(property "Reference" "D27"
+			(at 54.61 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 54.61 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 54.61 160.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 54.61 160.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 54.61 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 54.61 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 54.61 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 54.61 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7af98fde-7011-4bcf-99e9-a6a201bfdabf")
+		)
+		(pin "2"
+			(uuid "213962e6-c9e3-4b2b-a3ba-9feacab2eadc")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D27")
 					(unit 1)
 				)
 			)
@@ -7293,7 +8990,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a2766776-a8d6-4575-aa75-64dd6848384b")
-		(property "Reference" "Q6"
+		(property "Reference" "Q9"
 			(at 172.72 40.005 0)
 			(effects
 				(font
@@ -7353,7 +9050,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q6")
+					(reference "Q9")
 					(unit 1)
 				)
 			)
@@ -7368,7 +9065,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a2d03f6e-bbc5-4a73-9196-08bcb0abf513")
-		(property "Reference" "#PWR077"
+		(property "Reference" "#PWR0105"
 			(at 166.37 120.65 0)
 			(effects
 				(font
@@ -7418,7 +9115,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR077")
+					(reference "#PWR0105")
 					(unit 1)
 				)
 			)
@@ -7433,7 +9130,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a4535b61-7a1d-44c0-877e-fb1eeb6b4e6b")
-		(property "Reference" "R33"
+		(property "Reference" "R56"
 			(at 97.79 44.45 0)
 			(effects
 				(font
@@ -7496,7 +9193,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R33")
+					(reference "R56")
 					(unit 1)
 				)
 			)
@@ -7511,7 +9208,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a46fa93a-ca47-459f-aeca-c5bf00111609")
-		(property "Reference" "#PWR070"
+		(property "Reference" "#PWR0111"
 			(at 223.52 57.15 0)
 			(effects
 				(font
@@ -7561,7 +9258,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR070")
+					(reference "#PWR0111")
 					(unit 1)
 				)
 			)
@@ -7686,7 +9383,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a5cff129-3e38-4126-a644-cfdf75133904")
-		(property "Reference" "R57"
+		(property "Reference" "R81"
 			(at 250.19 41.91 0)
 			(effects
 				(font
@@ -7749,7 +9446,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R57")
+					(reference "R81")
 					(unit 1)
 				)
 			)
@@ -7764,7 +9461,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a79d77e5-db5f-4627-836c-c7bd666af8a4")
-		(property "Reference" "#PWR085"
+		(property "Reference" "#PWR092"
 			(at 76.2 191.77 0)
 			(effects
 				(font
@@ -7814,7 +9511,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR085")
+					(reference "#PWR092")
 					(unit 1)
 				)
 			)
@@ -7905,7 +9602,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "abcccf4d-19ae-4d97-94a4-c65a7bfdc90d")
-		(property "Reference" "R81"
+		(property "Reference" "R52"
 			(at 52.07 171.45 0)
 			(effects
 				(font
@@ -7968,7 +9665,74 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R81")
+					(reference "R52")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 95.25 33.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ae91a8de-5750-44b9-a7e7-cec48f97ae17")
+		(property "Reference" "#PWR093"
+			(at 99.06 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 91.44 33.0199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 95.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8dbfa392-4b92-4df5-a22a-0cb5cb124a57")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR093")
 					(unit 1)
 				)
 			)
@@ -7983,7 +9747,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "af359a99-3b38-4cef-87bd-8081ca42014c")
-		(property "Reference" "Q5"
+		(property "Reference" "Q6"
 			(at 110.49 40.005 0)
 			(effects
 				(font
@@ -8043,7 +9807,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q5")
+					(reference "Q6")
 					(unit 1)
 				)
 			)
@@ -8059,7 +9823,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b0b56274-d15f-4f93-bc86-07cdca2d52e6")
-		(property "Reference" "R76"
+		(property "Reference" "R79"
 			(at 232.41 99.06 90)
 			(effects
 				(font
@@ -8120,7 +9884,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R76")
+					(reference "R79")
 					(unit 1)
 				)
 			)
@@ -8135,7 +9899,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b3008972-9cab-4623-81f4-fd4517d97d9f")
-		(property "Reference" "R27"
+		(property "Reference" "R50"
 			(at 45.72 43.18 0)
 			(effects
 				(font
@@ -8198,7 +9962,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R27")
+					(reference "R50")
 					(unit 1)
 				)
 			)
@@ -8213,7 +9977,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b3be09eb-8681-4b93-8fb2-7446129d95e5")
-		(property "Reference" "R58"
+		(property "Reference" "R82"
 			(at 250.19 52.07 0)
 			(effects
 				(font
@@ -8276,7 +10040,102 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R58")
+					(reference "R82")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 227.33 33.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b6540a8f-8d4b-47fc-a859-f52c8690f54f")
+		(property "Reference" "D34"
+			(at 227.33 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 227.33 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 227.33 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 227.33 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 227.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 227.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 227.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 227.33 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "375a8a9a-5c2c-4cc4-b798-b80181092027")
+		)
+		(pin "2"
+			(uuid "82cbbc53-6449-47bc-9575-0350b6bf1b92")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D34")
 					(unit 1)
 				)
 			)
@@ -8361,6 +10220,101 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:D_Small")
+		(at 110.49 100.33 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ba691a92-e6eb-4d92-a5aa-3c7cec104b58")
+		(property "Reference" "D29"
+			(at 110.49 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 110.49 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 110.49 100.33 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 110.49 100.33 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 110.49 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5522aa7a-9048-426b-b9f4-c55d969839ed")
+		)
+		(pin "2"
+			(uuid "4b5330f1-0915-4ff5-b6b4-f19e7e03abd9")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_Small")
 		(at 114.3 167.64 90)
 		(unit 1)
@@ -8370,7 +10324,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c0a5a6de-ca06-4507-b7c8-0f2acdcc73b5")
-		(property "Reference" "R84"
+		(property "Reference" "R59"
 			(at 114.3 162.56 90)
 			(effects
 				(font
@@ -8431,7 +10385,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R84")
+					(reference "R59")
 					(unit 1)
 				)
 			)
@@ -8446,7 +10400,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c0d3526f-d648-4070-b1dd-d7ca8ae63d25")
-		(property "Reference" "#PWR079"
+		(property "Reference" "#PWR0113"
 			(at 237.49 120.65 0)
 			(effects
 				(font
@@ -8496,7 +10450,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR079")
+					(reference "#PWR0113")
 					(unit 1)
 				)
 			)
@@ -8511,7 +10465,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c2033e3b-510b-4f87-921e-22048be439a1")
-		(property "Reference" "R56"
+		(property "Reference" "R78"
 			(at 224.79 44.45 0)
 			(effects
 				(font
@@ -8574,7 +10528,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R56")
+					(reference "R78")
 					(unit 1)
 				)
 			)
@@ -8590,7 +10544,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ca184806-30aa-46a7-8321-3f80f2e3a714")
-		(property "Reference" "R55"
+		(property "Reference" "R77"
 			(at 218.44 35.56 90)
 			(effects
 				(font
@@ -8651,7 +10605,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R55")
+					(reference "R77")
 					(unit 1)
 				)
 			)
@@ -8666,7 +10620,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "cca8d998-b963-41d8-8e0b-53095f4116ee")
-		(property "Reference" "#PWR054"
+		(property "Reference" "#PWR086"
 			(at 44.45 55.88 0)
 			(effects
 				(font
@@ -8716,7 +10670,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR054")
+					(reference "#PWR086")
 					(unit 1)
 				)
 			)
@@ -8731,7 +10685,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "da6c19d8-c44c-420c-bb70-9240f42ed3c0")
-		(property "Reference" "#PWR073"
+		(property "Reference" "#PWR0114"
 			(at 248.92 67.31 0)
 			(effects
 				(font
@@ -8781,7 +10735,74 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR073")
+					(reference "#PWR0114")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 165.1 96.52 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dc281ba2-a782-45a8-8d44-f7d720bb843f")
+		(property "Reference" "#PWR0104"
+			(at 168.91 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 161.29 96.5199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 165.1 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 165.1 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 165.1 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cf7a818e-54c2-4019-b948-65139abcceb7")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0104")
 					(unit 1)
 				)
 			)
@@ -8796,7 +10817,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e0eb541a-789b-47df-b417-1678893aa280")
-		(property "Reference" "R78"
+		(property "Reference" "R83"
 			(at 264.16 105.41 0)
 			(effects
 				(font
@@ -8859,7 +10880,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R78")
+					(reference "R83")
 					(unit 1)
 				)
 			)
@@ -8874,7 +10895,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e40a7205-950f-4448-bfe1-18c4e73d2801")
-		(property "Reference" "#PWR081"
+		(property "Reference" "#PWR090"
 			(at 50.8 184.15 0)
 			(effects
 				(font
@@ -8924,7 +10945,102 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR081")
+					(reference "#PWR090")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 162.56 33.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e60b2505-c8ca-4269-bef4-6c265291c42d")
+		(property "Reference" "D31"
+			(at 162.56 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 162.56 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 162.56 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 162.56 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 162.56 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 162.56 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 162.56 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 162.56 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "18296707-3672-43b9-88a8-ba9d1d590dda")
+		)
+		(pin "2"
+			(uuid "fc6bfa0e-5288-461e-91e9-2f488ed0bd8d")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D31")
 					(unit 1)
 				)
 			)
@@ -8939,7 +11055,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e6e6efe7-443d-4c9e-85c7-aac2bc473126")
-		(property "Reference" "#PWR058"
+		(property "Reference" "#PWR099"
 			(at 121.92 64.77 0)
 			(effects
 				(font
@@ -8989,7 +11105,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR058")
+					(reference "#PWR099")
 					(unit 1)
 				)
 			)
@@ -9005,7 +11121,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e9738d31-0eb0-4f11-9164-bb74ad5c4a84")
-		(property "Reference" "Q11"
+		(property "Reference" "Q5"
 			(at 64.77 167.005 0)
 			(effects
 				(font
@@ -9065,7 +11181,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q11")
+					(reference "Q5")
 					(unit 1)
 				)
 			)
@@ -9080,7 +11196,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ea3ace10-c9ba-43bf-97c2-5b89ac64aa11")
-		(property "Reference" "R70"
+		(property "Reference" "R63"
 			(at 133.35 109.22 0)
 			(effects
 				(font
@@ -9143,7 +11259,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R70")
+					(reference "R63")
 					(unit 1)
 				)
 			)
@@ -9159,7 +11275,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "eb41f0a1-4e2e-4d38-9aa2-5bf9224141c9")
-		(property "Reference" "Q7"
+		(property "Reference" "Q12"
 			(at 237.49 40.005 0)
 			(effects
 				(font
@@ -9219,7 +11335,85 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q7")
+					(reference "Q12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x02")
+		(at 30.48 82.55 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ecd06551-efe5-4a8f-849b-090625068d3a")
+		(property "Reference" "J13"
+			(at 27.94 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IGNITOR"
+			(at 27.94 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TSRP_Connector_Hirose:DF51-2P-2DS"
+			(at 30.48 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-06309/"
+			(at 30.48 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 30.48 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 30.48 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3eaa4d50-9604-4819-b697-0042f2d769c9")
+		)
+		(pin "2"
+			(uuid "6f64e631-acd0-4175-b639-f4a46d9ab57f")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "J13")
 					(unit 1)
 				)
 			)
@@ -9234,7 +11428,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ee3f3190-bbbd-4d47-9cbc-bb642d7f9fe7")
-		(property "Reference" "#PWR080"
+		(property "Reference" "#PWR0115"
 			(at 262.89 128.27 0)
 			(effects
 				(font
@@ -9284,7 +11478,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR080")
+					(reference "#PWR0115")
 					(unit 1)
 				)
 			)
@@ -9299,7 +11493,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ef8bdad3-e27d-4200-9838-c62ba7c48454")
-		(property "Reference" "#PWR076"
+		(property "Reference" "#PWR0100"
 			(at 132.08 132.08 0)
 			(effects
 				(font
@@ -9349,7 +11543,169 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR076")
+					(reference "#PWR0100")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Small")
+		(at 170.18 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0bdcbee-9676-44a7-903c-329300546514")
+		(property "Reference" "D32"
+			(at 170.18 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GS1010FL"
+			(at 170.18 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
+			(at 170.18 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+			(at 170.18 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 170.18 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 170.18 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" ""
+			(at 170.18 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 170.18 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "700ba906-11c1-4401-9b39-f18ce2d2f9ec")
+		)
+		(pin "2"
+			(uuid "592ee3dd-ef27-4d26-a9e0-3fdb04e1491a")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "D32")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 222.25 33.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f4c68df2-aeef-43fc-8cfb-a1a6ad4bc434")
+		(property "Reference" "#PWR0110"
+			(at 226.06 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 218.44 33.0199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 222.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 222.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 222.25 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ed1e384d-9b42-4b6f-8a05-dd8c24aa5a0b")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "#PWR0110")
 					(unit 1)
 				)
 			)
@@ -9364,7 +11720,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f5432955-c9d7-4b34-9a59-da8988a08ebd")
-		(property "Reference" "#PWR055"
+		(property "Reference" "#PWR094"
 			(at 96.52 57.15 0)
 			(effects
 				(font
@@ -9414,7 +11770,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR055")
+					(reference "#PWR094")
 					(unit 1)
 				)
 			)
@@ -9430,7 +11786,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f5887801-4460-4748-82af-63ae787b0ded")
-		(property "Reference" "R68"
+		(property "Reference" "R57"
 			(at 101.6 102.87 90)
 			(effects
 				(font
@@ -9491,7 +11847,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R68")
+					(reference "R57")
 					(unit 1)
 				)
 			)
@@ -9507,7 +11863,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f662ed36-09c5-4948-98d7-fc2c7ede0847")
-		(property "Reference" "R80"
+		(property "Reference" "R51"
 			(at 45.72 162.56 90)
 			(effects
 				(font
@@ -9568,7 +11924,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "R80")
+					(reference "R51")
 					(unit 1)
 				)
 			)
@@ -9583,7 +11939,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f7f9d4d0-9c3a-486d-8295-a88bba83118d")
-		(property "Reference" "#PWR057"
+		(property "Reference" "#PWR0103"
 			(at 158.75 57.15 0)
 			(effects
 				(font
@@ -9633,7 +11989,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "#PWR057")
+					(reference "#PWR0103")
 					(unit 1)
 				)
 			)
@@ -9649,7 +12005,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f89fed37-ba68-44ae-a64b-d8afdf181ec4")
-		(property "Reference" "Q9"
+		(property "Reference" "Q10"
 			(at 180.34 103.505 0)
 			(effects
 				(font
@@ -9709,7 +12065,85 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
-					(reference "Q9")
+					(reference "Q10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 214.63 146.05 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fd4334a4-b984-4c9e-a0c7-ed528f9d6f9e")
+		(property "Reference" "R76"
+			(at 215.9 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10kR"
+			(at 215.9 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 214.63 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+			(at 214.63 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 214.63 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 214.63 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dd4e6ab2-141c-4ce7-b6db-a66e16c49cc5")
+		)
+		(pin "2"
+			(uuid "39f7e715-1491-48b2-9543-c8509d1f51ee")
+		)
+		(instances
+			(project "SatelliteController"
+				(path "/628d040b-43bf-4733-804f-091644a90124/00dde40e-a748-45c0-b568-e59daee433cf"
+					(reference "R76")
 					(unit 1)
 				)
 			)

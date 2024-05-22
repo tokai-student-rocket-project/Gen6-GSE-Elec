@@ -490,12 +490,6 @@
 		)
 	)
 	(junction
-		(at 53.34 96.52)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0c8fa538-91ea-4cc5-ab00-712b321ead9f")
-	)
-	(junction
 		(at 64.77 58.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -512,12 +506,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4d6aba41-513a-4e78-84f8-406cd3e47482")
-	)
-	(junction
-		(at 64.77 96.52)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "8e0e5902-5e6e-4378-a4ce-be52ce1c2c13")
 	)
 	(junction
 		(at 53.34 39.37)
@@ -579,7 +567,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 96.52) (xy 64.77 96.52)
+			(xy 38.1 96.52) (xy 41.91 96.52)
 		)
 		(stroke
 			(width 0)
@@ -639,16 +627,6 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 96.52) (xy 53.34 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4eb4926a-afdd-41e9-bb93-04cd7b8a73d2")
-	)
-	(wire
-		(pts
 			(xy 64.77 58.42) (xy 69.85 58.42)
 		)
 		(stroke
@@ -666,16 +644,6 @@
 			(type default)
 		)
 		(uuid "566a4bf1-4ca0-4aa7-9d6d-2446cfda6221")
-	)
-	(wire
-		(pts
-			(xy 35.56 104.14) (xy 40.64 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6f8d5ea3-8075-40a3-81a7-b4ea04e92172")
 	)
 	(wire
 		(pts
@@ -719,16 +687,6 @@
 	)
 	(wire
 		(pts
-			(xy 64.77 96.52) (xy 64.77 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "95215b76-ba8b-47bc-acc2-b0fc700e940d")
-	)
-	(wire
-		(pts
 			(xy 67.31 27.94) (xy 64.77 27.94)
 		)
 		(stroke
@@ -736,16 +694,6 @@
 			(type default)
 		)
 		(uuid "98ef8d0c-eea8-4b52-b1e5-f7cc90d438c8")
-	)
-	(wire
-		(pts
-			(xy 64.77 104.14) (xy 67.31 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a252349c-d865-41bc-8fe0-d9020c0e0b96")
 	)
 	(wire
 		(pts
@@ -789,7 +737,7 @@
 	)
 	(wire
 		(pts
-			(xy 72.39 96.52) (xy 74.93 96.52)
+			(xy 46.99 96.52) (xy 49.53 96.52)
 		)
 		(stroke
 			(width 0)
@@ -819,16 +767,6 @@
 	)
 	(wire
 		(pts
-			(xy 50.8 104.14) (xy 53.34 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cf51b1e4-d899-40a6-ac40-eede4247f240")
-	)
-	(wire
-		(pts
 			(xy 72.39 46.99) (xy 74.93 46.99)
 		)
 		(stroke
@@ -839,16 +777,6 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 96.52) (xy 53.34 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df3c04c1-de19-4e52-8f8e-3e8cbb7eb8ac")
-	)
-	(wire
-		(pts
 			(xy 64.77 39.37) (xy 64.77 46.99)
 		)
 		(stroke
@@ -856,16 +784,6 @@
 			(type default)
 		)
 		(uuid "e227cf80-24dc-473e-890d-c47daff35215")
-	)
-	(wire
-		(pts
-			(xy 64.77 96.52) (xy 67.31 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e54d24f2-01bf-4708-a70a-d9cd16add5bb")
 	)
 	(wire
 		(pts
@@ -1009,7 +927,7 @@
 		)
 		(uuid "77b5085a-860c-4407-bb0a-6632078af524")
 	)
-	(text "PURGE SWITCH\nA ALT -"
+	(text "CHECK SWITCH\nA ALT -"
 		(exclude_from_sim no)
 		(at 13.97 93.98 0)
 		(effects
@@ -1082,28 +1000,6 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "CTL_PURGE"
-		(shape output)
-		(at 67.31 104.14 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "1e3150fa-87f0-43a6-b914-79f5a434e252")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 80.7386 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 				(hide yes)
 			)
 		)
@@ -1218,7 +1114,7 @@
 			)
 		)
 	)
-	(global_label "SW_PURGE"
+	(global_label "SW_CHECK"
 		(shape input)
 		(at 38.1 96.52 180)
 		(fields_autoplaced yes)
@@ -1230,7 +1126,7 @@
 		)
 		(uuid "9e3962c9-3aad-45ec-bd69-c8c226f88c34")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 25.2762 96.52 0)
+			(at 25.1968 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1340,7 +1236,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "15ce4d65-b31b-4c41-b5be-53ebd2cb2985")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR076"
 			(at 31.75 27.94 0)
 			(effects
 				(font
@@ -1391,7 +1287,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR06")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
@@ -1406,7 +1302,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4926f00f-f0a0-430e-8b72-8da74d3752f9")
-		(property "Reference" "R50"
+		(property "Reference" "R48"
 			(at 72.39 53.34 90)
 			(effects
 				(font
@@ -1467,7 +1363,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "R50")
+					(reference "R48")
 					(unit 1)
 				)
 			)
@@ -1489,7 +1385,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "53aed7fb-86b8-49a3-a3ce-cc73ec0b16dd")
-		(property "Reference" "#PWR0104"
+		(property "Reference" "#PWR079"
 			(at 31.75 85.09 0)
 			(effects
 				(font
@@ -1540,142 +1436,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR0104")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 35.56 104.14 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "53bc9215-625e-4b94-87b7-056322175f9d")
-		(property "Reference" "#PWR0101"
-			(at 29.21 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 31.75 104.775 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 35.56 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 35.56 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 35.56 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "39bf6433-e448-4960-afc0-a9f6c8db4d86")
-		)
-		(instances
-			(project "SatelliteController"
-				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR0101")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Switch:SW_Push")
-		(at 45.72 104.14 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5822b048-d5ae-4be4-8555-4e8f60bdf581")
-		(property "Reference" "SW25"
-			(at 45.72 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "SW_Push"
-			(at 45.72 100.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 45.72 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gC-08593/"
-			(at 45.72 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 45.72 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6a597386-3270-4368-8c1b-a410f12e827e")
-		)
-		(pin "2"
-			(uuid "48c7c586-25fc-4f52-9db0-69270ba13ef0")
-		)
-		(instances
-			(project "SatelliteController"
-				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "SW25")
+					(reference "#PWR079")
 					(unit 1)
 				)
 			)
@@ -1759,7 +1520,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7abc243c-c6a2-4679-9787-041b48132e8d")
-		(property "Reference" "SW17"
+		(property "Reference" "SW4"
 			(at 45.72 78.74 0)
 			(effects
 				(font
@@ -1811,7 +1572,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "SW17")
+					(reference "SW4")
 					(unit 1)
 				)
 			)
@@ -1827,7 +1588,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "86db7ba3-1e14-401d-9b44-cb60e9eaadb1")
-		(property "Reference" "#PWR0100"
+		(property "Reference" "#PWR082"
 			(at 73.66 58.42 0)
 			(effects
 				(font
@@ -1878,7 +1639,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR0100")
+					(reference "#PWR082")
 					(unit 1)
 				)
 			)
@@ -1886,15 +1647,15 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 69.85 96.52 90)
+		(at 44.45 96.52 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "9809885f-d89a-4335-bc96-64c557bf90e5")
-		(property "Reference" "R66"
-			(at 69.85 91.44 90)
+		(property "Reference" "R46"
+			(at 44.45 91.44 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1902,7 +1663,7 @@
 			)
 		)
 		(property "Value" "1kR"
-			(at 69.85 93.98 90)
+			(at 44.45 93.98 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1910,7 +1671,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 69.85 96.52 0)
+			(at 44.45 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1919,7 +1680,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
-			(at 69.85 96.52 0)
+			(at 44.45 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1928,7 +1689,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 69.85 96.52 0)
+			(at 44.45 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1937,7 +1698,7 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 69.85 96.52 0)
+			(at 44.45 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1954,7 +1715,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "R66")
+					(reference "R46")
 					(unit 1)
 				)
 			)
@@ -1976,7 +1737,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9c777a70-6647-41e3-8c81-d90f7ede7e33")
-		(property "Reference" "SW11"
+		(property "Reference" "SW3"
 			(at 45.72 59.69 0)
 			(effects
 				(font
@@ -2028,7 +1789,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "SW11")
+					(reference "SW3")
 					(unit 1)
 				)
 			)
@@ -2043,7 +1804,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c23efffd-e558-4b77-8da1-960f0de3aa72")
-		(property "Reference" "R51"
+		(property "Reference" "R47"
 			(at 69.85 41.91 90)
 			(effects
 				(font
@@ -2104,7 +1865,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "R51")
+					(reference "R47")
 					(unit 1)
 				)
 			)
@@ -2126,7 +1887,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c7d3f015-99d1-4bae-bec8-e90ac527169d")
-		(property "Reference" "#PWR082"
+		(property "Reference" "#PWR078"
 			(at 31.75 66.04 0)
 			(effects
 				(font
@@ -2177,7 +1938,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR082")
+					(reference "#PWR078")
 					(unit 1)
 				)
 			)
@@ -2185,7 +1946,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 74.93 96.52 270)
+		(at 49.53 96.52 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2193,8 +1954,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cfceed81-8317-4d4b-91d9-6978c9ce4c97")
-		(property "Reference" "#PWR0102"
-			(at 71.12 96.52 0)
+		(property "Reference" "#PWR080"
+			(at 45.72 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2203,7 +1964,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 78.74 97.155 90)
+			(at 53.34 97.155 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2212,7 +1973,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 74.93 96.52 0)
+			(at 49.53 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2221,7 +1982,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 74.93 96.52 0)
+			(at 49.53 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2230,7 +1991,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 74.93 96.52 0)
+			(at 49.53 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2244,7 +2005,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR0102")
+					(reference "#PWR080")
 					(unit 1)
 				)
 			)
@@ -2260,7 +2021,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e8f2e43a-9245-430d-9b1c-db645e05c4e0")
-		(property "Reference" "#PWR075"
+		(property "Reference" "#PWR077"
 			(at 41.91 39.37 0)
 			(effects
 				(font
@@ -2311,7 +2072,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR075")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -2327,7 +2088,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f4e3ec68-93ab-4405-a06f-e9f0439e6cf2")
-		(property "Reference" "#PWR0103"
+		(property "Reference" "#PWR081"
 			(at 81.28 46.99 0)
 			(effects
 				(font
@@ -2378,7 +2139,7 @@
 		(instances
 			(project "SatelliteController"
 				(path "/628d040b-43bf-4733-804f-091644a90124/50cfa140-fcaf-4528-b6e7-da7a529677fd"
-					(reference "#PWR0103")
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
