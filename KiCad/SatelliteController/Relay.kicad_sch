@@ -11378,7 +11378,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TSRP_Connector_Hirose:DF51-2P-2DS"
+		(property "Footprint" "TSRP_TerminalBlock_Alphaplus:TB411-2-2-E-1"
 			(at 30.48 82.55 0)
 			(effects
 				(font

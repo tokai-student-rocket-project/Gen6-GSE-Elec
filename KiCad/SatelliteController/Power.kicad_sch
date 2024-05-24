@@ -5912,7 +5912,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "5.6R"
+		(property "Value" "5.6kR"
 			(at 82.55 33.655 0)
 			(effects
 				(font
@@ -7852,7 +7852,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3.3R"
+		(property "Value" "3.3kR"
 			(at 92.71 43.815 0)
 			(effects
 				(font
