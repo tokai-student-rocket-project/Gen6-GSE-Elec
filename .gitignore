@@ -34,5 +34,8 @@ fp-info-cache
 _autosave-*
 *auto_saved_files*
 
+# KiCad 作ったけれど必要なくなったファイル
+KiCad/XT60Socket
+
 # PlatformIO 自動生成ファイル
 .pio/build
