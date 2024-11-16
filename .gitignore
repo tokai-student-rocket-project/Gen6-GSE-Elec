@@ -33,3 +33,6 @@ fp-info-cache
 # KiCad オートセーブファイル
 _autosave-*
 *auto_saved_files*
+
+# PlatformIO 自動生成ファイル
+.pio/build
