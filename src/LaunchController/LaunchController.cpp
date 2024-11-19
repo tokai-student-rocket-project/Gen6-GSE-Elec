@@ -62,6 +62,8 @@ namespace control
     const String IGNITER_STOP = "igniter-stop";
     const String OPEN_START = "open-start";
     const String PLAY_MUSIC = "play-music";
+    const String PURGE_START = "purge-start";
+    const String PURGE_STOP = "purge-stop";
 
     void setChristmasTreeStart();
     void setChristmasTreeStop();
@@ -74,6 +76,8 @@ namespace control
     void setIgniterStart();
     void setIgniterStop();
     void setOpenStart();
+    void setPurgeStart();
+    void setPurgeStop();
 } // namespace control
 
 namespace sequence
@@ -170,6 +174,8 @@ void setup()
     Tasks.add(control::IGNITER_START, &control::setIgniterStart);
     Tasks.add(control::IGNITER_STOP, &control::setIgniterStop);
     Tasks.add(control::OPEN_START, &control::setOpenStart);
+    Tasks.add(control::PURGE_START, &control::setPurgeStart);
+    Tasks.add(control::PURGE_STOP, &control::setPurgeStop);
     Tasks.add(control::PLAY_MUSIC, []
               { mp3_play(9); });
 
@@ -484,6 +490,8 @@ void sequence::ignition()
 
     Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
     Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
+    Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
+    Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);
 }
 
 void control::setChristmasTreeStart()
@@ -602,4 +610,14 @@ void control::setIgniterStop()
 void control::setOpenStart()
 {
     control::open.setAutomaticOn();
+}
+
+void control::setPurgeStart()
+{
+    control::purge.setAutomaticOn();
+}
+
+void control::setPurgeStop()
+{
+    control::purge.setAutomaticOff();
 }
