@@ -281,17 +281,6 @@ void communication::onControlSyncReceived(uint8_t state)
 void communication::onComCheckReceived()
 {
   communication::statusLamp.blink();
-
-  // if (Serial1.available() > 0)
-  // {
-  //   char receiverChar = Serial1.read();
-  //   lastReceivedTime = millis();
-  //   Serial.println(receiverChar);
-  // }
-  // if (millis() - lastReceivedTime > timeout)
-  // {
-  //   control::dump.off();
-  // }
 }
 
 void control::handleManualTask()
