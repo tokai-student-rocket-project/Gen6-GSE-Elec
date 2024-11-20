@@ -270,7 +270,7 @@ void communication::onControlSyncReceived(uint8_t state)
   //   control::dump.off(); // DUMP OPEN
   // }
 
-  if ((control::dump.isHigh()) && (control::purge.isHigh()))
+  if ((control::dump.isHigh()) && (control::close.isHigh()))
   {
     control::dump.off();
   }
