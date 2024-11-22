@@ -225,7 +225,7 @@ void communication::sendPressureSync()
 }
 
 unsigned long lastReceivedTime = 0;
-const unsigned long timeout = 5000;
+const unsigned long timeout = 10000;
 
 void communication::sendComCheck()
 {
