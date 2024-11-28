@@ -66,7 +66,6 @@ namespace error
 namespace solenoid
 {
   SolenoidMonitor monitor(PIN_PC4);
-
   void measureTask();
 } // namespace solenoid
 
@@ -166,29 +165,6 @@ void solenoid::measureTask()
   // control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
   // control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
   // control::purgeFB.set(control::purge.isHigh() && isArmed ? !control::purgeFB.isHigh() : LOW);
-
-  // monitor.setDividerResistance(56000.0, 33000.0);
-  // uint16_t fillVoltage = monitor.getVoltage_mV(SolenoidMonitor::Solenoid::FILL);
-
-  // Serial.print("FILL Solenoid Voltage: ");
-  // Serial.println(fillVoltage);
-
-  // SolenoidMonitor::Status status = monitor.getStatus(SolenoidMonitor::Solenoid::SHIFT);
-  // switch (status)
-  // {
-  // case SolenoidMonitor::Status::ON:
-  //   Serial.println("Solenoid is on");
-  //   break;
-  // case SolenoidMonitor::Status::OFF:
-  //   Serial.println("Solenoid is off");
-  //   break;
-  // case SolenoidMonitor::Status::OPEN_FAILURE:
-  //   Serial.println("Open failure detected");
-  //   break;
-  // case SolenoidMonitor::Status::CLOSE_FAILURE:
-  //   Serial.println("Close failure detected");
-  //   break;
-  // }
 }
 
 void n2o::measureTask()
@@ -224,32 +200,12 @@ void communication::sendPressureSync()
   communication::disableOutput();
 }
 
-unsigned long lastReceivedTime = 0;
-const unsigned long timeout = 10000;
-
 void communication::sendComCheck()
 {
   communication::enableOutput();
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
   Serial1.flush();
   communication::disableOutput();
-
-  if (Serial1.available() > 0)
-  {
-    char receiverChar = Serial1.read();
-    lastReceivedTime = millis();
-    Serial.println(receiverChar);
-  }
-  if (millis() - lastReceivedTime > timeout)
-  {
-    control::dump.off();
-    control::fill.off();
-    control::oxygen.off();
-    control::igniter.off();
-    control::close.off();
-    control::purge.off();
-    control::open.off();
-  }
 }
 
 void communication::onControlSyncReceived(uint8_t state)
@@ -264,11 +220,6 @@ void communication::onControlSyncReceived(uint8_t state)
   control::open.set(state & (1 << 5) && isArmed);
   control::close.set(state & (1 << 6) && isArmed);
   control::purge.set(state & (1 << 7) && isArmed);
-
-  // if ((state & (1 << 2) && isArmed) && (state & (1 << 7) && isArmed))
-  // {
-  //   control::dump.off(); // DUMP OPEN
-  // }
 
   if ((control::dump.isHigh()) && (control::close.isHigh()))
   {
@@ -316,7 +267,7 @@ void control::handleManualTask()
   {
     control::purge.on();
   }
-  Serial.println(control::purgeSwitch.isRaised());
+  // Serial.println(control::purgeSwitch.isRaised());
   // control::purgeSwitch.setAutomatic(control::purge.isHigh());
 
   // アンビリカル
