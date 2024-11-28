@@ -66,6 +66,8 @@ namespace error
 namespace solenoid
 {
   SolenoidMonitor monitor(PIN_PC4);
+
+  void checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name);
   void measureTask();
 } // namespace solenoid
 
@@ -144,17 +146,17 @@ void power::measureTask()
 void solenoid::measureTask()
 {
   // 仮の振る舞い
-  bool isArmed = control::safetyArmed.isManualRaised();
+  // bool isArmed = control::safetyArmed.isManualRaised();
 
   // 正常
-  control::shiftFB.set(control::shift.isHigh() && isArmed);
-  control::fillFB.set(control::fill.isHigh() && isArmed);
-  control::dumpFB.set(control::dump.isHigh() && isArmed);
-  control::oxygenFB.set(control::oxygen.isHigh() && isArmed);
-  control::igniterFB.set(control::igniter.isHigh() && isArmed);
-  control::openFB.set(control::open.isHigh() && isArmed);
-  control::closeFB.set(control::close.isHigh() && isArmed);
-  control::purgeFB.set(control::purge.isHigh() && isArmed);
+  // control::shiftFB.set(control::shift.isHigh() && isArmed);
+  // control::fillFB.set(control::fill.isHigh() && isArmed);
+  // control::dumpFB.set(control::dump.isHigh() && isArmed);
+  // control::oxygenFB.set(control::oxygen.isHigh() && isArmed);
+  // control::igniterFB.set(control::igniter.isHigh() && isArmed);
+  // control::openFB.set(control::open.isHigh() && isArmed);
+  // control::closeFB.set(control::close.isHigh() && isArmed);
+  // control::purgeFB.set(control::purge.isHigh() && isArmed);
 
   // 故障
   // control::shiftFB.set(control::shift.isHigh() && isArmed ? !control::shiftFB.isHigh() : LOW);
@@ -165,7 +167,106 @@ void solenoid::measureTask()
   // control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
   // control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
   // control::purgeFB.set(control::purge.isHigh() && isArmed ? !control::purgeFB.isHigh() : LOW);
+  // checkSolenoid(SolenoidMonitor::Solenoid::FILL, "FILL");
+  // checkSolenoid(SolenoidMonitor::Solenoid::DUMP, "DUMP");
+  // checkSolenoid(SolenoidMonitor::Solenoid::OXYGEN, "OXYGEN");
+  // checkSolenoid(SolenoidMonitor::Solenoid::PURGE, "PURGE");
+  //
+
+  SolenoidMonitor::Status fillStatus = monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
+  SolenoidMonitor::Status dumpStatus = monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
+  SolenoidMonitor::Status oxygenStatus = monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
+  SolenoidMonitor::Status purgeStatus = monitor.getStatus(SolenoidMonitor::Solenoid::PURGE);
+
+  //
+  bool isArmed = control::safetyArmed.isManualRaised();
+
+  if (!isArmed)
+    return;
+
+  switch (fillStatus)
+  {
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::fillFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::fillFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::fillFB.on();
+    break;
+  }
+
+  switch (dumpStatus)
+  {
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::dumpFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::dumpFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::dumpFB.on();
+    break;
+  }
+
+  switch (oxygenStatus)
+  {
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::oxygenFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::oxygenFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::oxygenFB.on();
+    break;
+  }
+
+  switch (purgeStatus)
+  {
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::purgeFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::purgeFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::purgeFB.on();
+    break;
+  }
 }
+
+// void solenoid::checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name)
+// {
+//   // 電圧値の取得
+//   uint16_t voltage = monitor.getVoltage_mV(solenoid);
+//   // 状態の取得
+//   SolenoidMonitor::Status status = monitor.getStatus(solenoid);
+//   // 状態の文字列化
+//   const char *statusStr;
+//   switch (status)
+//   {
+//   case SolenoidMonitor::Status::ON:
+//     statusStr = "ON";
+//     break;
+//   case SolenoidMonitor::Status::OFF:
+//     statusStr = "OFF";
+//     break;
+//   case SolenoidMonitor::Status::OPEN_FAILURE:
+//     statusStr = "OPEN FAILURE";
+//     break;
+//   case SolenoidMonitor::Status::CLOSE_FAILURE:
+//     statusStr = "CLOSE FAILURE";
+//     break;
+//   }
+//   // 結果の出力
+//   Serial.print(name);
+//   Serial.print(": Voltage=");
+//   Serial.print(voltage);
+//   Serial.print("mV, Status=");
+//   Serial.println(statusStr);
+// }
 
 void n2o::measureTask()
 {
