@@ -168,6 +168,13 @@ void solenoid::measureTask()
   // control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
   // control::purgeFB.set(control::purge.isHigh() && isArmed ? !control::purgeFB.isHigh() : LOW);
 
+  // USBポートから状態を読み出し
+  checkSolenoid(SolenoidMonitor::Solenoid::FILL, "FILL");
+  checkSolenoid(SolenoidMonitor::Solenoid::DUMP, "DUMP");
+  checkSolenoid(SolenoidMonitor::Solenoid::OXYGEN, "OXYGEN");
+  checkSolenoid(SolenoidMonitor::Solenoid::PURGE, "PURGE");
+
+  // 正常・故障検知
   SolenoidMonitor::Status fillStatus = monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
   SolenoidMonitor::Status dumpStatus = monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
   SolenoidMonitor::Status oxygenStatus = monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
@@ -242,36 +249,38 @@ void solenoid::measureTask()
   }
 }
 
-// void solenoid::checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name)
-// {
-//   // 電圧値の取得
-//   uint16_t voltage = monitor.getVoltage_mV(solenoid);
-//   // 状態の取得
-//   SolenoidMonitor::Status status = monitor.getStatus(solenoid);
-//   // 状態の文字列化
-//   const char *statusStr;
-//   switch (status)
-//   {
-//   case SolenoidMonitor::Status::ON:
-//     statusStr = "ON";
-//     break;
-//   case SolenoidMonitor::Status::OFF:
-//     statusStr = "OFF";
-//     break;
-//   case SolenoidMonitor::Status::OPEN_FAILURE:
-//     statusStr = "OPEN FAILURE";
-//     break;
-//   case SolenoidMonitor::Status::CLOSE_FAILURE:
-//     statusStr = "CLOSE FAILURE";
-//     break;
-//   }
-//   // 結果の出力
-//   Serial.print(name);
-//   Serial.print(": Voltage=");
-//   Serial.print(voltage);
-//   Serial.print("mV, Status=");
-//   Serial.println(statusStr);
-// }
+void solenoid::checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name)
+{
+  // 電圧値の取得
+  uint16_t voltage = monitor.getVoltage_mV(solenoid);
+
+  // 状態の取得
+  SolenoidMonitor::Status status = monitor.getStatus(solenoid);
+
+  // 状態の文字列化
+  const char *statusStr;
+  switch (status)
+  {
+  case SolenoidMonitor::Status::ON:
+    statusStr = "ON";
+    break;
+  case SolenoidMonitor::Status::OFF:
+    statusStr = "OFF";
+    break;
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    statusStr = "OPEN FAILURE";
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    statusStr = "CLOSE FAILURE";
+    break;
+  }
+  // 結果の出力
+  Serial.print(name);
+  Serial.print(": Voltage=");
+  Serial.print(voltage);
+  Serial.print("mV, Status=");
+  Serial.println(statusStr);
+}
 
 void n2o::measureTask()
 {
