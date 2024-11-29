@@ -167,27 +167,23 @@ void solenoid::measureTask()
   // control::openFB.set(control::open.isHigh() && isArmed ? !control::openFB.isHigh() : LOW);
   // control::closeFB.set(control::close.isHigh() && isArmed ? !control::closeFB.isHigh() : LOW);
   // control::purgeFB.set(control::purge.isHigh() && isArmed ? !control::purgeFB.isHigh() : LOW);
-  // checkSolenoid(SolenoidMonitor::Solenoid::FILL, "FILL");
-  // checkSolenoid(SolenoidMonitor::Solenoid::DUMP, "DUMP");
-  // checkSolenoid(SolenoidMonitor::Solenoid::OXYGEN, "OXYGEN");
-  // checkSolenoid(SolenoidMonitor::Solenoid::PURGE, "PURGE");
-  //
 
   SolenoidMonitor::Status fillStatus = monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
   SolenoidMonitor::Status dumpStatus = monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
   SolenoidMonitor::Status oxygenStatus = monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
   SolenoidMonitor::Status purgeStatus = monitor.getStatus(SolenoidMonitor::Solenoid::PURGE);
 
-  //
-  bool isArmed = control::safetyArmed.isManualRaised();
-
-  if (!isArmed)
+  // Armedでなければこの時点で終わり
+  if (!control::safetyArmed.isManualRaised())
     return;
 
   switch (fillStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::fillFB.off();
+    control::fillFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::fillFB.toggle();
     break;
   case SolenoidMonitor::Status::OFF:
     control::fillFB.off();
@@ -200,7 +196,10 @@ void solenoid::measureTask()
   switch (dumpStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::dumpFB.off();
+    control::dumpFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::dumpFB.toggle();
     break;
   case SolenoidMonitor::Status::OFF:
     control::dumpFB.off();
@@ -213,7 +212,10 @@ void solenoid::measureTask()
   switch (oxygenStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::oxygenFB.off();
+    control::oxygenFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::oxygenFB.toggle();
     break;
   case SolenoidMonitor::Status::OFF:
     control::oxygenFB.off();
@@ -226,7 +228,10 @@ void solenoid::measureTask()
   switch (purgeStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::purgeFB.off();
+    control::purgeFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::purgeFB.toggle();
     break;
   case SolenoidMonitor::Status::OFF:
     control::purgeFB.off();
