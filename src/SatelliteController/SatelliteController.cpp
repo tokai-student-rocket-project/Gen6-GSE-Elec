@@ -184,6 +184,12 @@ void solenoid::measureTask()
   if (!control::safetyArmed.isManualRaised())
     return;
 
+  bool isArmed = control::safetyArmed.isManualRaised();
+
+  control::openFB.set(control::open.isHigh() && isArmed);
+  control::closeFB.set(control::close.isHigh() && isArmed);
+  control::igniterFB.set(control::igniter.isHigh() && isArmed);
+
   switch (fillStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
