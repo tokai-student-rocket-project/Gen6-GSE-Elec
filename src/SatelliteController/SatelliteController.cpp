@@ -129,7 +129,7 @@ void communication::disableOutput()
 
 void power::measureTask()
 {
-  bool isLowVoltage = power::input.getVoltage_V() < 10.5;
+  bool isLowVoltage = power::input.getVoltage_V() < 10.5; // 電磁弁の許容電流に設定
   bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
   bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
   bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
