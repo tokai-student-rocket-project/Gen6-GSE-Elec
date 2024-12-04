@@ -182,13 +182,23 @@ void solenoid::measureTask()
 
   // Armedでなければこの時点で終わり
   if (!control::safetyArmed.isManualRaised())
+  {
+    control::fillFB.off();
+    control::dumpFB.off();
+    control::oxygenFB.off();
+    control::purgeFB.off();
     return;
+  }
 
-  bool isArmed = control::safetyArmed.isManualRaised();
+  // bool isArmed = control::safetyArmed.isManualRaised();
 
-  control::openFB.set(control::open.isHigh() && isArmed);
-  control::closeFB.set(control::close.isHigh() && isArmed);
-  control::igniterFB.set(control::igniter.isHigh() && isArmed);
+  // control::openFB.set(control::open.isHigh() && isArmed);
+  // control::closeFB.set(control::close.isHigh() && isArmed);
+  // control::igniterFB.set(control::igniter.isHigh() && isArmed);
+
+  control::openFB.set(control::open.isHigh());
+  control::closeFB.set(control::close.isHigh());
+  control::igniterFB.set(control::igniter.isHigh());
 
   switch (fillStatus)
   {
