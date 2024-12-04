@@ -52,6 +52,7 @@ namespace control
   Output purgeFB(PIN_PH1);
   Output statusLamp(PIN_PK4);
 
+  void setCheck();
   void handleManualTask();
   void setChristmasTreeStart();
   void setChristmasTreeStop();
@@ -383,11 +384,9 @@ void control::handleManualTask()
   }
 
   // 手動制御
-  control::purgeSwitch.setManual();
-  if (control::purgeSwitch.isManualRaised())
-  {
-    control::purge.on();
-  }
+  if ()
+    control::purgeSwitch.setManual();
+
   // Serial.println(control::purgeSwitch.isRaised());
   // control::purgeSwitch.setAutomatic(control::purge.isHigh());
 
@@ -471,6 +470,7 @@ void setup()
   Tasks.add(&communication::sendPressureSync)->startFps(2);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), );
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
 
   control::setChristmasTreeStart();
