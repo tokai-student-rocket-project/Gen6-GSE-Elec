@@ -128,6 +128,7 @@ namespace communication
     void onFeedbackSyncReceived(uint8_t state);
     void onPressureSyncReceived(float pressure);
     void onComCheckReceived();
+    void onComCheckFailed();
 
     Output statusLamp(PIN_PK5);
 } // namespace communication
@@ -159,7 +160,6 @@ void setup()
 
     Tasks.add(&power::measureTask)->startFps(10);
     Tasks.add(&control::handleManualTask)->startFps(50);
-
     Tasks.add(&communication::sendControlSync)->startFps(50);
     Tasks.add(&communication::sendComCheck)->startFps(2);
     MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), &communication::onFeedbackSyncReceived);
@@ -261,24 +261,43 @@ void communication::onFeedbackSyncReceived(uint8_t state)
     control::closeFB.set(state & (1 << 6));
     control::purgeFB.set(state & (1 << 7));
 
-    communication::statusLamp.blink();
+    // communication::statusLamp.blink();
 }
 
 void communication::onPressureSyncReceived(float pressure)
 {
     n2o::tm1637.displayNumber(pressure);
 
-    communication::statusLamp.blink();
+    // communication::statusLamp.blink();
 }
+
+unsigned long preComReceivedTime = 0;
+const long timeout = 2000;
 
 void communication::onComCheckReceived()
 {
-    communication::statusLamp.blink();
+    // communication::statusLamp.blink();
+    communication::statusLamp.on();
+    preComReceivedTime = millis();
+}
+
+void communication::onComCheckFailed()
+{
+    if (!Serial1.available() && (millis() - preComReceivedTime > timeout))
+    {
+        communication::statusLamp.off();
+        error::statusLamp.toggle();
+
+        preComReceivedTime = millis();
+    }
+    else{
+        error::statusLamp.off();
+    }
 }
 
 void control::handleManualTask()
 {
-    control::statusLamp.blink();
+    // control::statusLamp.blink();
 
     if (power::killButton.isHigh())
     {

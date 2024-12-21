@@ -101,6 +101,10 @@ namespace communication
   Output sendEnableControl(PIN_PA2);
   Output accessLamp(PIN_PA4);
 
+  uint8_t syncState;
+  unsigned long preReceivedTime;
+  const long timeout = 5000;
+
   void enableOutput();
   void disableOutput();
 
@@ -109,6 +113,7 @@ namespace communication
   void sendComCheck();
   void onControlSyncReceived(uint8_t state);
   void onComCheckReceived();
+  void onComCheckFailed();
 
   Output statusLamp(PIN_PK5);
 } // namespace communication
@@ -206,7 +211,7 @@ void solenoid::measureTask()
     control::fillFB.toggle();
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::fillFB.toggle();
+    control::fillFB.off();
     break;
   case SolenoidMonitor::Status::OFF:
     control::fillFB.off();
@@ -222,7 +227,7 @@ void solenoid::measureTask()
     control::dumpFB.toggle();
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::dumpFB.toggle();
+    control::dumpFB.off();
     break;
   case SolenoidMonitor::Status::OFF:
     control::dumpFB.off();
@@ -238,7 +243,7 @@ void solenoid::measureTask()
     control::oxygenFB.toggle();
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::oxygenFB.toggle();
+    control::oxygenFB.off();
     break;
   case SolenoidMonitor::Status::OFF:
     control::oxygenFB.off();
@@ -254,7 +259,7 @@ void solenoid::measureTask()
     control::purgeFB.toggle();
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::purgeFB.toggle();
+    control::purgeFB.off();
     break;
   case SolenoidMonitor::Status::OFF:
     control::purgeFB.off();
@@ -343,6 +348,8 @@ void communication::onControlSyncReceived(uint8_t state)
 {
   bool isArmed = control::safetyArmed.isManualRaised();
 
+  communication::syncState = state;
+
   // control::shift.set(state & (1 << 0) && isArmed);
   control::fill.set(state & (1 << 1) && isArmed);
   control::dump.set(state & (1 << 2) && isArmed);
@@ -357,17 +364,44 @@ void communication::onControlSyncReceived(uint8_t state)
     control::dump.off();
   }
 
-  communication::statusLamp.blink();
+  // communication::statusLamp.blink();
 }
 
 void communication::onComCheckReceived()
 {
-  communication::statusLamp.blink();
+  // communication::statusLamp.blink();
+  communication::statusLamp.on();
+  communication::preReceivedTime = millis();
+  Serial.print("preComReceivedTime: ");
+  Serial.println(communication::preReceivedTime);
+}
+
+void communication::onComCheckFailed()
+{
+  if (!Serial1.available() && (millis() - communication::preReceivedTime > communication::timeout))
+  {
+    communication::statusLamp.off();
+    error::statusLamp.on();
+
+    control::dump.set(communication::syncState & 0);
+    control::fill.set(communication::syncState & 0);
+    control::oxygen.set(communication::syncState & 0);
+    control::igniter.set(communication::syncState & 0);
+    control::open.set(communication::syncState & 0);
+    control::close.set(communication::syncState & 0);
+    control::purge.set(communication::syncState & 0);
+
+    communication::preReceivedTime = millis();
+    Serial.println("COM Error");
+  }
+  else{
+    error::statusLamp.off();
+  }
 }
 
 void control::handleManualTask()
 {
-  control::statusLamp.blink();
+  // control::statusLamp.blink();
 
   if (power::killButton.isHigh())
   {
@@ -476,10 +510,10 @@ void setup()
   Tasks.add(&solenoid::measureTask)->startFps(10);
   Tasks.add(&n2o::measureTask)->startFps(2);
   Tasks.add(&control::handleManualTask)->startFps(50);
-
   Tasks.add(&communication::sendFeedbackSync)->startFps(10);
   Tasks.add(&communication::sendPressureSync)->startFps(2);
   Tasks.add(&communication::sendComCheck)->startFps(2);
+  Tasks.add(&communication::onComCheckFailed)->startFps(2);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
 
