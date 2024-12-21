@@ -31,6 +31,6 @@ SolenoidMonitor::Status SolenoidMonitor::getStatus(Solenoid solenoid) {
 
   if (voltage_mV < 8) return SolenoidMonitor::Status::OPEN_FAILURE;
   if (voltage_mV >= 8 && voltage_mV < 100) return SolenoidMonitor::Status::ON;
-  if (voltage_mV >= 100 && voltage_mV < 7000) return SolenoidMonitor::Status::OFF;
+  if (voltage_mV >= 100 && voltage_mV < 7200) return SolenoidMonitor::Status::OFF;
   return SolenoidMonitor::Status::CLOSE_FAILURE;
 }
