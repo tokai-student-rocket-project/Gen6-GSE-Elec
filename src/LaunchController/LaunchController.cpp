@@ -222,6 +222,7 @@ void power::measureTask()
         // HACK エラー
         error::statusLamp.on();
     }
+
     if (isSequenceStartMistake)
     {
         error::statusLamp.on();
@@ -438,10 +439,12 @@ void sequence::peacefulStop()
     Tasks[control::FILL_START]->stop();
     Tasks[control::OXYGEN_START]->stop();
     Tasks[control::IGNITER_START]->stop();
+    Tasks[control::PURGE_START]->stop();
     Tasks[control::FILL_STOP]->stop();
     Tasks[control::OPEN_START]->stop();
     Tasks[control::OXYGEN_STOP]->stop();
     Tasks[control::IGNITER_STOP]->stop();
+    Tasks[control::PURGE_STOP]->stop();
 
     mp3_stop();
     control::setPeacefulStop();
