@@ -120,6 +120,9 @@ namespace communication
     Output sendEnableControl(PIN_PA2);
     Output accessLamp(PIN_PA4);
 
+    unsigned long preReceivedTime;
+    const long timeout = 5000;
+
     void enableOutput();
     void disableOutput();
 
@@ -162,6 +165,7 @@ void setup()
     Tasks.add(&control::handleManualTask)->startFps(50);
     Tasks.add(&communication::sendControlSync)->startFps(50);
     Tasks.add(&communication::sendComCheck)->startFps(2);
+    Tasks.add(&communication::onComCheckFailed)->startFps(2);
     MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), &communication::onFeedbackSyncReceived);
     MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), &communication::onPressureSyncReceived);
     MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L), &communication::onComCheckReceived);
@@ -272,24 +276,29 @@ void communication::onPressureSyncReceived(float pressure)
     // communication::statusLamp.blink();
 }
 
-unsigned long preComReceivedTime = 0;
-const long timeout = 2000;
-
 void communication::onComCheckReceived()
 {
     // communication::statusLamp.blink();
     communication::statusLamp.on();
-    preComReceivedTime = millis();
+    communication::preReceivedTime = millis();
 }
 
 void communication::onComCheckFailed()
 {
-    if (!Serial1.available() && (millis() - preComReceivedTime > timeout))
+    if (!Serial1.available() && (millis() - communication::preReceivedTime > communication::timeout))
     {
         communication::statusLamp.off();
         error::statusLamp.toggle();
 
-        preComReceivedTime = millis();
+        control::fillFB.off();
+        control::dumpFB.off();
+        control::oxygenFB.off();
+        control::igniterFB.off();
+        control::openFB.off();
+        control::closeFB.off();
+        control::purgeFB.off();
+
+        communication::preReceivedTime = millis();
     }
     else{
         error::statusLamp.off();
@@ -298,7 +307,7 @@ void communication::onComCheckFailed()
 
 void control::handleManualTask()
 {
-    // control::statusLamp.blink();
+    control::statusLamp.blink();
 
     if (power::killButton.isHigh())
     {
