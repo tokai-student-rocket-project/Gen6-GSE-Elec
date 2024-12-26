@@ -392,7 +392,6 @@ void communication::onComCheckFailed()
     control::purge.set(communication::syncState & 0);
 
     communication::preReceivedTime = millis();
-    Serial.println("COM Error");
   }
   else{
     error::statusLamp.off();
@@ -401,7 +400,7 @@ void communication::onComCheckFailed()
 
 void control::handleManualTask()
 {
-  // control::statusLamp.blink();
+  control::statusLamp.blink();
 
   if (power::killButton.isHigh())
   {
