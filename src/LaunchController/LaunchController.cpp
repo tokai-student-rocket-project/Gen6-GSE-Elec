@@ -103,7 +103,7 @@ namespace n2o
 namespace error
 {
     // HACK LEDだけでなく処理もする
-    Output statusLamp(PIN_PK6);
+    Output statusLamp(PIN_PK6); //ERR
 } // namespace caution
 
 namespace communication
@@ -118,7 +118,9 @@ namespace communication
     };
 
     Output sendEnableControl(PIN_PA2);
-    Output accessLamp(PIN_PA4);
+    Output accessLamp(PIN_PA4); //RS485
+
+    // bool checkFailed = false;
 
     unsigned long preReceivedTime;
     const long timeout = 5000;
@@ -133,7 +135,7 @@ namespace communication
     void onComCheckReceived();
     void onComCheckFailed();
 
-    Output statusLamp(PIN_PK5);
+    Output statusLamp(PIN_PK5); // COM
 } // namespace communication
 
 void setup()
@@ -240,7 +242,7 @@ void power::measureTask()
 void communication::sendControlSync()
 {
     uint8_t state = (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) | (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) | (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) | (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
-    Serial.println(state, BIN); // ビット列を表示
+    // Serial.println(state, BIN); // ビット列を表示
     communication::enableOutput();
     MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), state);
     Serial1.flush();
@@ -288,7 +290,7 @@ void communication::onComCheckFailed()
     if (!Serial1.available() && (millis() - communication::preReceivedTime > communication::timeout))
     {
         communication::statusLamp.off();
-        error::statusLamp.toggle();
+        error::statusLamp.on();
 
         control::fillFB.off();
         control::dumpFB.off();
@@ -299,8 +301,8 @@ void communication::onComCheckFailed()
         control::purgeFB.off();
 
         communication::preReceivedTime = millis();
-    }
-    else{
+    }else
+    {
         error::statusLamp.off();
     }
 }
@@ -342,6 +344,8 @@ void control::handleManualTask()
 
         return;
     }
+
+
 
     // エマスト
     control::emergencyStop.setManual();
@@ -469,12 +473,20 @@ void sequence::fill()
     if (sequence::emergencyStopSequenceIsActive)
         return;
 
+
     // シーケンス開始時点で充填確認されていたらエラーを吐く
     if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh())
     {
         // HACK エラー
         sequence::peacefulStop();
         error::statusLamp.on();
+        return;
+    }
+
+    // 通信失敗したらシーケンスに進めない
+    if (!communication::statusLamp.isHigh())
+    {
+        sequence::peacefulStop();
         return;
     }
 
@@ -493,6 +505,13 @@ void sequence::ignition()
     // 重複実行防止
     if (sequence::ignitionSequenceIsActive)
         return;
+    
+    // 通信失敗したら点火シーケンスに進めない
+    if (!communication::statusLamp.isHigh())
+    {
+        sequence::peacefulStop();
+        return;
+    }
 
     // エマスト中は点火シーケンスを始めない
     if (sequence::emergencyStopSequenceIsActive)
