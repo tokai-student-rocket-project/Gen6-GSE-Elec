@@ -1,9 +1,9 @@
 
 ![Hero](./Documents/Pictures/Hero.JPG)
 
-# 第6世代GSE
+# 第6世代 Ground Support Equipment (GSE)
 
-これまで運用してきたGSE(Ground Support Equipment | 地上支援装置)から
+これまで運用してきたGSEから
 
 - 小型化
 - バッテリーからの給電
@@ -11,7 +11,7 @@
 
 に対応しました．
 
-前GSEから，セミオートマチックシークエンスも引き継いでいます．
+以前のGSEから，セミオートマチックシークエンスも引き継いでいます．
 
 ## 主な仕様
 
@@ -41,7 +41,7 @@
   - 想定通信距離
     - 100 m
 - 電源
-  - DC12V
+  - DC 12 V
 
 ### ランチコントローラー
 - 音声出力
@@ -67,6 +67,11 @@
 
 # ドキュメント
 
+[構成一覧](./Documents/)
+
+## 手順書
+[簡易手順書](./Documents/Gen6GSEManual-Elec.md)
+
 ## データフロー
 
 ### ランチコントローラー
@@ -76,9 +81,6 @@
 ### サテライトコントローラー
 ![SatelliteControllerDataFlowDiagram](./Documents/Pictures/DataFlowDiagram/SatelliteController_DataFlowDiagram.png)
 
-## 手順書
-
-[第6世代GSE手順書](./Documents/Gen6GSEManual-Elec.md)
 
 
 
