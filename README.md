@@ -1,3 +1,4 @@
+
 ![Hero](./Documents/Pictures/Hero.JPG)
 
 # 第6世代GSE
@@ -78,6 +79,7 @@
 ## 手順書
 
 [第6世代GSE手順書](./Documents/Gen6GSEManual-Elec.md)
+
 
 
 
