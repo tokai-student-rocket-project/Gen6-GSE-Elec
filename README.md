@@ -19,7 +19,7 @@
 - [構成一覧](./Documents/StructureList.md)
 
 ## 手順書
-[簡易手順書](./Documents/Gen6GSEManual-Elec.md)
+- [簡易手順書](./Documents/Gen6GSEManual-Elec.md)
 
 ## データフロー
 
@@ -27,7 +27,11 @@
 
 - [サテライトコントローラー](./Documents/Pictures/DataFlowDiagram/SatelliteController_DataFlowDiagram.png)
 
+## License
 
+Copyright (c) 2025 Tokai Student Rocket Project
+
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/tokai-student-rocket-project/Gen6-GSE-Elec/blob/main/LICENSE) file for mare details.
 
 
 
