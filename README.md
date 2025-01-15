@@ -16,15 +16,25 @@
 
 ## フォルダ構成
 
-- .pio: 基本的に自動生成されるため必要ないですが，ライブラリの関係で置いてあります．.pioフォルダの役割は外部ライブラリのインストール先とbuild時のファイル生成先です．（たぶん）
-- [Document](./Documents/): 資料保管場所として使用しています．できる限りの情報を残せるように頑張ります．
-- [include](./include/): 特に使用していません．(PlatformIO自動生成)
-- [KiCad](./KiCad/): サテライトコントローラーランチコントローラーの基板が入っています．フォルダ名の通り，オープンソースのEDAである[KiCad](https://www.kicad.org/)を使用して作成しました．バージョンは 8.0 です．(2025年1月中に9.0へと上がるみたいでびっくりしています．)
-- [lib](./lib/): ライブラリが入っています．新しくライブラリを作成する際はこちらに収納すると分かりやすいです．(PlatformIO自動生成)
-- [src](./src/): ランチコントローラーとサテライトコントローラーのソースファイルが入っています．Arduinoで記述していますが，[PlatformIO](https://platformio.org/)の仕様上 .ino ファイルではなく，.cppファイルになっています．(PlatformIO自動生成)
-- [test](./test/): test機能を使っていないので意味はありません．(PlatformIO自動生成)
-- [LICENCE](./LICENSE): ライセンスを記載しています．
-- [platformio.ini](./platformio.ini): PlatformIOを使用するための設定ファイルとなっています．参照：[platform.iniについて](#platforminiについて)
+## .pio
+: 基本的に自動生成されるため必要ないですが，ライブラリの関係で置いてあります．.pioフォルダの役割は外部ライブラリのインストール先とbuild時のファイル生成先です．（たぶん）
+
+## [Document](./Documents/)
+: 資料保管場所として使用しています．できる限りの情報を残せるように頑張ります．
+## [include](./include/)
+: 特に使用していません．(PlatformIO自動生成)
+## [KiCad](./KiCad/)
+: サテライトコントローラーランチコントローラーの基板が入っています．フォルダ名の通り，オープンソースのEDAである[KiCad](https://www.kicad.org/)を使用して作成しました．バージョンは 8.0 です．(2025年1月中に9.0へと上がるみたいでびっくりしています．)
+## [lib](./lib/)
+: ライブラリが入っています．新しくライブラリを作成する際はこちらに収納すると分かりやすいです．(PlatformIO自動生成)
+## [src](./src/)
+: ランチコントローラーとサテライトコントローラーのソースファイルが入っています．Arduinoで記述していますが，[PlatformIO](https://platformio.org/)の仕様上 .ino ファイルではなく，.cppファイルになっています．(PlatformIO自動生成)
+## [test](./test/)
+: test機能を使っていないので意味はありません．(PlatformIO自動生成)
+## [LICENCE](./LICENSE)
+: ライセンスを記載しています．
+## [platformio.ini](./platformio.ini)
+: PlatformIOを使用するための設定ファイルとなっています．参照：[platform.iniについて](#platforminiについて)
 
 ## platform.iniについて
 
