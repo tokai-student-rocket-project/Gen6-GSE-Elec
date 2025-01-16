@@ -14,6 +14,10 @@
 
 以前のGSEから，セミオートマチックシークエンスも引き継いでいます．
 
+## ドキュメント
+- [仕様](./Documents/Specifications.md)
+- [パーツリスト](./Documents/)
+
 ## フォルダ構成
 
 ## .pio
@@ -96,10 +100,6 @@ lib_deps = ...
 
 build_src_filter = +<LaunchController/LaunchController.cpp>
 > [platform.ini > サテライトコントローラー参照](#サテライトコントローラー)
-
-## ドキュメント
-- [仕様](./Documents/Specifications.md)
-- [パーツリスト](./Documents/)
 
 ### 手順書
 - [せいさくちゅう](./)
