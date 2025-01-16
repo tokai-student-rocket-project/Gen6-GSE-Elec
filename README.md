@@ -15,7 +15,7 @@
 以前のGSEから，セミオートマチックシークエンスも引き継いでいます．
 
 ## ドキュメント
-- [仕様](./Documents/Specifications.md)
+- [仕様](./Documents/Specification.md)
 - [パーツリスト](./Documents/)
 
 ## フォルダ構成
