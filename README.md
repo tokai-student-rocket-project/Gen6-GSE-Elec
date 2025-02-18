@@ -17,6 +17,7 @@
 ## ドキュメント
 - [仕様](./Documents/Specification.md)
 - [パーツリスト](./Documents/)
+- [自動シークエンスタイミングの考え方](./Documents/AutoSequence.md)
 
 ## フォルダ構成
 
@@ -60,7 +61,7 @@ board = ATmega2560
 > 使用するマイコンが持つ固有の値を入れています．参照：[公式](https://docs.platformio.org/en/latest/projectconf/sections/env/options/platform/board.html)
 
 framework = arduino
-> 使用したいフレームワークを指定ています．参照：[公式](https://docs.platformio.org/en/latest/frameworks/index.html#frameworks)
+> 使用したいフレームワークを指定しています．参照：[公式](https://docs.platformio.org/en/latest/frameworks/index.html#frameworks)
 
 monitor_speed = 115200
 > シリアルモニターのボーレートを指定しています．なお，VScodeの拡張機能である Serial Monitor を使用する場合は拡張機能側で設定する必要があるため関係ありません．
