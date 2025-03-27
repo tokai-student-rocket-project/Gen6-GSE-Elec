@@ -17,7 +17,7 @@
 以前のGSEから，セミオートマチックシークエンスも引き継いでいます．
 
 ## ギャラリー
-- [2025年3月8日 H-60号機打上げ実験](https://github.com/tokai-student-rocket-project/Gen6-GSE-Elec/blob/main/Documents/Pictures/Gallery/Gallery.md))
+- [2025年3月8日 H-60号機打上げ実験](https://github.com/tokai-student-rocket-project/Gen6-GSE-Elec/blob/main/Documents/Pictures/Gallery/Gallery.md)
 
 ## ドキュメント
 - [仕様](./Documents/Specification.md)
