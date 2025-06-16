@@ -531,9 +531,11 @@ void sequence::ignition()
     control::sequenceStart.setAutomaticOn();
     mp3_play(4); // 0104_ignitionSequenceStart
 
-    Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
+    // Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
+    Tasks[control::OXYGEN_START]->startOnceAfterMsec(100);
 
-    Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
+    // Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
+    Tasks[control::IGNITER_START]->startOnceAfterSec(3.0);
 
     Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
     Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
