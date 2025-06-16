@@ -552,7 +552,7 @@ void sequence::ignition()
     Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
     Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
 
-    Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5)test;
+    Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
     Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
     Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
     Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);
