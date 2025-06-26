@@ -103,7 +103,7 @@ namespace n2o
 namespace error
 {
     // HACK LEDだけでなく処理もする
-    Output statusLamp(PIN_PK6); //ERR
+    Output statusLamp(PIN_PK6); // ERR
 } // namespace caution
 
 namespace communication
@@ -118,7 +118,7 @@ namespace communication
     };
 
     Output sendEnableControl(PIN_PA2);
-    Output accessLamp(PIN_PA4); //RS485
+    Output accessLamp(PIN_PA4); // RS485
 
     // bool checkFailed = false;
 
@@ -301,7 +301,8 @@ void communication::onComCheckFailed()
         control::purgeFB.off();
 
         communication::preReceivedTime = millis();
-    }else
+    }
+    else
     {
         error::statusLamp.off();
     }
@@ -344,8 +345,6 @@ void control::handleManualTask()
 
         return;
     }
-
-
 
     // エマスト
     control::emergencyStop.setManual();
@@ -473,7 +472,6 @@ void sequence::fill()
     if (sequence::emergencyStopSequenceIsActive)
         return;
 
-
     // シーケンス開始時点で充填確認されていたらエラーを吐く
     if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh())
     {
@@ -505,7 +503,7 @@ void sequence::ignition()
     // 重複実行防止
     if (sequence::ignitionSequenceIsActive)
         return;
-    
+
     // 通信失敗したら点火シーケンスに進めない
     if (!communication::statusLamp.isHigh())
     {
@@ -532,18 +530,6 @@ void sequence::ignition()
     mp3_play(4); // 0104_ignitionSequenceStart
 
     // Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
-    Tasks[control::OXYGEN_START]->startOnceAfterMsec(100);
-
-    // Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
-    Tasks[control::IGNITER_START]->startOnceAfterSec(3.0);
-
-    Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
-    Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
-
-    Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
-    Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
-    Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
-    Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);// Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
     Tasks[control::OXYGEN_START]->startOnceAfterMsec(100);
 
     // Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
