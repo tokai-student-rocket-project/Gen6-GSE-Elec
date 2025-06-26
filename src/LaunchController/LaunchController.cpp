@@ -540,8 +540,8 @@ void sequence::ignition()
 
     Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
     Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
-    Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
-    Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);
+    Tasks[control::PURGE_START]->startOnceAfterSec(30.5);
+    Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
 }
 
 void control::setChristmasTreeStart()
