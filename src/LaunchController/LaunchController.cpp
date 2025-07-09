@@ -390,7 +390,7 @@ void control::handleManualTask()
     }
 
     // 点火シーケンス
-    if ((control::confirm1.isHigh() && control::confirm2.isHigh()) || (control::confirm2.isHigh() && control::confirm3.isHigh()) || (control::confirm3.isHigh() && control::confirm1.isHigh()))
+    if (control::confirm1.isHigh() && control::confirm2.isHigh() && control::confirm3.isHigh()) // 3人同時押しで充填確認するように変更
     {
         sequence::ignition();
     }
