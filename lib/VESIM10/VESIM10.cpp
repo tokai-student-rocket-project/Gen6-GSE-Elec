@@ -5,8 +5,10 @@ VESIM10::VESIM10(uint8_t analogPinNumber, float shuntResistance_Ohm, float fullS
   _analogPinNumber = analogPinNumber;
   _shuntResistance_Ohm = shuntResistance_Ohm;
 
-  _a = fullScaleRange_MPa / (_maxOutputCurrent_mA - _minOutputCurrent_mA);
-  _b = -(_a * _minOutputCurrent_mA);
+  // _a = fullScaleRange_MPa / (_maxOutputCurrent_mA - _minOutputCurrent_mA);
+  _a = 0.66; // 2023/05/13 校正　// 2025/07/22 書き込み済み
+  // _b = -(_a * _minOutputCurrent_mA);
+  _b = -2.86; // 2023/05/13 校正 // 2025/07/22 書き込み済み
 }
 
 float VESIM10::getCurrent_mA()
@@ -33,4 +35,6 @@ void VESIM10::calibrateBlocking(uint8_t samplingCount)
   float averageCurrent_mA = currentAverageBuffer_mA / (float)samplingCount;
 
   _offsetCurrent_mA = averageCurrent_mA - _minOutputCurrent_mA;
+  Serial.print(">offsetCurrent_mA");
+  Serial.println(_offsetCurrent_mA);
 }
