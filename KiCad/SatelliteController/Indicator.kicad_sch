@@ -1,14 +1,18 @@
 (kicad_sch
-	(version 20231120)
+	(version 20250114)
 	(generator "eeschema")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(uuid "224234b2-8397-40ed-a160-fba136d8106d")
 	(paper "A4")
 	(lib_symbols
 		(symbol "Device:LED_Small"
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 0.254) hide)
+				(offset 0.254)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -90,7 +94,19 @@
 				)
 				(polyline
 					(pts
-						(xy 1.016 0) (xy -0.762 0)
+						(xy 0 0.762) (xy -0.508 1.27) (xy -0.254 1.27) (xy -0.508 1.27) (xy -0.508 1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.508 1.27) (xy 0 1.778) (xy 0.254 1.778) (xy 0 1.778) (xy 0 1.524)
 					)
 					(stroke
 						(width 0)
@@ -114,19 +130,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0.762) (xy -0.508 1.27) (xy -0.254 1.27) (xy -0.508 1.27) (xy -0.508 1.016)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.508 1.27) (xy 0 1.778) (xy 0.254 1.778) (xy 0 1.778) (xy 0 1.524)
+						(xy 1.016 0) (xy -0.762 0)
 					)
 					(stroke
 						(width 0)
@@ -175,11 +179,16 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "Device:R_Small"
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 0.254) hide)
+				(offset 0.254)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -297,6 +306,7 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:+5V"
 			(power)
@@ -374,7 +384,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 2.54)
+						(xy 0 2.54) (xy 0.762 1.27)
 					)
 					(stroke
 						(width 0)
@@ -386,7 +396,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
+						(xy 0 0) (xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -400,7 +410,8 @@
 			(symbol "+5V_1_1"
 				(pin power_in line
 					(at 0 0 90)
-					(length 0) hide
+					(length 0)
+					(hide yes)
 					(name "+5V"
 						(effects
 							(font
@@ -417,6 +428,7 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:GND"
 			(power)
@@ -496,7 +508,8 @@
 			(symbol "GND_1_1"
 				(pin power_in line
 					(at 0 0 270)
-					(length 0) hide
+					(length 0)
+					(hide yes)
 					(name "GND"
 						(effects
 							(font
@@ -513,7 +526,445 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
+	)
+	(rectangle
+		(start 34.29 12.7)
+		(end 54.61 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 1ca7cfd7-d7e7-4a7e-b5ad-d5afe7a13185)
+	)
+	(rectangle
+		(start 55.88 12.7)
+		(end 76.2 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 205db7b8-3151-4487-8d6e-c715fed5c9b6)
+	)
+	(rectangle
+		(start 234.95 76.2)
+		(end 259.08 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 214beecb-437d-44c7-8fed-9bb18b253816)
+	)
+	(rectangle
+		(start 99.06 12.7)
+		(end 119.38 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 230ab1a2-4d1a-4088-9a1d-9e1f6b64c64e)
+	)
+	(rectangle
+		(start 218.44 12.7)
+		(end 238.76 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 2a6fa972-0232-4bf3-8cd3-c37ad8f46d37)
+	)
+	(rectangle
+		(start 170.18 76.2)
+		(end 190.5 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 2d8d3fe8-2a95-412e-9b3c-487381294f4a)
+	)
+	(rectangle
+		(start 77.47 12.7)
+		(end 97.79 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 3864d807-4a1e-4340-a876-4588d415c6df)
+	)
+	(rectangle
+		(start 213.36 76.2)
+		(end 233.68 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 4301afac-f1ec-4fba-9f70-6ede2455a97f)
+	)
+	(rectangle
+		(start 261.62 12.7)
+		(end 281.94 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 50572957-65cb-48b9-93bf-a1a5942ac655)
+	)
+	(rectangle
+		(start 55.88 76.2)
+		(end 76.2 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 66d1483c-f57c-4cee-a6e6-6f4af5c7f2c2)
+	)
+	(rectangle
+		(start 170.18 12.7)
+		(end 190.5 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 840036bb-60e2-49a5-935c-95cef7949a98)
+	)
+	(rectangle
+		(start 34.29 76.2)
+		(end 54.61 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 8bffb1a4-0c84-4d3a-854e-8dd7dda404bf)
+	)
+	(rectangle
+		(start 196.85 12.7)
+		(end 217.17 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid a15ce037-6724-4f3d-93d7-0147cc36e9aa)
+	)
+	(rectangle
+		(start 191.77 76.2)
+		(end 212.09 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid a4289b7a-bff6-425a-9471-0774f49db05c)
+	)
+	(rectangle
+		(start 12.7 76.2)
+		(end 33.02 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid c6bad168-81ab-4228-8332-5e312f5afea4)
+	)
+	(rectangle
+		(start 240.03 12.7)
+		(end 260.35 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid cad28e4c-55f7-4335-83f9-67be22ec2d02)
+	)
+	(rectangle
+		(start 12.7 12.7)
+		(end 33.02 74.93)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid d109cc5d-c0e1-4c7e-886b-38f2a73267ee)
+	)
+	(rectangle
+		(start 77.47 76.2)
+		(end 97.79 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid e124f43d-0fd2-4e0b-9cca-6742343730bb)
+	)
+	(rectangle
+		(start 260.35 76.2)
+		(end 284.48 138.43)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid fa029ec3-1713-4767-9325-a13f760a9ff8)
+	)
+	(text "LED_CLOSE"
+		(exclude_from_sim no)
+		(at 214.63 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "117787b5-43f3-4b86-bbef-13e9cb27433f")
+	)
+	(text "LED_ERROR"
+		(exclude_from_sim no)
+		(at 57.15 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "1288f443-7b58-4bad-8b40-aab519c311ce")
+	)
+	(text "LED_RS485_ACCESS"
+		(exclude_from_sim no)
+		(at 35.56 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "134da0a6-5575-4e42-b2da-f3c1014d53a9")
+	)
+	(text "LED_DUMP"
+		(exclude_from_sim no)
+		(at 241.3 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2f370294-3220-4a91-959a-e5b1f047289a")
+	)
+	(text "LED_TASK"
+		(exclude_from_sim no)
+		(at 100.33 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "363210dc-b710-49f5-ad09-e9f6595b3e02")
+	)
+	(text "LED_PURGE"
+		(exclude_from_sim no)
+		(at 236.22 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3efa4dd2-3351-4485-ac8a-e6c0af1c97de")
+	)
+	(text "LED_FILL"
+		(exclude_from_sim no)
+		(at 219.71 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "54f6cd21-a7f4-4213-b8ff-24c4bcc1633d")
+	)
+	(text "LED_LOW_VOLTAGE"
+		(exclude_from_sim no)
+		(at 78.74 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5d3d1d6d-0d29-4f37-9d9c-b160da88a647")
+	)
+	(text "LED_O2"
+		(exclude_from_sim no)
+		(at 262.89 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "688333bb-79ee-4da4-8fec-5afc4335e6aa")
+	)
+	(text "LED_COM"
+		(exclude_from_sim no)
+		(at 78.74 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "710c597b-9ac7-431e-95e5-1fcac0aedb27")
+	)
+	(text "LED_5V"
+		(exclude_from_sim no)
+		(at 57.15 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "737c3612-3c5d-4165-9d64-3c11bafd91d3")
+	)
+	(text "LED_SHIFT"
+		(exclude_from_sim no)
+		(at 198.12 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8f013b41-c425-40af-89d6-02157c53ec42")
+	)
+	(text "LED_USB_ACCESS"
+		(exclude_from_sim no)
+		(at 13.97 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "90c1987e-7a9a-49d0-a66a-5f6381237acd")
+	)
+	(text "LED_IGNITOR\n"
+		(exclude_from_sim no)
+		(at 171.45 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "995a9379-cc19-4359-843c-9731e76f18da")
+	)
+	(text "LED_OPEN"
+		(exclude_from_sim no)
+		(at 193.04 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a369e031-2db2-49b7-9bb2-9f85d2122e67")
+	)
+	(text "LED_INPUT"
+		(exclude_from_sim no)
+		(at 13.97 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a712301e-6c54-4090-9d57-686943fb773b")
+	)
+	(text "LED_SAFETY"
+		(exclude_from_sim no)
+		(at 171.45 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b9bc7192-bcff-44d5-bfc9-74bc1b5230e2")
+	)
+	(text "LED_12V"
+		(exclude_from_sim no)
+		(at 35.56 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c50d863c-01b8-4bf8-be6d-7340aa88d43a")
+	)
+	(text "LED_CHECK"
+		(exclude_from_sim no)
+		(at 261.62 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ece3c5a7-03d5-40a0-abb5-cb77aa4f31fe")
 	)
 	(junction
 		(at 85.09 101.6)
@@ -1570,443 +2021,6 @@
 			(type default)
 		)
 		(uuid "ff9fb40d-fa0a-428b-a1ea-c95627b55746")
-	)
-	(rectangle
-		(start 34.29 12.7)
-		(end 54.61 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 1ca7cfd7-d7e7-4a7e-b5ad-d5afe7a13185)
-	)
-	(rectangle
-		(start 55.88 12.7)
-		(end 76.2 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 205db7b8-3151-4487-8d6e-c715fed5c9b6)
-	)
-	(rectangle
-		(start 234.95 76.2)
-		(end 259.08 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 214beecb-437d-44c7-8fed-9bb18b253816)
-	)
-	(rectangle
-		(start 99.06 12.7)
-		(end 119.38 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 230ab1a2-4d1a-4088-9a1d-9e1f6b64c64e)
-	)
-	(rectangle
-		(start 218.44 12.7)
-		(end 238.76 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 2a6fa972-0232-4bf3-8cd3-c37ad8f46d37)
-	)
-	(rectangle
-		(start 170.18 76.2)
-		(end 190.5 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 2d8d3fe8-2a95-412e-9b3c-487381294f4a)
-	)
-	(rectangle
-		(start 77.47 12.7)
-		(end 97.79 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 3864d807-4a1e-4340-a876-4588d415c6df)
-	)
-	(rectangle
-		(start 213.36 76.2)
-		(end 233.68 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 4301afac-f1ec-4fba-9f70-6ede2455a97f)
-	)
-	(rectangle
-		(start 261.62 12.7)
-		(end 281.94 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 50572957-65cb-48b9-93bf-a1a5942ac655)
-	)
-	(rectangle
-		(start 55.88 76.2)
-		(end 76.2 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 66d1483c-f57c-4cee-a6e6-6f4af5c7f2c2)
-	)
-	(rectangle
-		(start 170.18 12.7)
-		(end 190.5 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 840036bb-60e2-49a5-935c-95cef7949a98)
-	)
-	(rectangle
-		(start 34.29 76.2)
-		(end 54.61 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 8bffb1a4-0c84-4d3a-854e-8dd7dda404bf)
-	)
-	(rectangle
-		(start 196.85 12.7)
-		(end 217.17 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid a15ce037-6724-4f3d-93d7-0147cc36e9aa)
-	)
-	(rectangle
-		(start 191.77 76.2)
-		(end 212.09 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid a4289b7a-bff6-425a-9471-0774f49db05c)
-	)
-	(rectangle
-		(start 12.7 76.2)
-		(end 33.02 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid c6bad168-81ab-4228-8332-5e312f5afea4)
-	)
-	(rectangle
-		(start 240.03 12.7)
-		(end 260.35 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid cad28e4c-55f7-4335-83f9-67be22ec2d02)
-	)
-	(rectangle
-		(start 12.7 12.7)
-		(end 33.02 74.93)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid d109cc5d-c0e1-4c7e-886b-38f2a73267ee)
-	)
-	(rectangle
-		(start 77.47 76.2)
-		(end 97.79 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid e124f43d-0fd2-4e0b-9cca-6742343730bb)
-	)
-	(rectangle
-		(start 260.35 76.2)
-		(end 284.48 138.43)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid fa029ec3-1713-4767-9325-a13f760a9ff8)
-	)
-	(text "LED_CLOSE"
-		(exclude_from_sim no)
-		(at 214.63 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "117787b5-43f3-4b86-bbef-13e9cb27433f")
-	)
-	(text "LED_ERROR"
-		(exclude_from_sim no)
-		(at 57.15 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1288f443-7b58-4bad-8b40-aab519c311ce")
-	)
-	(text "LED_RS485_ACCESS"
-		(exclude_from_sim no)
-		(at 35.56 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "134da0a6-5575-4e42-b2da-f3c1014d53a9")
-	)
-	(text "LED_DUMP"
-		(exclude_from_sim no)
-		(at 241.3 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "2f370294-3220-4a91-959a-e5b1f047289a")
-	)
-	(text "LED_TASK"
-		(exclude_from_sim no)
-		(at 100.33 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "363210dc-b710-49f5-ad09-e9f6595b3e02")
-	)
-	(text "LED_PURGE"
-		(exclude_from_sim no)
-		(at 236.22 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "3efa4dd2-3351-4485-ac8a-e6c0af1c97de")
-	)
-	(text "LED_FILL"
-		(exclude_from_sim no)
-		(at 219.71 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "54f6cd21-a7f4-4213-b8ff-24c4bcc1633d")
-	)
-	(text "LED_LOW_VOLTAGE"
-		(exclude_from_sim no)
-		(at 78.74 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5d3d1d6d-0d29-4f37-9d9c-b160da88a647")
-	)
-	(text "LED_O2"
-		(exclude_from_sim no)
-		(at 262.89 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "688333bb-79ee-4da4-8fec-5afc4335e6aa")
-	)
-	(text "LED_COM"
-		(exclude_from_sim no)
-		(at 78.74 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "710c597b-9ac7-431e-95e5-1fcac0aedb27")
-	)
-	(text "LED_5V"
-		(exclude_from_sim no)
-		(at 57.15 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "737c3612-3c5d-4165-9d64-3c11bafd91d3")
-	)
-	(text "LED_SHIFT"
-		(exclude_from_sim no)
-		(at 198.12 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "8f013b41-c425-40af-89d6-02157c53ec42")
-	)
-	(text "LED_USB_ACCESS"
-		(exclude_from_sim no)
-		(at 13.97 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "90c1987e-7a9a-49d0-a66a-5f6381237acd")
-	)
-	(text "LED_IGNITOR\n"
-		(exclude_from_sim no)
-		(at 171.45 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "995a9379-cc19-4359-843c-9731e76f18da")
-	)
-	(text "LED_OPEN"
-		(exclude_from_sim no)
-		(at 193.04 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a369e031-2db2-49b7-9bb2-9f85d2122e67")
-	)
-	(text "LED_INPUT"
-		(exclude_from_sim no)
-		(at 13.97 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a712301e-6c54-4090-9d57-686943fb773b")
-	)
-	(text "LED_SAFETY"
-		(exclude_from_sim no)
-		(at 171.45 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "b9bc7192-bcff-44d5-bfc9-74bc1b5230e2")
-	)
-	(text "LED_12V"
-		(exclude_from_sim no)
-		(at 35.56 15.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c50d863c-01b8-4bf8-be6d-7340aa88d43a")
-	)
-	(text "LED_CHECK"
-		(exclude_from_sim no)
-		(at 261.62 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ece3c5a7-03d5-40a0-abb5-cb77aa4f31fe")
 	)
 	(global_label "CONN_LED_LOW_VOLTAGE"
 		(shape output)

@@ -1,14 +1,18 @@
 (kicad_sch
-	(version 20231120)
+	(version 20250114)
 	(generator "eeschema")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(uuid "7a9db562-9ba2-4e28-86d0-8020190b3bce")
 	(paper "A4")
 	(lib_symbols
 		(symbol "Device:R_Small"
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 0.254) hide)
+				(offset 0.254)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -126,11 +130,16 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "Switch:SW_Push"
-			(pin_numbers hide)
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 1.016) hide)
+				(offset 1.016)
+				(hide yes)
+			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -211,10 +220,9 @@
 						(type none)
 					)
 				)
-				(polyline
-					(pts
-						(xy 2.54 1.27) (xy -2.54 1.27)
-					)
+				(circle
+					(center 2.032 0)
+					(radius 0.508)
 					(stroke
 						(width 0)
 						(type default)
@@ -223,9 +231,10 @@
 						(type none)
 					)
 				)
-				(circle
-					(center 2.032 0)
-					(radius 0.508)
+				(polyline
+					(pts
+						(xy 2.54 1.27) (xy -2.54 1.27)
+					)
 					(stroke
 						(width 0)
 						(type default)
@@ -271,6 +280,7 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:+5V"
 			(power)
@@ -348,7 +358,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 2.54)
+						(xy 0 2.54) (xy 0.762 1.27)
 					)
 					(stroke
 						(width 0)
@@ -360,7 +370,7 @@
 				)
 				(polyline
 					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
+						(xy 0 0) (xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -374,7 +384,8 @@
 			(symbol "+5V_1_1"
 				(pin power_in line
 					(at 0 0 90)
-					(length 0) hide
+					(length 0)
+					(hide yes)
 					(name "+5V"
 						(effects
 							(font
@@ -391,6 +402,7 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
 		(symbol "power:GND"
 			(power)
@@ -470,7 +482,8 @@
 			(symbol "GND_1_1"
 				(pin power_in line
 					(at 0 0 270)
-					(length 0) hide
+					(length 0)
+					(hide yes)
 					(name "GND"
 						(effects
 							(font
@@ -487,7 +500,123 @@
 					)
 				)
 			)
+			(embedded_fonts no)
 		)
+	)
+	(rectangle
+		(start 12.7 50.8)
+		(end 92.71 68.58)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 43f429b5-7c73-4de7-89c2-660c923ea6e8)
+	)
+	(rectangle
+		(start 12.7 12.7)
+		(end 92.71 30.48)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 7e6ee53f-ff69-4605-a826-71b4dab6e135)
+	)
+	(rectangle
+		(start 12.7 31.75)
+		(end 92.71 49.53)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid b57126b2-27c3-49af-97b1-301f82963887)
+	)
+	(rectangle
+		(start 12.7 69.85)
+		(end 92.71 87.63)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid c2e96b89-99dd-4131-b85f-5e3af99c2cc6)
+	)
+	(rectangle
+		(start 12.7 88.9)
+		(end 92.71 106.68)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid de361da9-0641-452c-a503-0fb4201bf428)
+	)
+	(text "KILL SWITCH\nA MOM +"
+		(exclude_from_sim no)
+		(at 13.97 36.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "407cab36-6432-4110-ac2c-595053b8bf28")
+	)
+	(text "SAFETY SWITCH\nA ALT -"
+		(exclude_from_sim no)
+		(at 13.97 55.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "77b5085a-860c-4407-bb0a-6632078af524")
+	)
+	(text "CHECK SWITCH\nA ALT -"
+		(exclude_from_sim no)
+		(at 13.97 93.98 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "7a8577c9-fc56-49b4-bbaa-57e9a38e9898")
+	)
+	(text "RESET SWITCH\nA MOM -"
+		(exclude_from_sim no)
+		(at 13.97 74.93 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "abe65e45-9fe2-43ed-b1db-a9a5207e2068")
+	)
+	(text "RUN SWITCH\nA MOM +"
+		(exclude_from_sim no)
+		(at 13.97 17.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c3807336-46b3-48f2-8bb5-01c5408029f6")
 	)
 	(junction
 		(at 64.77 58.42)
@@ -844,121 +973,6 @@
 			(type default)
 		)
 		(uuid "f7213215-9e96-4d2b-89be-9745b7f67950")
-	)
-	(rectangle
-		(start 12.7 50.8)
-		(end 92.71 68.58)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 43f429b5-7c73-4de7-89c2-660c923ea6e8)
-	)
-	(rectangle
-		(start 12.7 12.7)
-		(end 92.71 30.48)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid 7e6ee53f-ff69-4605-a826-71b4dab6e135)
-	)
-	(rectangle
-		(start 12.7 31.75)
-		(end 92.71 49.53)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid b57126b2-27c3-49af-97b1-301f82963887)
-	)
-	(rectangle
-		(start 12.7 69.85)
-		(end 92.71 87.63)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid c2e96b89-99dd-4131-b85f-5e3af99c2cc6)
-	)
-	(rectangle
-		(start 12.7 88.9)
-		(end 92.71 106.68)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(fill
-			(type none)
-		)
-		(uuid de361da9-0641-452c-a503-0fb4201bf428)
-	)
-	(text "KILL SWITCH\nA MOM +"
-		(exclude_from_sim no)
-		(at 13.97 36.83 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "407cab36-6432-4110-ac2c-595053b8bf28")
-	)
-	(text "SAFETY SWITCH\nA ALT -"
-		(exclude_from_sim no)
-		(at 13.97 55.88 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "77b5085a-860c-4407-bb0a-6632078af524")
-	)
-	(text "CHECK SWITCH\nA ALT -"
-		(exclude_from_sim no)
-		(at 13.97 93.98 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7a8577c9-fc56-49b4-bbaa-57e9a38e9898")
-	)
-	(text "RESET SWITCH\nA MOM -"
-		(exclude_from_sim no)
-		(at 13.97 74.93 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "abe65e45-9fe2-43ed-b1db-a9a5207e2068")
-	)
-	(text "RUN SWITCH\nA MOM +"
-		(exclude_from_sim no)
-		(at 13.97 17.78 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c3807336-46b3-48f2-8bb5-01c5408029f6")
 	)
 	(global_label "SW_RUN"
 		(shape input)
