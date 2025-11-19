@@ -544,6 +544,7 @@ void sequence::ignition()
     Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
 }
 
+
 void control::setChristmasTreeStart()
 {
     n2o::tm1637.displayNumber(8.8);
