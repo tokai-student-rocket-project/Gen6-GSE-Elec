@@ -529,11 +529,11 @@ void sequence::ignition()
     control::sequenceStart.setAutomaticOn();
     mp3_play(4); // 0104_ignitionSequenceStart
 
-    // Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
-    Tasks[control::OXYGEN_START]->startOnceAfterMsec(100);
+    Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5); // 「充填が確認されました．点火します．5秒前...」←これが4.5秒くらいかかる
+    // Tasks[control::OXYGEN_START]->startOnceAfterMsec(50); // THR-E810L で点火
 
-    // Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
-    Tasks[control::IGNITER_START]->startOnceAfterSec(3.0);
+    Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
+    // Tasks[control::IGNITER_START]->startOnceAfterSec(1.0); // THR-E810L で点火
 
     Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
     Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
@@ -543,7 +543,6 @@ void sequence::ignition()
     Tasks[control::PURGE_START]->startOnceAfterSec(30.5);
     Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
 }
-
 
 void control::setChristmasTreeStart()
 {
