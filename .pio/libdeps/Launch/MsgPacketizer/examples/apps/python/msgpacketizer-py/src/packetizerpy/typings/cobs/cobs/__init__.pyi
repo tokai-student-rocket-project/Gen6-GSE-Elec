@@ -1,6 +1,0 @@
-from ._cobs_ext import *
-from ._cobs_py import *
-from .._version import *
-
-def encoding_overhead(source_len): ...
-def max_encoded_length(source_len): ...
