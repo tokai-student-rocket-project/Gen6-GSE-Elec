@@ -38,4 +38,4 @@ _autosave-*
 KiCad/XT60Socket
 
 # PlatformIO 自動生成ファイル
-.pio
+.pio/
