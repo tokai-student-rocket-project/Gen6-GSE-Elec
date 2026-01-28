@@ -1,120 +1,169 @@
 #include "Lib_FRAM.hpp"
 
-
 FRAM::FRAM(uint32_t cs) {
-  _setting = SPISettings(20000000, MSBFIRST, SPI_MODE0);
+  _spi = &SPI;
   _cs = cs;
+  _clk = -1;
+  _mosi = -1;
+  _miso = -1;
+  _isSoftSPI = false;
+  _setting = SPISettings(20000000, MSBFIRST, SPI_MODE0);
   pinMode(_cs, OUTPUT);
   digitalWrite(_cs, HIGH);
 }
 
+FRAM::FRAM(uint32_t cs, SPIClass *theSPI) {
+  _spi = theSPI;
+  _cs = cs;
+  _clk = -1;
+  _mosi = -1;
+  _miso = -1;
+  _isSoftSPI = false;
+  _setting = SPISettings(20000000, MSBFIRST, SPI_MODE0);
+  pinMode(_cs, OUTPUT);
+  digitalWrite(_cs, HIGH);
+}
+
+FRAM::FRAM(uint32_t clk, uint32_t miso, uint32_t mosi, uint32_t cs) {
+  _spi = NULL;
+  _clk = clk;
+  _miso = miso;
+  _mosi = mosi;
+  _cs = cs;
+  _isSoftSPI = true;
+  _setting = SPISettings(20000000, MSBFIRST, SPI_MODE0);
+
+  pinMode(_cs, OUTPUT);
+  digitalWrite(_cs, HIGH);
+  pinMode(_clk, OUTPUT);
+  digitalWrite(_clk, HIGH); // Mode 3 idle HIGH
+  pinMode(_mosi, OUTPUT);
+  pinMode(_miso, INPUT);
+}
 
 void FRAM::setWriteEnable() {
-  SPI.beginTransaction(_setting);
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(WREN);
+  transfer(WREN);
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 }
 
-
-void FRAM::getStatus(uint8_t* buffer) {
-  SPI.beginTransaction(_setting);
+void FRAM::getStatus(uint8_t *buffer) {
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(RDSR);
-  buffer[0] = SPI.transfer(0xFF);
+  transfer(RDSR);
+  buffer[0] = transfer(0xFF);
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 }
 
-
-void FRAM::getId(uint8_t* buffer) {
-  SPI.beginTransaction(_setting);
+void FRAM::getId(uint8_t *buffer) {
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(RDID);
-  buffer[0] = SPI.transfer(0xFF);
-  buffer[1] = SPI.transfer(0xFF);
-  buffer[2] = SPI.transfer(0xFF);
-  buffer[3] = SPI.transfer(0xFF);
+  transfer(RDID);
+  buffer[0] = transfer(0xFF);
+  buffer[1] = transfer(0xFF);
+  buffer[2] = transfer(0xFF);
+  buffer[3] = transfer(0xFF);
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 }
-
 
 uint8_t FRAM::read(uint32_t address) {
   uint8_t addressPart[3];
   memcpy(addressPart, &address, 3);
 
-  SPI.beginTransaction(_setting);
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(READ);
+  transfer(READ);
 
-  SPI.transfer(addressPart[2]);
-  SPI.transfer(addressPart[1]);
-  SPI.transfer(addressPart[0]);
-  uint8_t data = SPI.transfer(0xFF);
+  transfer(addressPart[2]);
+  transfer(addressPart[1]);
+  transfer(addressPart[0]);
+  uint8_t data = transfer(0xFF);
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 
   return data;
 }
-
 
 void FRAM::write(uint32_t address, uint8_t data) {
   uint8_t addressPart[3];
   memcpy(addressPart, &address, 3);
 
-  SPI.beginTransaction(_setting);
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(WRITE);
+  transfer(WRITE);
 
-  SPI.transfer(addressPart[2]);
-  SPI.transfer(addressPart[1]);
-  SPI.transfer(addressPart[0]);
-  SPI.transfer(data);
+  transfer(addressPart[2]);
+  transfer(addressPart[1]);
+  transfer(addressPart[0]);
+  transfer(data);
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 }
 
-
-void FRAM::write(uint32_t address, const uint8_t* data, uint32_t size) {
+void FRAM::write(uint32_t address, const uint8_t *data, uint32_t size) {
   uint8_t addressPart[3];
   memcpy(addressPart, &address, 3);
 
-  SPI.beginTransaction(_setting);
+  if (_isSoftSPI)
+    digitalWrite(_clk, HIGH);
+  if (!_isSoftSPI)
+    SPI.beginTransaction(_setting);
   digitalWrite(_cs, LOW);
 
-  SPI.transfer(WRITE);
+  transfer(WRITE);
 
-  SPI.transfer(addressPart[2]);
-  SPI.transfer(addressPart[1]);
-  SPI.transfer(addressPart[0]);
+  transfer(addressPart[2]);
+  transfer(addressPart[1]);
+  transfer(addressPart[0]);
 
   for (uint32_t i = 0; i < size; i++) {
-    SPI.transfer(data[i]);
+    transfer(data[i]);
   }
 
   digitalWrite(_cs, HIGH);
-  SPI.endTransaction();
+  if (!_isSoftSPI)
+    SPI.endTransaction();
 }
-
 
 void FRAM::clear() {
   for (uint32_t address = 0; address < LENGTH; address++) {
     write(address, 0x00);
   }
 }
-
 
 void FRAM::dump() {
   for (size_t address = 0; address < LENGTH; address++) {
@@ -124,9 +173,29 @@ void FRAM::dump() {
 
     if (data == 0) {
       Serial.println();
-    }
-    else {
+    } else {
       Serial.print(" ");
     }
   }
+}
+
+uint8_t FRAM::transfer(uint8_t data) {
+  if (_isSoftSPI) {
+    return spixfer(data);
+  } else {
+    return _spi->transfer(data);
+  }
+}
+
+uint8_t FRAM::spixfer(uint8_t x) {
+  uint8_t reply = 0;
+  for (int i = 7; i >= 0; i--) {
+    reply <<= 1;
+    digitalWrite(_clk, LOW);
+    digitalWrite(_mosi, x & (1 << i));
+    digitalWrite(_clk, HIGH);
+    if (digitalRead(_miso))
+      reply |= 1;
+  }
+  return reply;
 }

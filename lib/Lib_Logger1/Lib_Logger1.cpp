@@ -1,34 +1,28 @@
 #include "Lib_Logger1.hpp"
 
-Logger::Logger(uint32_t csFram0)
-{
-  _fram0 = new FRAM(csFram0);
+Logger::Logger(uint32_t csFram0) { _fram0 = new FRAM(csFram0); }
+
+Logger::Logger(uint32_t csFram0, SPIClass *theSPI) {
+  _fram0 = new FRAM(csFram0, theSPI);
 }
 
-void Logger::reset()
-{
-  _offset = 0;
+Logger::Logger(uint32_t clk, uint32_t miso, uint32_t mosi, uint32_t csFram0) {
+  _fram0 = new FRAM(clk, miso, mosi, csFram0);
 }
 
-void Logger::dump()
-{
-  _fram0->dump();
-}
+void Logger::reset() { _offset = 0; }
 
-void Logger::clear()
-{
+void Logger::dump() { _fram0->dump(); }
+
+void Logger::clear() {
   _fram0->setWriteEnable();
   _fram0->clear();
 }
 
-uint32_t Logger::write(const uint8_t *data, uint32_t size)
-{
-  if (_offset + size >= FRAM::LENGTH)
-  {
+uint32_t Logger::write(const uint8_t *data, uint32_t size) {
+  if (_offset + size >= FRAM::LENGTH) {
     return size;
-  }
-  else
-  {
+  } else {
     uint32_t writeAddress = _offset;
     _fram0->setWriteEnable();
     _fram0->write(writeAddress, data, size);
@@ -45,8 +39,7 @@ uint32_t Logger::write(const uint8_t *data, uint32_t size)
   Serial.print(FRAM::LENGTH * 1);
   Serial.print("b] ");
 
-  for (uint32_t i = 0; i < size; i++)
-  {
+  for (uint32_t i = 0; i < size; i++) {
     Serial.print(data[i], HEX);
     Serial.print((data[i] == 0x00) ? "\n" : " ");
   }
@@ -55,24 +48,16 @@ uint32_t Logger::write(const uint8_t *data, uint32_t size)
   return size;
 }
 
-uint32_t Logger::getOffset()
-{
-  return _offset;
-}
+uint32_t Logger::getOffset() { return _offset; }
 
-float Logger::getUsage()
-{
+float Logger::getUsage() {
   return ((float)_offset / (float)(FRAM::LENGTH * 1)) * 100.0;
 }
 
-uint8_t Logger::framNumber()
-{
-  if (_offset >= FRAM::LENGTH)
-  {
+uint8_t Logger::framNumber() {
+  if (_offset >= FRAM::LENGTH) {
     return -1;
-  }
-  else
-  {
+  } else {
     return 0;
   }
 }
