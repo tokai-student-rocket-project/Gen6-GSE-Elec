@@ -577,7 +577,7 @@
           "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Supplyer",
           "name": "Supplyer",
           "show": true
