@@ -2,14 +2,17 @@
 
 #include <Arduino.h>
 
-
 class VESIM10 {
 public:
-  VESIM10(uint8_t analogPinNumber, float shuntResistance_Ohm, float fullScaleRange_MPa);
+  VESIM10(uint8_t analogPinNumber, float shuntResistance_Ohm,
+          float fullScaleRange_MPa);
 
   float getCurrent_mA();
   float getPressure_MPa();
   void calibrateBlocking(uint8_t samplingCount);
+
+  void setFullScale(float fullScale_MPa);
+  void setCalibration(float a, float b);
 
 private:
   uint8_t _analogPinNumber;
