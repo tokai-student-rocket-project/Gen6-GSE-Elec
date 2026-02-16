@@ -67,7 +67,7 @@ bool IcsHardSerialClass::begin()
 {
   if (icsHardSerial == nullptr)
   {
-    // Serial.println("begin() ERROR");
+    Serial.println("begin() ERROR");
     return false;
   }
 
@@ -132,7 +132,7 @@ bool IcsHardSerialClass::synchronize(byte *txBuf, byte txLen, byte *rxBuf, byte 
 
   if (icsHardSerial == nullptr)
   {
-    // Serial.println("Serial Init ERROR");
+    Serial.println("Serial Init ERROR");
     return false;
   }
 
