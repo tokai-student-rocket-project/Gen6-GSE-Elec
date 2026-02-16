@@ -14,6 +14,9 @@ public:
   void setFullScale(float fullScale_MPa);
   void setCalibration(float a, float b);
 
+  void setDummyCurrent(float current_mA);
+  void disableDummy();
+
 private:
   uint8_t _analogPinNumber;
 
@@ -27,4 +30,7 @@ private:
   float _b;
 
   float _offsetCurrent_mA = 0;
+
+  bool _isDummyMode = false;
+  float _dummyCurrent_mA = 0.0;
 };
