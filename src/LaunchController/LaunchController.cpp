@@ -9,147 +9,162 @@
 #include <MsgPacketizer.h>
 #include <TaskManager.h>
 
-namespace power {
-Input killButton(PIN_PJ1, false);
-Output loadSwitch(PIN_PF5);
-Output powerLamp(PIN_PG5);
-Output lowVoltageLamp(PIN_PK7);
+namespace power
+{
+  Input killButton(PIN_PJ1, false);
+  Output loadSwitch(PIN_PF5);
+  Output powerLamp(PIN_PG5);
+  Output lowVoltageLamp(PIN_PK7);
 
-PowerMonitor input(0x40);
-PowerMonitor bus12(0x41);
-Thermistor thermal(PIN_PF4, 10000.0);
+  PowerMonitor input(0x40);
+  PowerMonitor bus12(0x41);
+  Thermistor thermal(PIN_PF4, 10000.0);
 
-void measureTask();
+  void measureTask();
 } // namespace power
 
-namespace control {
-SemiAutoControl safetyArmed(PIN_PC2, false, PIN_PH7);
-SemiAutoControl sequenceStart(PIN_PC3, false, PIN_PG3);
-SemiAutoControl emergencyStop(PIN_PC4, true, PIN_PG4);
+namespace control
+{
+  SemiAutoControl safetyArmed(PIN_PC2, false, PIN_PH7);
+  SemiAutoControl sequenceStart(PIN_PC3, false, PIN_PG3);
+  SemiAutoControl emergencyStop(PIN_PC4, true, PIN_PG4);
 
-Input confirm1(PIN_PC7, false);
-Input confirm2(PIN_PC6, false);
-Input confirm3(PIN_PC5, false);
+  Input confirm1(PIN_PC7, false);
+  Input confirm2(PIN_PC6, false);
+  Input confirm3(PIN_PC5, false);
 
-SemiAutoControl shift(PIN_PD4, false, PIN_PH5);
-SemiAutoControl fill(PIN_PD5, false, PIN_PB0);
-SemiAutoControl dump(PIN_PG1, false, PIN_PB5);
-SemiAutoControl oxygen(PIN_PC1, false, PIN_PL4);
-SemiAutoControl igniter(PIN_PD7, false, PIN_PH4);
-SemiAutoControl open(PIN_PD6, false, PIN_PH6);
-SemiAutoControl close(PIN_PG0, false, PIN_PB4);
-SemiAutoControl purge(PIN_PC0, false, PIN_PB6);
+  SemiAutoControl shift(PIN_PD4, false, PIN_PH5);
+  SemiAutoControl fill(PIN_PD5, false, PIN_PB0);
+  SemiAutoControl dump(PIN_PG1, false, PIN_PB5);
+  SemiAutoControl oxygen(PIN_PC1, false, PIN_PL4);
+  SemiAutoControl igniter(PIN_PD7, false, PIN_PH4);
+  SemiAutoControl open(PIN_PD6, false, PIN_PH6);
+  SemiAutoControl close(PIN_PG0, false, PIN_PB4);
+  SemiAutoControl purge(PIN_PC0, false, PIN_PB6);
 
-Output shiftFB(PIN_PE3);
-Output fillFB(PIN_PE5);
-Output dumpFB(PIN_PE7);
-Output oxygenFB(PIN_PH3);
-Output igniterFB(PIN_PE2);
-Output openFB(PIN_PE4);
-Output closeFB(PIN_PE6);
-Output purgeFB(PIN_PH2);
+  Output shiftFB(PIN_PE3);
+  Output fillFB(PIN_PE5);
+  Output dumpFB(PIN_PE7);
+  Output oxygenFB(PIN_PH3);
+  Output igniterFB(PIN_PE2);
+  Output openFB(PIN_PE4);
+  Output closeFB(PIN_PE6);
+  Output purgeFB(PIN_PH2);
 
-Output statusLamp(PIN_PK4);
-void handleManualTask();
+  Output statusLamp(PIN_PK4);
+  void handleManualTask();
 
-const String FILL_START = "fill-start";
-const String FILL_STOP = "fill-stop";
-const String OXYGEN_START = "oxygen-start";
-const String OXYGEN_STOP = "oxygen-stop";
-const String IGNITER_START = "igniter-start";
-const String IGNITER_STOP = "igniter-stop";
-const String OPEN_START = "open-start";
-const String PLAY_MUSIC = "play-music";
-const String PURGE_START = "purge-start";
-const String PURGE_STOP = "purge-stop";
+  const String FILL_START = "fill-start";
+  const String FILL_STOP = "fill-stop";
+  const String OXYGEN_START = "oxygen-start";
+  const String OXYGEN_STOP = "oxygen-stop";
+  const String IGNITER_START = "igniter-start";
+  const String IGNITER_STOP = "igniter-stop";
+  const String OPEN_START = "open-start";
+  const String PLAY_MUSIC = "play-music";
+  const String PURGE_START = "purge-start";
+  const String PURGE_STOP = "purge-stop";
 
-void setChristmasTreeStart();
-void setChristmasTreeStop();
-void setEmergencyStop();
-void setPeacefulStop();
-void setFillStart();
-void setFillStop();
-void setOxygenStart();
-void setOxygenStop();
-void setIgniterStart();
-void setIgniterStop();
-void setOpenStart();
-void setPurgeStart();
-void setPurgeStop();
+  void setChristmasTreeStart();
+  void setChristmasTreeStop();
+  void setEmergencyStop();
+  void setPeacefulStop();
+  void setFillStart();
+  void setFillStop();
+  void setOxygenStart();
+  void setOxygenStop();
+  void setIgniterStart();
+  void setIgniterStop();
+  void setOpenStart();
+  void setPurgeStart();
+  void setPurgeStop();
 } // namespace control
 
-namespace sequence {
-void emergencyStop();
-void peacefulStop();
-void fill();
-void ignition();
+namespace sequence
+{
+  void emergencyStop();
+  void peacefulStop();
+  void fill();
+  void ignition();
 
-uint32_t sequenceStartRiseCount = 0;
+  uint32_t sequenceStartRiseCount = 0;
 
-bool emergencyStopSequenceIsActive = false;
-bool fillSequenceIsActive = false;
-bool ignitionSequenceIsActive = false;
-bool canConfirm = false;
+  bool emergencyStopSequenceIsActive = false;
+  bool fillSequenceIsActive = false;
+  bool ignitionSequenceIsActive = false;
+  bool canConfirm = false;
 } // namespace sequence
 
-namespace n2o {
-TM1637 tm1637(PIN_PK0, PIN_PK1);
+namespace n2o
+{
+  TM1637 tm1637(PIN_PK0, PIN_PK1);
 
-// --- キャリブレーション設定 ---
-// 高圧ガス試験で求めた値をここに記入してください
-const float SENSOR_FS_MPa = 10.0f;                     // 定格圧力
-const float CALIB_SLOPE_A = SENSOR_FS_MPa / 16.0f;     // 傾き (理論値は FS/16)
-const float CALIB_INTERCEPT_B = -CALIB_SLOPE_A * 4.0f; // 切片 (理論値は -a*4)
-// ----------------------------------------
+  // --- キャリブレーション設定 ---
+  // 高圧ガス試験で求めた値をここに記入してください
+  const float SENSOR_FS_MPa = 10.0f;                     // 定格圧力
+  const float CALIB_SLOPE_A = SENSOR_FS_MPa / 16.0f;     // 傾き (理論値は FS/16) //default -> SENSOR_FS_MPa / 16.0f
+  const float CALIB_INTERCEPT_B = -CALIB_SLOPE_A * 4.0f; // 切片 (理論値は -a*4)
+  // ----------------------------------------
 } // namespace n2o
 
-namespace error {
-// HACK LEDだけでなく処理もする
-Output statusLamp(PIN_PK6); // ERR
+namespace error
+{
+  // HACK LEDだけでなく処理もする
+  Output statusLamp(PIN_PK6); // ERR
 } // namespace error
 
-namespace communication {
-enum class Packet : uint8_t {
-  CONTROL_SYNC,       // 操作卓からの制御コマンド同期（電磁弁開閉など）
-  FEEDBACK_SYNC,      // 機体からのフィードバック（電磁弁の実際の状態など）
-  PRESSURE_SYNC,      // 算出された圧力値(MPa)の同期
-  COM_CHECK_L_TO_S,   // 操作卓から機体への生存確認（通信チェック）
-  COM_CHECK_S_TO_L,   // 機体から操作卓への生存確認（通信チェック）
-  SENSOR_CONFIG_SYNC, // センサの基本設定（フルスケールなど）の同期
-  SENSOR_DUMMY_CURRENT_SYNC, // シミュレーション用のダミー電流値同期
-  SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
-  SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
-  SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
+namespace communication
+{
+  enum class Packet : uint8_t
+  {
+    CONTROL_SYNC,              // 操作卓からの制御コマンド同期（電磁弁開閉など）
+    FEEDBACK_SYNC,             // 機体からのフィードバック（電磁弁の実際の状態など）
+    PRESSURE_SYNC,             // 算出された圧力値(MPa)の同期
+    COM_CHECK_L_TO_S,          // 操作卓から機体への生存確認（通信チェック）
+    COM_CHECK_S_TO_L,          // 機体から操作卓への生存確認（通信チェック）
+    SENSOR_CONFIG_SYNC,        // センサの基本設定（フルスケールなど）の同期
+    SENSOR_DUMMY_CURRENT_SYNC, // シミュレーション用のダミー電流値同期
+    SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
+    SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
+    SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
 
-};
+  };
 
-Output sendEnableControl(PIN_PA2);
-Output accessLamp(PIN_PA4); // RS485
+  Output sendEnableControl(PIN_PA2);
+  Output accessLamp(PIN_PA4); // RS485
 
-// bool checkFailed = false;
+  // bool checkFailed = false;
 
-unsigned long preReceivedTime;
-const long timeout = 5000;
+  unsigned long preReceivedTime;
+  const long timeout = 5000;
 
-void enableOutput();
-void disableOutput();
+  void enableOutput();
+  void disableOutput();
 
-void sendControlSync();
-void sendComCheck();
-void onFeedbackSyncReceived(uint8_t state);
-void onPressureSyncReceived(float pressure);
-void onCurrentSyncReceived(float current_mA); // 電流受信ハンドラ
-void onComCheckReceived();
-void onComCheckFailed();
-void sendSensorConfigSync();
-void sendSensorDummyCurrent(float current_mA);
-void sendSensorCalibCoeff(float a, float b);
-void sendSensorZeroCalibReq();
+  void sendControlSync();
+  void sendComCheck();
+  void onFeedbackSyncReceived(uint8_t state);
+  void onPressureSyncReceived(float pressure);
+  void onCurrentSyncReceived(float current_mA); // 電流受信ハンドラ
+  void onComCheckReceived();
+  void onComCheckFailed();
+  void sendSensorConfigSync();
+  void sendSensorDummyCurrent(float current_mA);
+  void sendSensorCalibCoeff(float a, float b);
+  void sendSensorZeroCalibReq();
 
-Output statusLamp(PIN_PK5); // COM
+  Output statusLamp(PIN_PK5); // COM
 } // namespace communication
 
-void setup() {
+namespace simulation
+{
+
+  void updateTask() { communication::sendSensorDummyCurrent(0.0f); }
+
+} // namespace simulation
+
+void setup()
+{
   power::loadSwitch.on();
   power::powerLamp.on();
 
@@ -174,10 +189,11 @@ void setup() {
   power::bus12.begin();
 
   Tasks.add(&power::measureTask)->startFps(10);
-  Tasks.add(&control::handleManualTask)->startFps(50);
-  Tasks.add(&communication::sendControlSync)->startFps(50);
+  Tasks.add(&control::handleManualTask)->startFps(20);
+  Tasks.add(&communication::sendControlSync)->startFps(20);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
+  // Tasks.add(&simulation::updateTask)->startFps(2);
   communication::sendSensorConfigSync();
   // 起動時に実測校正係数を同期
   communication::sendSensorCalibCoeff(n2o::CALIB_SLOPE_A,
@@ -206,42 +222,44 @@ void setup() {
   Tasks.add(control::OPEN_START, &control::setOpenStart);
   Tasks.add(control::PURGE_START, &control::setPurgeStart);
   Tasks.add(control::PURGE_STOP, &control::setPurgeStop);
-  Tasks.add(control::PLAY_MUSIC, [] { mp3_play(9); });
+  Tasks.add(control::PLAY_MUSIC, []
+            { mp3_play(9); });
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 
   // 起動5秒後に、その場の環境に合わせて自動でゼロ点校正を実行
-  Tasks
-      .add([] {
+  Tasks.add([]
+            {
         Serial.println(">>> Requesting Remote Zero-Point Calibration...");
-        communication::sendSensorZeroCalibReq();
-      })
+        communication::sendSensorZeroCalibReq(); })
       ->startOnceAfterSec(5.0);
 
   mp3_play(11);
 }
 
-void loop() {
+void loop()
+{
   MsgPacketizer::parse();
   Tasks.update();
-
-  communication::sendSensorDummyCurrent(11.0f); // ダミーデータ
 }
 
 /// @brief 送信を有効にする
-void communication::enableOutput() {
+void communication::enableOutput()
+{
   communication::sendEnableControl.on();
   communication::accessLamp.on();
 }
 
 /// @brief 送信を無効にする
-void communication::disableOutput() {
+void communication::disableOutput()
+{
   communication::sendEnableControl.off();
   communication::accessLamp.off();
 }
 
-void power::measureTask() {
+void power::measureTask()
+{
   bool isLowVoltage = power::input.getVoltage_V() < 11.5;
   bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
   bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
@@ -255,20 +273,25 @@ void power::measureTask() {
 
   // Serial.println(power::thermal.getTemperature_degC()); // 温度モニター
 
-  if (isOverloadedInput || isOverloadedBus || isOverheated) {
+  if (isOverloadedInput || isOverloadedBus || isOverheated)
+  {
     // HACK エラー
     error::statusLamp.on();
   }
 
-  if (isSequenceStartMistake) {
+  if (isSequenceStartMistake)
+  {
     error::statusLamp.on();
-  } else if (control::dump.isManualRaised() ||
-             sequence::emergencyStopSequenceIsActive) {
+  }
+  else if (control::dump.isManualRaised() ||
+           sequence::emergencyStopSequenceIsActive)
+  {
     error::statusLamp.off();
   }
 }
 
-void communication::sendControlSync() {
+void communication::sendControlSync()
+{
   uint8_t state =
       (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
       (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
@@ -283,7 +306,8 @@ void communication::sendControlSync() {
   communication::disableOutput();
 }
 
-void communication::sendSensorConfigSync() {
+void communication::sendSensorConfigSync()
+{
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC),
@@ -292,7 +316,8 @@ void communication::sendSensorConfigSync() {
   communication::disableOutput();
 }
 
-void communication::sendSensorDummyCurrent(float current_mA) {
+void communication::sendSensorDummyCurrent(float current_mA)
+{
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1,
@@ -307,7 +332,8 @@ void communication::sendSensorDummyCurrent(float current_mA) {
  * @param a 傾き (Pressure = a * Current + b)
  * @param b 切片
  */
-void communication::sendSensorCalibCoeff(float a, float b) {
+void communication::sendSensorCalibCoeff(float a, float b)
+{
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1,
@@ -320,7 +346,8 @@ void communication::sendSensorCalibCoeff(float a, float b) {
 /**
  * @brief ゼロ点校正（大気圧校正）の実行リクエストを送信
  */
-void communication::sendSensorZeroCalibReq() {
+void communication::sendSensorZeroCalibReq()
+{
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1,
@@ -329,7 +356,8 @@ void communication::sendSensorZeroCalibReq() {
   communication::disableOutput();
 }
 
-void communication::sendComCheck() {
+void communication::sendComCheck()
+{
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
@@ -337,7 +365,8 @@ void communication::sendComCheck() {
   communication::disableOutput();
 }
 
-void communication::onFeedbackSyncReceived(uint8_t state) {
+void communication::onFeedbackSyncReceived(uint8_t state)
+{
   control::shiftFB.set(state & (1 << 0));
   control::fillFB.set(state & (1 << 1));
   control::dumpFB.set(state & (1 << 2));
@@ -350,7 +379,8 @@ void communication::onFeedbackSyncReceived(uint8_t state) {
   // communication::statusLamp.blink();
 }
 
-void communication::onPressureSyncReceived(float pressure) {
+void communication::onPressureSyncReceived(float pressure)
+{
   n2o::tm1637.displayNumber(pressure);
 
   // communication::statusLamp.blink();
@@ -359,20 +389,24 @@ void communication::onPressureSyncReceived(float pressure) {
 /**
  * @brief 機体から受信した生の電流値(mA)をシリアル出力
  */
-void communication::onCurrentSyncReceived(float current_mA) {
+void communication::onCurrentSyncReceived(float current_mA)
+{
   Serial.print(">VESIM10 Current: ");
-  Serial.print(current_mA);
+  Serial.println(current_mA);
 }
 
-void communication::onComCheckReceived() {
+void communication::onComCheckReceived()
+{
   // communication::statusLamp.blink();
   communication::statusLamp.on();
   communication::preReceivedTime = millis();
 }
 
-void communication::onComCheckFailed() {
+void communication::onComCheckFailed()
+{
   if (!Serial1.available() &&
-      (millis() - communication::preReceivedTime > communication::timeout)) {
+      (millis() - communication::preReceivedTime > communication::timeout))
+  {
     communication::statusLamp.off();
     error::statusLamp.on();
 
@@ -385,15 +419,19 @@ void communication::onComCheckFailed() {
     control::purgeFB.off();
 
     communication::preReceivedTime = millis();
-  } else {
+  }
+  else
+  {
     error::statusLamp.off();
   }
 }
 
-void control::handleManualTask() {
+void control::handleManualTask()
+{
   control::statusLamp.blink();
 
-  if (power::killButton.isHigh()) {
+  if (power::killButton.isHigh())
+  {
     mp3_play(12);
     power::powerLamp.off();
     delay(500);
@@ -415,10 +453,12 @@ void control::handleManualTask() {
   // セーフティー
   // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  if (!control::safetyArmed.isManualRaised()) {
+  if (!control::safetyArmed.isManualRaised())
+  {
     // シーケンスが進行中なら穏便ストップ
     if (sequence::emergencyStopSequenceIsActive ||
-        sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive) {
+        sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
+    {
       sequence::peacefulStop();
     }
 
@@ -427,7 +467,8 @@ void control::handleManualTask() {
 
   // エマスト
   control::emergencyStop.setManual();
-  if (control::emergencyStop.isManualRaised()) {
+  if (control::emergencyStop.isManualRaised())
+  {
     sequence::emergencyStop();
   }
 
@@ -437,28 +478,37 @@ void control::handleManualTask() {
   // DUMPがCLOSEされていない場合，シークエンス開始ボタンを押してもシークエンスが開始されない
   if (control::sequenceStart.isManualRaised() &&
       !control::dump.isManualRaised() &&
-      !sequence::emergencyStopSequenceIsActive) {
+      !sequence::emergencyStopSequenceIsActive)
+  {
     mp3_play(13);
     return;
   }
 
-  if (control::sequenceStart.isManualRaised()) {
-    if (sequence::sequenceStartRiseCount == 0) {
+  if (control::sequenceStart.isManualRaised())
+  {
+    if (sequence::sequenceStartRiseCount == 0)
+    {
       if (!(sequence::emergencyStopSequenceIsActive ||
             sequence::fillSequenceIsActive ||
-            sequence::ignitionSequenceIsActive)) {
+            sequence::ignitionSequenceIsActive))
+      {
         sequence::fill();
       }
       // 充填確認スイッチの代替
-      else if (sequence::canConfirm) {
+      else if (sequence::canConfirm)
+      {
         sequence::ignition();
-      } else {
+      }
+      else
+      {
         sequence::peacefulStop();
       }
     }
 
     sequence::sequenceStartRiseCount++;
-  } else {
+  }
+  else
+  {
     sequence::sequenceStartRiseCount = 0;
   }
 
@@ -480,7 +530,8 @@ void control::handleManualTask() {
   control::purge.setManual();
 }
 
-void sequence::emergencyStop() {
+void sequence::emergencyStop()
+{
   // 重複実行防止
   if (sequence::emergencyStopSequenceIsActive)
     return;
@@ -508,7 +559,8 @@ void sequence::emergencyStop() {
   control::setEmergencyStop();
 }
 
-void sequence::peacefulStop() {
+void sequence::peacefulStop()
+{
   control::sequenceStart.setAutomaticOff();
 
   sequence::emergencyStopSequenceIsActive = false;
@@ -534,7 +586,8 @@ void sequence::peacefulStop() {
   control::setPeacefulStop();
 }
 
-void sequence::fill() {
+void sequence::fill()
+{
   // 重複実行防止
   if (sequence::fillSequenceIsActive)
     return;
@@ -545,7 +598,8 @@ void sequence::fill() {
 
   // シーケンス開始時点で充填確認されていたらエラーを吐く
   if (control::confirm1.isHigh() || control::confirm2.isHigh() ||
-      control::confirm3.isHigh()) {
+      control::confirm3.isHigh())
+  {
     // HACK エラー
     sequence::peacefulStop();
     error::statusLamp.on();
@@ -553,7 +607,8 @@ void sequence::fill() {
   }
 
   // 通信失敗したらシーケンスに進めない
-  if (!communication::statusLamp.isHigh()) {
+  if (!communication::statusLamp.isHigh())
+  {
     sequence::peacefulStop();
     return;
   }
@@ -568,13 +623,15 @@ void sequence::fill() {
   Tasks[control::FILL_START]->startOnceAfterSec(24.0);
 }
 
-void sequence::ignition() {
+void sequence::ignition()
+{
   // 重複実行防止
   if (sequence::ignitionSequenceIsActive)
     return;
 
   // 通信失敗したら点火シーケンスに進めない
-  if (!communication::statusLamp.isHigh()) {
+  if (!communication::statusLamp.isHigh())
+  {
     sequence::peacefulStop();
     return;
   }
@@ -609,11 +666,12 @@ void sequence::ignition() {
 
   Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
   Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
-  Tasks[control::PURGE_START]->startOnceAfterSec(30.5);
-  Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
+  Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
+  Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);
 }
 
-void control::setChristmasTreeStart() {
+void control::setChristmasTreeStart()
+{
   n2o::tm1637.displayNumber(8.8);
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
@@ -641,7 +699,8 @@ void control::setChristmasTreeStart() {
   control::purgeFB.setTestOn();
 }
 
-void control::setChristmasTreeStop() {
+void control::setChristmasTreeStop()
+{
   n2o::tm1637.clearDisplay();
   error::statusLamp.setTestOff();
   power::lowVoltageLamp.setTestOff();
@@ -669,7 +728,8 @@ void control::setChristmasTreeStop() {
   control::purgeFB.setTestOff();
 }
 
-void control::setEmergencyStop() {
+void control::setEmergencyStop()
+{
   control::fill.setAutomaticOff();
   control::oxygen.setAutomaticOff();
   control::igniter.setAutomaticOff();
@@ -681,7 +741,8 @@ void control::setEmergencyStop() {
   control::purge.setAutomaticOn();
 }
 
-void control::setPeacefulStop() {
+void control::setPeacefulStop()
+{
   control::fill.setAutomaticOff();
   control::oxygen.setAutomaticOff();
   control::igniter.setAutomaticOff();
@@ -691,7 +752,8 @@ void control::setPeacefulStop() {
   control::purge.setAutomaticOff();
 }
 
-void control::setFillStart() {
+void control::setFillStart()
+{
   control::fill.setAutomaticOn();
   sequence::canConfirm = true;
 }
