@@ -11,6 +11,7 @@
 - バッテリーからの給電
 - Arduinoでの開発
 - PlatformIOでの開発
+- 遠隔からの亜酸化窒素の圧力計測
 
 に対応しました．
 
@@ -23,6 +24,10 @@
 - [仕様](./Documents/Specification.md)
 - [パーツリスト](./Documents/)
 - [自動シークエンスタイミングの考え方](./Documents/AutoSequence.md)
+- [通信・タスク管理ライブラリについて](./Documents/library_guide.md)
+- [亜酸化窒素の圧力計測について](./Documents/VESIM10_Manual.md)
+  - [校正シート](./Documents/VESIM10_Calibration.xlsx)
+  - [試験成績表(TSRP Only)](https://u-tokai.box.com/s/f19nbcfg3vuwrdxsdca0jw9x3lm8z8kp)
 
 ## フォルダ構成
 
