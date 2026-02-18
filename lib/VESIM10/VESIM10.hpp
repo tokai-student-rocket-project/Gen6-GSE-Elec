@@ -2,7 +2,8 @@
 
 #include <Arduino.h>
 
-class VESIM10 {
+class VESIM10
+{
 public:
   VESIM10(uint8_t analogPinNumber, float shuntResistance_Ohm,
           float fullScaleRange_MPa);
