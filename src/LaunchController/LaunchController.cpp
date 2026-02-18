@@ -131,7 +131,7 @@ Output accessLamp(PIN_PA4); // RS485
 // bool checkFailed = false;
 
 unsigned long preReceivedTime = 0;
-const long timeout = 1000; // ★ 5000ms から 1000ms に短縮
+const long timeout = 5000;
 
 void enableOutput();
 void disableOutput();
@@ -235,19 +235,19 @@ void setup() {
 void loop() {
   MsgPacketizer::parse();
   Tasks.update();
+
+  communication::accessLamp.update();
+  control::statusLamp.update();
 }
 
 /// @brief 送信を有効にする
 void communication::enableOutput() {
   communication::sendEnableControl.on();
-  communication::accessLamp.on();
+  communication::accessLamp.pulse(10);
 }
 
 /// @brief 送信を無効にする
-void communication::disableOutput() {
-  communication::sendEnableControl.off();
-  communication::accessLamp.off();
-}
+void communication::disableOutput() { communication::sendEnableControl.off(); }
 
 void power::measureTask() {
   bool isLowVoltage = power::input.getVoltage_V() < 11.5;
@@ -404,7 +404,7 @@ void communication::onComCheckFailed() {
 }
 
 void control::handleManualTask() {
-  control::statusLamp.blink();
+  control::statusLamp.pulse(50);
 
   if (power::killButton.isHigh()) {
     mp3_play(12);
