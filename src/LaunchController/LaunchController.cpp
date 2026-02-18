@@ -49,7 +49,7 @@ Output openFB(PIN_PE4);
 Output closeFB(PIN_PE6);
 Output purgeFB(PIN_PH2);
 
-Output statusLamp(PIN_PK4);
+Output statusLamp(PIN_PK4); // Task
 void handleManualTask();
 
 const String FILL_START = "fill-start";
@@ -130,8 +130,8 @@ Output accessLamp(PIN_PA4); // RS485
 
 // bool checkFailed = false;
 
-unsigned long preReceivedTime;
-const long timeout = 5000;
+unsigned long preReceivedTime = 0;
+const long timeout = 1000; // ★ 5000ms から 1000ms に短縮
 
 void enableOutput();
 void disableOutput();
@@ -166,6 +166,7 @@ void setup() {
 
   // LTC485 (RS485)
   Serial1.begin(115200);
+  communication::preReceivedTime = millis() - communication::timeout;
 
   // DFPlayer (Audio)
   Serial2.begin(9600);
@@ -182,8 +183,8 @@ void setup() {
   power::bus12.begin();
 
   Tasks.add(&power::measureTask)->startFps(10);
-  Tasks.add(&control::handleManualTask)->startFps(20);
-  Tasks.add(&communication::sendControlSync)->startFps(20);
+  Tasks.add(&control::handleManualTask)->startFps(10);
+  Tasks.add(&communication::sendControlSync)->startFps(10);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
   // Tasks.add(&simulation::updateTask)->startFps(2);
@@ -276,6 +277,11 @@ void power::measureTask() {
 }
 
 void communication::sendControlSync() {
+  // ★重要：通信失敗（タイムアウト）している間は、送信処理自体をスキップする
+  if (millis() - communication::preReceivedTime > communication::timeout) {
+    return;
+  }
+
   uint8_t state =
       (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
       (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
@@ -286,6 +292,7 @@ void communication::sendControlSync() {
   MsgPacketizer::send(Serial1,
                       static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),
                       state);
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -294,6 +301,7 @@ void communication::sendSensorConfigSync() {
   MsgPacketizer::send(
       Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC),
       10.0f); // Default 10.0 MPa
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -303,6 +311,7 @@ void communication::sendSensorDummyCurrent(float current_mA) {
       Serial1,
       static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC),
       current_mA);
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -317,6 +326,7 @@ void communication::sendSensorCalibCoeff(float a, float b) {
       Serial1,
       static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC), a,
       b);
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -328,6 +338,7 @@ void communication::sendSensorZeroCalibReq() {
   MsgPacketizer::send(
       Serial1,
       static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ));
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -335,6 +346,7 @@ void communication::sendComCheck() {
   communication::enableOutput();
   MsgPacketizer::send(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
+  Serial1.flush();
   communication::disableOutput();
 }
 
@@ -366,16 +378,20 @@ void communication::onCurrentSyncReceived(float current_mA) {
 }
 
 void communication::onComCheckReceived() {
-  // communication::statusLamp.blink();
   communication::statusLamp.on();
+  error::statusLamp.off();
   communication::preReceivedTime = millis();
 }
 
 void communication::onComCheckFailed() {
-  if (!Serial1.available() &&
-      (millis() - communication::preReceivedTime > communication::timeout)) {
+  if (millis() - communication::preReceivedTime > communication::timeout) {
     communication::statusLamp.off();
     error::statusLamp.on();
+
+    // ★重要：シーケンス実行中に通信が切れたら、強制的にシーケンスを止める
+    if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive) {
+      sequence::peacefulStop();
+    }
 
     control::fillFB.off();
     control::dumpFB.off();
@@ -384,10 +400,6 @@ void communication::onComCheckFailed() {
     control::openFB.off();
     control::closeFB.off();
     control::purgeFB.off();
-
-    communication::preReceivedTime = millis();
-  } else {
-    error::statusLamp.off();
   }
 }
 
