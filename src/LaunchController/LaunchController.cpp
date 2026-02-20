@@ -147,6 +147,7 @@ void sendSensorConfigSync();
 void sendSensorDummyCurrent(float current_mA);
 void sendSensorCalibCoeff(float a, float b);
 void sendSensorZeroCalibReq();
+void sendTelemetryForPython();
 
 Output statusLamp(PIN_PK5); // COM
 } // namespace communication
@@ -187,6 +188,8 @@ void setup() {
   Tasks.add(&communication::sendControlSync)->startFps(10);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
+  Tasks.add(&communication::sendTelemetryForPython)
+      ->startFps(10); // 10HzでPCへ状態送信
   // Tasks.add(&simulation::updateTask)->startFps(2);
   communication::sendSensorConfigSync();
   // 起動時に実測校正係数を同期
@@ -401,6 +404,29 @@ void communication::onComCheckFailed() {
     control::closeFB.off();
     control::purgeFB.off();
   }
+}
+
+/**
+ * @brief Python GUI (Visualizer) 用に現在の状態をSerial出力
+ * フォーマット: V_DATA:<CMD_BITS>,<FB_BITS>
+ */
+void communication::sendTelemetryForPython() {
+  uint8_t cmd_state =
+      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
+      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
+      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
+      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+
+  uint8_t fb_state =
+      (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
+      (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
+      (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
+      (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
+
+  Serial.print("V_DATA:");
+  Serial.print(cmd_state);
+  Serial.print(",");
+  Serial.println(fb_state);
 }
 
 void control::handleManualTask() {
