@@ -461,141 +461,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "TSRP_IC:BP5293-50"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "U"
-				(at 0 1.778 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "BP5293-50"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_THT:TO-220F-3_Vertical"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "https://akizukidenshi.com/goodsaffix/BP5293_DataSheet_J_VerC_161013.pdf"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "三端子DCDCレギュレーター 5V BP5293-50"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "秋月" "https://akizukidenshi.com/catalog/g/g111188/"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "BP5293-50_1_1"
-				(rectangle
-					(start 0 0)
-					(end 22.86 -8.89)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(text "BP5293-50"
-					(at 11.43 -1.778 0)
-					(effects
-						(font
-							(size 1.27 1.27)
-							(thickness 0.254)
-							(bold yes)
-						)
-					)
-				)
-				(pin power_in line
-					(at -2.54 -3.81 0)
-					(length 2.54)
-					(name "VIN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 11.43 -11.43 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_out line
-					(at 25.4 -3.81 180)
-					(length 2.54)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "TSRP_IC:StrawberryLinux_SC8721"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -1028,131 +893,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:+5V"
-			(power)
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "#PWR"
-				(at 0 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Value" "+5V"
-				(at 0 3.556 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Power symbol creates a global label with name \"+5V\""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "global power"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "+5V_0_1"
-				(polyline
-					(pts
-						(xy -0.762 1.27) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 0) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "+5V_1_1"
-				(pin power_in line
-					(at 0 0 90)
-					(length 0)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "power:GND"
 			(power)
 			(pin_numbers
@@ -1437,16 +1177,6 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 57.15) (xy 187.96 54.61)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "59186c4d-a1e9-4b7d-93e2-df3027fd1a32")
-	)
-	(wire
-		(pts
 			(xy 110.49 59.69) (xy 111.76 59.69)
 		)
 		(stroke
@@ -1477,16 +1207,6 @@
 	)
 	(wire
 		(pts
-			(xy 171.45 64.77) (xy 171.45 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "866bc063-c519-4c47-aa00-d5f2e0ca2230")
-	)
-	(wire
-		(pts
 			(xy 40.64 39.37) (xy 45.72 39.37)
 		)
 		(stroke
@@ -1514,16 +1234,6 @@
 			(type default)
 		)
 		(uuid "90e25986-25f4-4f0b-a72f-66c286a0e129")
-	)
-	(wire
-		(pts
-			(xy 156.21 57.15) (xy 157.48 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "931557c3-106a-4ff2-ac5a-929aeb89ec77")
 	)
 	(wire
 		(pts
@@ -1617,16 +1327,6 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 57.15) (xy 187.96 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cc7d5d26-467d-481d-ab8c-83fab66aac4b")
-	)
-	(wire
-		(pts
 			(xy 76.2 57.15) (xy 76.2 58.42)
 		)
 		(stroke
@@ -1668,28 +1368,6 @@
 		(uuid "3dcedd1c-6236-4a69-b67d-35018c5f63d1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 62.0652 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "SC8721_VOUT"
-		(shape input)
-		(at 156.21 57.15 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.143 1.143)
-			)
-			(justify right)
-		)
-		(uuid "505663eb-47d8-4161-b752-b1f12d523167")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 141.8212 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2015,72 +1693,6 @@
 			(project "THRCombustionExperimentModule"
 				(path "/dc98d680-5dd3-4db2-b9e5-37ad629f3456/d0421203-1aa9-45b6-ab72-6883d0e44853"
 					(reference "#PWR033")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 187.96 54.61 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "48580668-3fad-4ff1-87bf-e1eb563d272e")
-		(property "Reference" "#PWR036"
-			(at 187.96 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 187.96 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 187.96 54.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 187.96 54.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 187.96 54.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "602d8249-56f2-4c9a-b8a0-762cfb9fd842")
-		)
-		(instances
-			(project ""
-				(path "/dc98d680-5dd3-4db2-b9e5-37ad629f3456/d0421203-1aa9-45b6-ab72-6883d0e44853"
-					(reference "#PWR036")
 					(unit 1)
 				)
 			)
@@ -2634,152 +2246,6 @@
 			(project "THRCombustionExperimentModule"
 				(path "/dc98d680-5dd3-4db2-b9e5-37ad629f3456/d0421203-1aa9-45b6-ab72-6883d0e44853"
 					(reference "#PWR030")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 171.45 66.04 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a890771f-ab84-4372-9e97-3de08fabdd15")
-		(property "Reference" "#PWR035"
-			(at 171.45 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 171.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 171.45 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 171.45 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 171.45 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "fe13784d-f05b-4c2b-baa0-aa1701659738")
-		)
-		(instances
-			(project "THRCombustionExperimentModule"
-				(path "/dc98d680-5dd3-4db2-b9e5-37ad629f3456/d0421203-1aa9-45b6-ab72-6883d0e44853"
-					(reference "#PWR035")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "TSRP_IC:BP5293-50")
-		(at 160.02 53.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "dc94b17a-1adb-4831-8b59-7c5b4a52c8a9")
-		(property "Reference" "U7"
-			(at 171.45 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "BP5293-50"
-			(at 171.45 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TSRP_IC:BP5293-50"
-			(at 160.02 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://akizukidenshi.com/goodsaffix/BP5293_DataSheet_J_VerC_161013.pdf"
-			(at 160.02 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "三端子DCDCレギュレーター 5V BP5293-50"
-			(at 160.02 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplyer" "https://akizukidenshi.com/catalog/g/g111188/"
-			(at 160.02 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0f29bdfd-0cae-4285-8a9b-66d107fcf656")
-		)
-		(pin "2"
-			(uuid "20610be5-0a9c-47d2-8df8-c8fb72a79890")
-		)
-		(pin "3"
-			(uuid "f6f4cc80-d9ee-4a85-b550-b61017cb12f3")
-		)
-		(instances
-			(project ""
-				(path "/dc98d680-5dd3-4db2-b9e5-37ad629f3456/d0421203-1aa9-45b6-ab72-6883d0e44853"
-					(reference "U7")
 					(unit 1)
 				)
 			)
