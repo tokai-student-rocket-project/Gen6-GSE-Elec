@@ -9,7 +9,6 @@
 #include <TaskManager.h>
 #include <Wire.h>
 
-
 const int speakerPin = 11;
 const uint8_t mosi = D15;
 const uint8_t miso = D16;
@@ -62,7 +61,8 @@ static float startTime;
 void taskAcc();
 void measureFeRAM();
 
-void calibrateSensor() {
+void calibrateSensor()
+{
   Serial.println("Calibration starting...");
   Serial.println("Keep sensor flat and stationary (Z should be +1g).");
   delay(2000); // 準備待ち
@@ -71,7 +71,8 @@ void calibrateSensor() {
   int samples = 100;
 
   Serial.println("Sampling...");
-  for (int i = 0; i < samples; i++) {
+  for (int i = 0; i < samples; i++)
+  {
     int16_t x, y, z;
     adxl375.getXYZ(&x, &y, &z);
     x_sum += x;
@@ -132,7 +133,8 @@ void calibrateSensor() {
   Serial.println("----------------------------------------");
 }
 
-void taskAcc() {
+void taskAcc()
+{
   startTime = millis() / 1000.0;
 
   icm42688.readSensor();
@@ -145,29 +147,30 @@ void taskAcc() {
 
   adxl375.getAcceleration(&x_acc, &y_acc, &z_acc);
 
-  // Serial.print("> Time: ");
-  // Serial.println((millis() - startTime) / 1000.0);
-  // Serial.print("> X_highAcc: ");
-  // Serial.println(x_acc);
-  // Serial.print("> Y_highAcc: ");
-  // Serial.println(y_acc);
-  // Serial.print("> Z_highAcc: ");
-  // Serial.println(z_acc);
-  // Serial.print("> X_acc: ");
-  // Serial.println(x_acc_icm);
-  // Serial.print("> Y_acc: ");
-  // Serial.println(y_acc_icm);
-  // Serial.print("> Z_acc: ");
-  // Serial.println(z_acc_icm);
-  // Serial.print("> X_gyro: ");
-  // Serial.println(x_gyro_icm);
-  // Serial.print("> Y_gyro: ");
-  // Serial.println(y_gyro_icm);
-  // Serial.print("> Z_gyro: ");
-  // Serial.println(z_gyro_icm);
+  Serial.print("> Time: ");
+  Serial.println((millis() - startTime) / 1000.0);
+  Serial.print("> X_highAcc: ");
+  Serial.println(x_acc);
+  Serial.print("> Y_highAcc: ");
+  Serial.println(y_acc);
+  Serial.print("> Z_highAcc: ");
+  Serial.println(z_acc);
+  Serial.print("> X_acc: ");
+  Serial.println(x_acc_icm);
+  Serial.print("> Y_acc: ");
+  Serial.println(y_acc_icm);
+  Serial.print("> Z_acc: ");
+  Serial.println(z_acc_icm);
+  Serial.print("> X_gyro: ");
+  Serial.println(x_gyro_icm);
+  Serial.print("> Y_gyro: ");
+  Serial.println(y_gyro_icm);
+  Serial.print("> Z_gyro: ");
+  Serial.println(z_gyro_icm);
 }
 
-void measureFeRAM() {
+void measureFeRAM()
+{
   const auto &logPacket = MsgPacketizer::encode(
       0x0A, startTime, x_acc, y_acc, z_acc, x_acc_icm, y_acc_icm, z_acc_icm,
       x_gyro_icm, y_gyro_icm, z_gyro_icm);
@@ -175,7 +178,8 @@ void measureFeRAM() {
   logger.write(logPacket.data.data(), logPacket.data.size());
 }
 
-void taskServo() {
+void taskServo()
+{
   // 45.00度 (4500) と -45.00度 (-4500) を交互に繰り返す例
   static int targetPos = 4500;
   b3m.setPosition(SERVO_ID, targetPos, 0);
@@ -186,7 +190,8 @@ void taskServo() {
     targetPos = 4500;
 }
 
-void setup() {
+void setup()
+{
   b3m.initialize(SERVO_ID);
   delay(100);
   Serial.begin(115200);
@@ -196,11 +201,13 @@ void setup() {
 
   SPI.begin();
 
-  if (!adxl375.begin()) {
+  if (!adxl375.begin())
+  {
     Serial.println("adxl375 is not found...");
   }
 
-  if (!icm42688.begin()) {
+  if (!icm42688.begin())
+  {
     Serial.println("icm42688 is not found...");
   }
 
@@ -218,12 +225,15 @@ void setup() {
   Tasks.add(&measureFeRAM)->startFps(100);
   Tasks.add(&taskServo)->startFps(0.5); // 2秒に1回更新
 }
-void loop() {
+void loop()
+{
   Tasks.update();
 
-  if (Serial.available()) {
+  if (Serial.available())
+  {
     char ch = Serial.read();
-    if (ch == 'c') {
+    if (ch == 'c')
+    {
       calibrateSensor();
     }
   }
