@@ -14,8 +14,8 @@
  *   - Serialコマンドで手動送信も可能 (s: 送信, h: ヘルプ)
  *
  * ピン配置 (Nucleo F756ZG):
- *   RS485 UART : USART6 (PG_9=RX, PG_14=TX)
- *   RS485 DE   : PF_15 (HIGH=送信, LOW=受信)
+ *   RS485 UART : USART6 (PG9=RX, PG14=TX)
+ *   RS485 DE   : PF15 (HIGH=送信, LOW=受信)
  *   Debug UART : Serial (USB/ST-LINK)
  *
  * パケットIndex一覧:

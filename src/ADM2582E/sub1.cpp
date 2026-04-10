@@ -14,8 +14,8 @@
  *   - TaskManagerで定期的に自発的なデータ送信も行う
  *
  * ピン配置 (Nucleo F446RE):
- *   RS485 UART : USART2 (PA_3=RX, PA_2=TX)
- *   RS485 DE   : PA_10 (HIGH=送信, LOW=受信)
+ *   RS485 UART : USART2 (PC11=RX, PC10=TX)
+ *   RS485 DE   : PA10 (HIGH=送信, LOW=受信)
  *   Debug UART : Serial (USB/ST-LINK)
  *
  * パケットIndex一覧:
@@ -64,7 +64,8 @@ static constexpr uint8_t NODE_ID_SUB = 0x03;
 // ============================================================
 
 // mainから受信するコマンドパケット
-struct CmdPacket {
+struct CmdPacket
+{
   uint8_t target_id; // 宛先ノードID (0xFF = ブロードキャスト)
   uint8_t cmd;       // コマンド番号
   uint32_t seq;      // シーケンス番号
@@ -72,7 +73,8 @@ struct CmdPacket {
 };
 
 // sub1がmainへ返すステータスパケット
-struct StatusPacket {
+struct StatusPacket
+{
   uint8_t node_id;    // 自ノードID
   uint32_t seq;       // 対応するシーケンス番号
   float test_value_a; // テストデータA (例: 電圧)
@@ -82,7 +84,8 @@ struct StatusPacket {
 };
 
 // subへ転送するパケット (mainのコマンドをそのまま渡す)
-struct ForwardPacket {
+struct ForwardPacket
+{
   uint8_t from_id;   // 転送元ノードID
   uint8_t target_id; // 転送先ノードID
   uint8_t cmd;
@@ -107,7 +110,8 @@ static float g_test_b = 0.0f;
 // ============================================================
 inline void rs485TxMode() { digitalWrite(RS485_DE_PIN, HIGH); }
 
-inline void rs485RxMode() {
+inline void rs485RxMode()
+{
   RS485_SERIAL.flush();
   delayMicroseconds(100);
   digitalWrite(RS485_DE_PIN, LOW);
@@ -118,7 +122,9 @@ inline void rs485RxMode() {
 //   MsgPacketizer::send() はデフォルトで flush を行わないため
 //   DE制御をこのラッパー内で管理する
 // ============================================================
-template <typename... Args> void rs485Send(uint8_t index, Args &&...args) {
+template <typename... Args>
+void rs485Send(uint8_t index, Args &&...args)
+{
   rs485TxMode();
   MsgPacketizer::send(RS485_SERIAL, index, args...);
   rs485RxMode();
@@ -134,7 +140,8 @@ template <typename... Args> void rs485Send(uint8_t index, Args &&...args) {
  * mainからのポーリングに依存せず、定期的に自ノードの状態を送信する。
  * 疑似データとして時間変化するサイン波を使用。
  */
-void taskSendStatus() {
+void taskSendStatus()
+{
   // 疑似センサデータ生成 (実装時はセンサ読み取りに置き換える)
   float t = millis() / 1000.0f;
   g_test_a = 3.3f * (0.5f + 0.5f * sinf(t));          // 0.0〜3.3V の疑似電圧
@@ -163,13 +170,15 @@ void taskSendStatus() {
  * コマンド受信フラグが立っている場合のみ転送を行う。
  * フラグはコールバック内でセットされる。
  */
-void taskForwardToSub() {
+void taskForwardToSub()
+{
   if (!g_cmd_received)
     return;
   g_cmd_received = false;
 
   // target がsub (0x03) またはブロードキャスト (0xFF) の場合のみ転送
-  if (g_last_cmd.target_id != NODE_ID_SUB && g_last_cmd.target_id != 0xFF) {
+  if (g_last_cmd.target_id != NODE_ID_SUB && g_last_cmd.target_id != 0xFF)
+  {
     return;
   }
 
@@ -198,7 +207,8 @@ void taskUpdateReceiver() { MsgPacketizer::update(); }
 // ============================================================
 // セットアップ
 // ============================================================
-void setup() {
+void setup()
+{
   // デバッグシリアル初期化
   DEBUG_SERIAL.begin(DEBUG_BAUD);
   delay(500);
@@ -222,7 +232,8 @@ void setup() {
 
   // (1) mainからのコマンドを受信
   MsgPacketizer::subscribe(
-      RS485_SERIAL, IDX_CMD_FROM_MAIN, [](const CmdPacket &pkt) {
+      RS485_SERIAL, IDX_CMD_FROM_MAIN, [](const CmdPacket &pkt)
+      {
         ++g_recv_count;
         g_last_seq = pkt.seq;
 
@@ -252,18 +263,17 @@ void setup() {
 
         // subへの転送フラグをセット (taskForwardToSubで処理)
         g_last_cmd = pkt;
-        g_cmd_received = true;
-      });
+        g_cmd_received = true; });
 
   // (2) subからのステータスを受信してmainへ中継
   //     sub1はバスの途中にいるため、subのステータスをmainへ再送する
   MsgPacketizer::subscribe(
-      RS485_SERIAL, IDX_STATUS_FROM_SUB, [](const StatusPacket &pkt) {
+      RS485_SERIAL, IDX_STATUS_FROM_SUB, [](const StatusPacket &pkt)
+      {
         // subのステータスをそのままmainへ転送 (index維持)
         DEBUG_SERIAL.print("[RELAY] Got status from sub, seq=");
         DEBUG_SERIAL.println(pkt.seq);
-        rs485Send(IDX_STATUS_FROM_SUB, pkt);
-      });
+        rs485Send(IDX_STATUS_FROM_SUB, pkt); });
 
   // -------------------------------------------------------
   // TaskManager タスク登録
