@@ -4035,15 +4035,15 @@
 		(fields_autoplaced yes)
 		(uuid "10d1649a-3814-4529-aee6-9fd69671a430")
 		(property "Reference" "J10"
-			(at 133.35 25.4 0)
+			(at 133.35 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "CONN_PANEL_BAORD_2"
-			(at 133.35 27.94 0)
+		(property "Value" "CONN_PANEL_BOARD_2"
+			(at 133.35 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4171,15 +4171,15 @@
 		(fields_autoplaced yes)
 		(uuid "1a6f73e7-c0fd-4cc2-a1b2-76e1e3a3c08a")
 		(property "Reference" "J9"
-			(at 91.44 31.75 0)
+			(at 91.44 30.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "CONN_PANEL_BAORD_1"
-			(at 91.44 34.29 0)
+		(property "Value" "CONN_PANEL_BOARD_1"
+			(at 91.44 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
