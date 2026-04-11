@@ -5421,16 +5421,6 @@
 		(uuid "44805f33-3450-45ca-8ba0-7dd0d17fcb84")
 	)
 	(label "Visoin"
-		(at 129.54 92.71 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "6bc55478-10c2-4dbd-9358-c5e6e26a79fc")
-	)
-	(label "Visoout"
 		(at 129.54 95.25 180)
 		(effects
 			(font
@@ -5438,7 +5428,17 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "baa48022-beb4-4638-9978-c59d78cadbc4")
+		(uuid "da68cf7e-55a2-4469-bd9c-355376660ff5")
+	)
+	(label "Visoout"
+		(at 129.54 92.71 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "df57c09d-0b59-4aeb-a425-852417874d71")
 	)
 	(label "Visoout"
 		(at 198.12 116.84 180)
@@ -5986,7 +5986,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.01uF"
+		(property "Value" "0.1uF"
 			(at 162.56 124.4535 0)
 			(effects
 				(font
