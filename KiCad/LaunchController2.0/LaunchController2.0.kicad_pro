@@ -41,7 +41,7 @@
           "height": 1.27,
           "width": 2.54
         },
-        "silk_line_width": 0.15,
+        "silk_line_width": 0.1,
         "silk_text_italic": false,
         "silk_text_size_h": 1.5,
         "silk_text_size_v": 1.5,
@@ -188,6 +188,7 @@
       ],
       "track_widths": [
         0.0,
+        0.5,
         1.0
       ],
       "tuning_pattern_settings": {
@@ -504,7 +505,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "LaunchController2.0.step",
       "svg": "",
       "vrml": ""
     },

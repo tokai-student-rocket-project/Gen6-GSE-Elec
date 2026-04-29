@@ -5,7 +5,7 @@
 	(uuid "017c5872-fa6f-4200-9242-8d168e4d6b79")
 	(paper "A4")
 	(title_block
-		(title "GSE Gen 6 Launch Controller 2.0")
+		(title "Gen6 GSE Launch Controller 2.0")
 		(date "2026-03-30")
 	)
 	(lib_symbols
@@ -6111,12 +6111,6 @@
 		(uuid "f3664513-6b86-49b1-aa99-0d6eb6dfa799")
 	)
 	(junction
-		(at 116.84 58.42)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f70c34c3-c478-4947-86b4-fcd754bb4bcb")
-	)
-	(junction
 		(at 15.24 53.34)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6245,6 +6239,10 @@
 	(no_connect
 		(at 242.57 118.11)
 		(uuid "a63cfb50-a1c1-4e1f-9ccd-96b98e2f22dc")
+	)
+	(no_connect
+		(at 90.17 58.42)
+		(uuid "afe3f7d6-5c80-4de7-95bb-7c9ad6ab9566")
 	)
 	(no_connect
 		(at 49.53 76.2)
@@ -6656,16 +6654,6 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 55.88) (xy 116.84 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2cbdfb8a-faf4-4252-bbd2-2e35f68503c8")
-	)
-	(wire
-		(pts
 			(xy 217.17 77.47) (xy 218.44 77.47)
 		)
 		(stroke
@@ -6703,16 +6691,6 @@
 			(type default)
 		)
 		(uuid "2ff63711-647c-4343-bfb9-d8764791ddc3")
-	)
-	(wire
-		(pts
-			(xy 90.17 58.42) (xy 116.84 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3108d5f0-b285-462c-855d-f16da2fc492f")
 	)
 	(wire
 		(pts
@@ -7033,16 +7011,6 @@
 			(type default)
 		)
 		(uuid "58d72dd4-af4e-4ace-b7df-52f67bc6720f")
-	)
-	(wire
-		(pts
-			(xy 116.84 49.53) (xy 116.84 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5920b12e-eca6-498f-8454-2cdbd23bc03c")
 	)
 	(wire
 		(pts
@@ -8413,16 +8381,6 @@
 			(type default)
 		)
 		(uuid "f97a5b7c-5dea-40fb-8d04-195cb9f5547a")
-	)
-	(wire
-		(pts
-			(xy 116.84 58.42) (xy 121.92 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fa8e2f36-7a3a-4687-9d6b-2260ceb07e35")
 	)
 	(wire
 		(pts
@@ -11710,28 +11668,6 @@
 			)
 		)
 	)
-	(global_label "SPI_~{CS}_FeRAM0"
-		(shape output)
-		(at 121.92 58.42 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a5c8032c-a998-41d9-8c44-14dfd5687b72")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 139.6009 58.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "CTL_IGNITOR"
 		(shape input)
 		(at 91.44 127 0)
@@ -12539,92 +12475,6 @@
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
 					(reference "#PWR02")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small")
-		(at 116.84 53.34 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0fae97ac-18b9-465f-b6ee-5e242fb3a0af")
-		(property "Reference" "R7"
-			(at 119.38 52.705 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10kR"
-			(at 119.38 55.245 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021098"
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" ""
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Supplier" ""
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "60366648-99ce-478f-860e-b63ae8cd0c05")
-		)
-		(pin "2"
-			(uuid "86709876-8929-421c-90f3-3e812e0d00ea")
-		)
-		(instances
-			(project "LaunchController2.0"
-				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -14135,71 +13985,6 @@
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
 					(reference "#PWR016")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 116.84 49.53 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "4251fdc8-ae9a-4ab3-9103-47521df9507b")
-		(property "Reference" "#PWR07"
-			(at 116.84 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 116.84 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 116.84 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 116.84 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 116.84 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "baa803ea-d25c-4efc-adbd-d2714591b12e")
-		)
-		(instances
-			(project "LaunchController2.0"
-				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR07")
 					(unit 1)
 				)
 			)
