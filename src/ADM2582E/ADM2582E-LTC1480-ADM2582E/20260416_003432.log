@@ -1,0 +1,129 @@
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=7
+[TX] Immediat[TX] Status seq=44 A=4.884 B=3.181
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=45
+[TX] Immediate reply seq=45
+[TX] Status seq=45 A=3.730 B=0.529
+[TX] Status seq=45 A=1.917 B=0.111
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=46
+[TX] Immediate reply seq=46
+[TX] Status seq=46 A=0.416 B=1.936
+[TX] Status seq=46 A=0.034 B=5.964
+[TX] Status seq=46 A=0.975 B=12.103
+[TX] Status seq=46 A=2.734 B=20.217
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=48
+[TX] Immediate reply seq=48
+[TX] Status seq=48 A=4.368 B=30.122
+[TX] Status seq=48 A=4.999 B=41.597
+[TX] Status seq=48 A=4.289 B=54.383
+[TX] Status seq=48 A=2.619 B=68.193
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=50
+[TX] Immediate reply seq=50
+[TX] Status seq=50 A=0.885 B=82.718
+[TX] Status seq=50 A=0.018 B=97.631
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=51
+[TX] Immediate reply seq=51
+[TX] Status seq=51 A=0.482 B=112.598
+[TX] Status seq=51 A=2.030 B=127.281
+[TX] Status seq=51 A=3.829 B=141.351
+[TX] Status seq=51 A=4.916 B=154.494
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=53
+[TX] Immediate reply seq=53
+[TX] Status seq=53 A=4.706 B=166.411
+[TX] Status seq=53 A=3.312 B=176.839
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=54
+[TX] Immediate reply seq=54
+[TX] Status seq=54 A=1.483 B=185.539
+[TX] Status seq=54 A=0.199 B=192.319
+[TX] Status seq=54 A=0.150 B=197.026
+[TX] Status seq=54 A=1.362 B=199.554
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=56
+[TX] Immediate reply seq=56
+[TX] Status seq=56 A=3.185 B=199.846
+[TX] Status seq=56 A=4.640 B=197.896
+[TX] Status seq=56 A=4.947 B=193.747
+[TX] Status seq=56 A=3.941 B=187.492
+[TX] Status seq=56 A=2.161 B=179.274
+[TX] Status seq=56 A=0.564 B=169.274
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=59
+[TX] Immediate reply seq=59
+[TX] Status seq=59 A=0.005 B=157.719
+[TX] Status seq=59 A=0.786 B=144.868
+[TX] Status seq=59 A=2.486 B=131.008
+[TX] Status seq=59 A=4.194 B=116.453
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=61
+[TX] Immediate reply seq=61
+[TX] Status seq=61 A=4.993 B=101.528
+[TX] Status seq=61 A=4.454 B=86.569
+[TX] Status seq=61 A=2.867 B=71.912
+[TX] Status seq=61 A=1.083 B=57.884
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=63
+[TX] Immediate reply seq=63
+[TX] Status seq=63 A=0.059 B=44.804
+[TX] Status seq=63 A=0.345 B=32.962
+[TX] Status seq=63 A=1.788 B=22.626
+[TX] Status seq=63 A=3.612 B=14.029
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=65
+[TX] Immediate reply seq=65
+[TX] Status seq=65 A=4.840 B=7.361
+[TX] Status seq=65 A=4.812 B=2.774
+[TX] Status seq=65 A=3.543 B=0.370
+[TX] Status seq=65 A=1.715 B=0.204
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=67
+[TX] Immediate reply seq=67
+[TX] Status seq=67 A=0.308 B=2.279
+[TX] Status seq=67 A=0.077 B=6.549
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=68
+[TX] Immediate reply seq=68
+[TX] Status seq=68 A=1.147 B=12.917
+[TX] Status seq=68 A=2.943 B=21.242
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=69
+[TX] Immediate reply seq=69
+[TX] Status seq=69 A=4.501 B=31.335
+[TX] Status seq=69 A=4.986 B=42.969
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=70
+[TX] Immediate reply seq=70
+[TX] Status seq=70 A=4.136 B=55.886
+[TX] Status seq=70 A=2.409 B=69.792
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=71
+[TX] Immediate reply seq=71
+[TX] Status seq=71 A=0.731 B=84.377
+[TX] Status seq=71 A=0.001 B=99.312
+[TX] Status seq=71 A=0.613 B=114.263
+[TX] Status seq=71 A=2.237 B=128.895
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=73
+[TX] Immediate reply seq=73
+[TX] Status seq=73 A=4.003 B=142.876
+[TX] Status seq=73 A=4.961 B=155.896
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=74
+[TX] Immediate reply seq=74
+[TX] Status seq=74 A=4.599 B=167.659
+[TX] Status seq=74 A=3.111 B=177.903
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=75
+[TX] Immediate reply seq=75
+[TX] Status seq=75 A=1.294 B=186.398
+[TX] Status seq=75 A=0.125 B=192.952
+[TX] Status seq=75 A=0.230 B=197.420
+[TX] Status seq=75 A=1.553 B=199.699
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=77
+[TX] Immediate reply seq=77
+[TX] Status seq=77 A=3.384 B=199.739
+[TX] Status seq=77 A=4.741 B=197.539
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=78
+[TX] Immediate reply seq=78
+[TX] Status seq=78 A=4.895 B=193.148
+[TX] Status seq=78 A=3.764 B=186.666
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=79
+[TX] Immediate reply seq=79
+[TX] Status seq=79 A=1.954 B=178.237
+[TX] Status seq=79 A=0.438 B=168.052
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=80
+[TX] Immediate reply seq=80
+[TX] Status seq=80 A=0.028 B=156.338
+[TX] Status seq=80 A=0.944 B=143.359
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=81
+[TX] Immediate reply seq=81
+[TX] Status seq=81 A=2.696 B=129.405
+[TX] Status seq=81 A=4.342 B=114.792
+[RX] ForwardPacket from=0x2 target=0xFF cmd=0x0 seq=82
+[TX] Immediate reply seq=82
+[TX] Status seq=82 A=5.000 B=99.847

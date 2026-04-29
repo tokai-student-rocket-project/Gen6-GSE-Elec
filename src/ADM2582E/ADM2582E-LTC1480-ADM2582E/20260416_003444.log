@@ -1,0 +1,225 @@
+[TX] StatusPacket seq=6 A=2.918 B=95.277
+[RELAY] Got status from sub, seq=6
+[TX] StatusPacket seq=6 A=3.269 B=88.622
+[[TX] StatusPacket seq=57 A=2.485 B=63.115
+[RELAY] Got status from sub, seq=56
+[TX] StatusPacket seq=57 A=1.701 B=50.770
+[RELAY] Got status from sub, seq=56
+[TX] StatusPacket seq=57 A=0.904 B=38.378
+[RELAY] Got status from sub, seq=56
+[TX] StatusPacket seq=57 A=0.290 B=26.708
+[RX] CmdPacket target=0xFF cmd=0x0 seq=59
+[TX] Immediate reply seq=59
+[FWD] Forward to sub: cmd=0x0 seq=59
+[RELAY] Got status from sub, seq=59
+[RELAY] Got status from sub, seq=59
+[TX] StatusPacket seq=59 A=0.009 B=16.486
+[RELAY] Got status from sub, seq=59
+[TX] StatusPacket seq=59 A=0.129 B=8.348
+[RX] CmdPacket target=0xFF cmd=0x0 seq=60
+[TX] Immediate reply seq=60
+[FWD] Forward to sub: cmd=0x0 seq=60
+[RELAY] Got status from sub, seq=59
+[TX] StatusPacket seq=60 A=0.622 B=2.799
+[RELAY] Got status from sub, seq=59
+[TX] StatusPacket seq=60 A=1.367 B=0.186
+[RX] CmdPacket target=0xFF cmd=0x0 seq=61
+[TX] Immediate reply seq=61
+[FWD] Forward to sub: cmd=0x0 seq=61
+[RELAY] Got status from sub, seq=61
+[RELAY] Got status from sub, seq=61
+[TX] StatusPacket seq=61 A=2.181 B=0.669
+[RELAY] Got status from sub, seq=61
+[TX] StatusPacket seq=61 A=2.865 B=4.220
+[RX] CmdPacket target=0xFF cmd=0x0 seq=62
+[TX] Immediate reply seq=62
+[FWD] Forward to sub: cmd=0x0 seq=62
+[RELAY] Got status from sub, seq=61
+[TX] StatusPacket seq=62 A=3.251 B=10.617
+[RELAY] Got status from sub, seq=61
+[TX] StatusPacket seq=62 A=3.246 B=19.463
+[RX] CmdPacket target=0xFF cmd=0x0 seq=63
+[TX] Immediate reply seq=63
+[FWD] Forward to sub: cmd=0x0 seq=63
+[RELAY] Got status from sub, seq=63
+[RELAY] Got status from sub, seq=63
+[TX] StatusPacket seq=63 A=2.850 B=30.207
+[RELAY] Got status from sub, seq=63
+[TX] StatusPacket seq=63 A=2.160 B=42.182
+[RX] CmdPacket target=0xFF cmd=0x0 seq=64
+[TX] Immediate reply seq=64
+[FWD] Forward to sub: cmd=0x0 seq=64
+[RELAY] Got status from sub, seq=63
+[TX] StatusPacket seq=64 A=1.345 B=54.643
+[RELAY] Got status from sub, seq=63
+[TX] StatusPacket seq=64 A=0.605 B=66.816
+[RX] CmdPacket target=0xFF cmd=0x0 seq=65
+[TX] Immediate reply seq=65
+[FWD] Forward to sub: cmd=0x0 seq=65
+[RELAY] Got status from sub, seq=65
+[RELAY] Got status from sub, seq=65
+[TX] StatusPacket seq=65 A=0.121 B=77.943
+[RELAY] Got status from sub, seq=65
+[TX] StatusPacket seq=65 A=0.011 B=87.332
+[RX] CmdPacket target=0xFF cmd=0x0 seq=66
+[TX] Immediate reply seq=66
+[FWD] Forward to sub: cmd=0x0 seq=66
+[RELAY] Got status from sub, seq=65
+[TX] StatusPacket seq=66 A=0.303 B=94.401
+[RELAY] Got status from sub, seq=65
+[TX] StatusPacket seq=66 A=0.924 B=98.708
+[RX] CmdPacket target=0xFF cmd=0x0 seq=67
+[TX] Immediate reply seq=67
+[FWD] Forward to sub: cmd=0x0 seq=67
+[RELAY] Got status from sub, seq=67
+[RELAY] Got status from sub, seq=67
+[TX] StatusPacket seq=67 A=1.723 B=99.988
+[RELAY] Got status from sub, seq=67
+[TX] StatusPacket seq=67 A=2.505 B=98.159
+[RX] CmdPacket target=0xFF cmd=0x0 seq=68
+[TX] Immediate reply seq=68
+[FWD] Forward to sub: cmd=0x0 seq=68
+[RELAY] Got status from sub, seq=68
+[RELAY] Got status from sub, seq=68
+[TX] StatusPacket seq=68 A=3.077 B=93.336
+[RELAY] Got status from sub, seq=68
+[TX] StatusPacket seq=68 A=3.299 B=85.819
+[RX] CmdPacket target=0xFF cmd=0x0 seq=69
+[TX] Immediate reply seq=69
+[FWD] Forward to sub: cmd=0x0 seq=69
+[RELAY] Got status from sub, seq=69
+[RELAY] Got status from sub, seq=69
+[TX] StatusPacket seq=69 A=3.118 B=76.074
+[RELAY] Got status from sub, seq=69
+[TX] StatusPacket seq=69 A=2.578 B=64.709
+[RX] CmdPacket target=0xFF cmd=0x0 seq=70
+[TX] Immediate reply seq=70
+[FWD] Forward to sub: cmd=0x0 seq=70
+[RELAY] Got status from sub, seq=70
+[RELAY] Got status from sub, seq=70
+[TX] StatusPacket seq=70 A=1.810 B=52.429
+[RELAY] Got status from sub, seq=70
+[TX] StatusPacket seq=70 A=1.003 B=39.998
+[RX] CmdPacket target=0xFF cmd=0x0 seq=71
+[TX] Immediate reply seq=71
+[FWD] Forward to sub: cmd=0x0 seq=71
+[RELAY] Got status from sub, seq=71
+[RELAY] Got status from sub, seq=71
+[TX] StatusPacket seq=71 A=0.355 B=28.188
+[RELAY] Got status from sub, seq=71
+[TX] StatusPacket seq=71 A=0.023 B=17.735
+[RX] CmdPacket target=0xFF cmd=0x0 seq=72
+[TX] Immediate reply seq=72
+[FWD] Forward to sub: cmd=0x0 seq=72
+[RELAY] Got status from sub, seq=71
+[TX] StatusPacket seq=72 A=0.090 B=9.288
+[RELAY] Got status from sub, seq=71
+[TX] StatusPacket seq=72 A=0.539 B=3.373
+[RX] CmdPacket target=0xFF cmd=0x0 seq=73
+[TX] Immediate reply seq=73
+[FWD] Forward to sub: cmd=0x0 seq=73
+[RELAY] Got status from sub, seq=73
+[RELAY] Got status from sub, seq=73
+[TX] StatusPacket seq=73 A=1.260 B=0.356
+[RELAY] Got status from sub, seq=73
+[TX] StatusPacket seq=73 A=2.076 B=0.426
+[RX] CmdPacket target=0xFF cmd=0x0 seq=74
+[TX] Immediate reply seq=74
+[FWD] Forward to sub: cmd=0x0 seq=74
+[RELAY] Got status from sub, seq=74
+[RELAY] Got status from sub, seq=74
+[TX] StatusPacket seq=74 A=2.788 B=3.578
+[RELAY] Got status from sub, seq=74
+[TX] StatusPacket seq=74 A=3.222 B=9.617
+[RX] CmdPacket target=0xFF cmd=0x0 seq=75
+[TX] Immediate reply seq=75
+[FWD] Forward to sub: cmd=0x0 seq=75
+[RELAY] Got status from sub, seq=75
+[RELAY] Got status from sub, seq=75
+[TX] StatusPacket seq=75 A=3.270 B=18.166
+[RELAY] Got status from sub, seq=75
+[TX] StatusPacket seq=75 A=2.922 B=28.695
+[RX] CmdPacket target=0xFF cmd=0x0 seq=76
+[TX] Immediate reply seq=76
+[FWD] Forward to sub: cmd=0x0 seq=76
+[RELAY] Got status from sub, seq=75
+[TX] StatusPacket seq=76 A=2.263 B=40.548
+[RELAY] Got status from sub, seq=75
+[TX] StatusPacket seq=76 A=1.453 B=52.989
+[RX] CmdPacket target=0xFF cmd=0x0 seq=77
+[TX] Immediate reply seq=77
+[FWD] Forward to sub: cmd=0x0 seq=77
+[RELAY] Got status from sub, seq=77
+[RELAY] Got status from sub, seq=77
+[TX] StatusPacket seq=77 A=0.692 B=65.244
+[RELAY] Got status from sub, seq=77
+[TX] StatusPacket seq=77 A=0.165 B=76.551
+[RX] CmdPacket target=0xFF cmd=0x0 seq=78
+[TX] Immediate reply seq=78
+[FWD] Forward to sub: cmd=0x0 seq=78
+[RELAY] Got status from sub, seq=78
+[RELAY] Got status from sub, seq=78
+[TX] StatusPacket seq=78 A=0.002 B=86.208
+[RELAY] Got status from sub, seq=78
+[TX] StatusPacket seq=78 A=0.242 B=93.613
+[RX] CmdPacket target=0xFF cmd=0x0 seq=79
+[TX] Immediate reply seq=79
+[FWD] Forward to sub: cmd=0x0 seq=79
+[RELAY] Got status from sub, seq=79
+[RELAY] Got status from sub, seq=79
+[TX] StatusPacket seq=79 A=0.827 B=98.307
+[RELAY] Got status from sub, seq=79
+[TX] StatusPacket seq=79 A=1.614 B=99.997
+[RX] CmdPacket target=0xFF cmd=0x0 seq=80
+[TX] Immediate reply seq=80
+[FWD] Forward to sub: cmd=0x0 seq=80
+[RELAY] Got status from sub, seq=80
+[RELAY] Got status from sub, seq=80
+[TX] StatusPacket seq=80 A=2.409 B=98.579
+[RELAY] Got status from sub, seq=80
+[TX] StatusPacket seq=80 A=3.019 B=94.140
+[RX] CmdPacket target=0xFF cmd=0x0 seq=81
+[TX] Immediate reply seq=81
+[FWD] Forward to sub: cmd=0x0 seq=81
+[RELAY] Got status from sub, seq=81
+[RELAY] Got status from sub, seq=81
+[TX] StatusPacket seq=81 A=3.293 B=86.956
+[RELAY] Got status from sub, seq=81
+[TX] StatusPacket seq=81 A=3.165 B=77.475
+[RX] CmdPacket target=0xFF cmd=0x0 seq=82
+[TX] Immediate reply seq=82
+[FWD] Forward to sub: cmd=0x0 seq=82
+[RELAY] Got status from sub, seq=82
+[RELAY] Got status from sub, seq=82
+[TX] StatusPacket seq=82 A=2.666 B=66.286
+[RELAY] Got status from sub, seq=82
+[TX] StatusPacket seq=82 A=1.919 B=54.084
+[RX] CmdPacket target=0xFF cmd=0x0 seq=83
+[TX] Immediate reply seq=83
+[FWD] Forward to sub: cmd=0x0 seq=83
+[RELAY] Got status from sub, seq=83
+[RELAY] Got status from sub, seq=83
+[TX] StatusPacket seq=83 A=1.105 B=41.628
+[RELAY] Got status from sub, seq=83
+[TX] StatusPacket seq=83 A=0.423 B=29.648
+[RX] CmdPacket target=0xFF cmd=0x0 seq=84
+[TX] Immediate reply seq=84
+[FWD] Forward to sub: cmd=0x0 seq=84
+[TX] StatusPacket seq=84 A=0.045 B=19.020
+[RELAY] Got status from sub, seq=83
+[TX] StatusPacket seq=84 A=0.058 B=10.274
+[RELAY] Got status from sub, seq=83
+[RX] CmdPacket target=0xFF cmd=0x0 seq=85
+[TX] Immediate reply seq=85
+[FWD] Forward to sub: cmd=0x0 seq=85
+[RELAY] Got status from sub, seq=85
+[TX] StatusPacket seq=85 A=0.460 B=3.997
+[RELAY] Got status from sub, seq=85
+[TX] StatusPacket seq=85 A=1.154 B=0.581
+[RELAY] Got status from sub, seq=85
+[RX] CmdPacket target=0xFF cmd=0x0 seq=86
+[TX] Immediate reply seq=86
+[FWD] Forward to sub: cmd=0x0 seq=86
+[RELAY] Got status from sub, seq=86
+[TX] StatusPacket seq=86 A=1.969 B=0.237
+[RELAY] Got status from sub, seq=86

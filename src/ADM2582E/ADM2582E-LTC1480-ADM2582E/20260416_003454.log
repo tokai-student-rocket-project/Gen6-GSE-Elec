@@ -1,0 +1,517 @@
+--- sub1 status ---
+  seq=8
+  val_a=2.470  val_b=62.862
+  uptime=27754 ms
+--- sub status ---
+  seq=8
+  val_a=1.227  val_b=79.416
+  uptime=392008 ms
+[RX] sub status seq=8
+[RX] sub status seq=8
+[RX] sub1 status s--- sub1 status ---
+  seq=67
+  val_a=1.146  val_b=99.398
+  uptime=87654 ms
+--- sub status ---
+  seq=67
+  val_a=0.308  val_b=2.279
+  uptime=451008 ms
+[RX] sub status seq=67
+[RX] sub1 status seq=67
+[TX] Poll #68  total_sent=68
+--- sub1 status ---
+  seq=67
+  val_a=2.505  val_b=98.159
+  uptime=88509 ms
+--- sub status ---
+  seq=67
+  val_a=0.077  val_b=6.549
+  uptime=451508 ms
+[RX] sub1 status seq=68
+[RX] sub status seq=68
+[RX] sub status seq=68
+[RX] sub status seq=68
+[RX] sub status seq=68
+[RX] sub1 status seq=68
+--- sub1 status ---
+  seq=68
+  val_a=3.077  val_b=93.336
+  uptime=89009 ms
+--- sub status ---
+  seq=68
+  val_a=1.147  val_b=12.917
+  uptime=452008 ms
+[RX] sub status seq=68
+[RX] sub status seq=68
+[RX] sub1 status seq=68
+[TX] Poll #69  total_sent=69
+--- sub1 status ---
+  seq=68
+  val_a=3.299  val_b=85.819
+  uptime=89509 ms
+--- sub status ---
+  seq=68
+  val_a=2.943  val_b=21.242
+  uptime=452508 ms
+[RX] sub1 status seq=69
+[RX] sub status seq=69
+[RX] sub status seq=69
+[RX] sub1 status seq=0
+--- sub1 status ---
+  seq=0
+  val_a=0.000  val_b=0.000
+  uptime=0 ms
+--- sub status ---
+  seq=69
+  val_a=4.501  val_b=31.335
+  uptime=453008 ms
+[RX] sub status seq=69
+[RX] sub status seq=69
+[RX] sub1 status seq=69
+[TX] Poll #70  total_sent=70
+--- sub1 status ---
+  seq=69
+  val_a=2.578  val_b=64.709
+  uptime=90509 ms
+--- sub status ---
+  seq=69
+  val_a=4.986  val_b=42.969
+  uptime=453508 ms
+[RX] sub1 status seq=70
+[RX] sub status seq=70
+[RX] sub status seq=70
+[RX] sub status seq=70
+[RX] sub1 status seq=70
+--- sub1 status ---
+  seq=70
+  val_a=1.810  val_b=52.429
+  uptime=91009 ms
+--- sub status ---
+  seq=70
+  val_a=4.136  val_b=55.886
+  uptime=454008 ms
+[RX] sub status seq=70
+[RX] sub status seq=70
+[RX] sub1 status seq=70
+[TX] Poll #71  total_sent=71
+--- sub1 status ---
+  seq=70
+  val_a=1.003  val_b=39.998
+  uptime=91509 ms
+--- sub status ---
+  seq=70
+  val_a=2.409  val_b=69.792
+  uptime=454508 ms
+[RX] sub1 status seq=71
+[RX] sub status seq=71
+[RX] sub status seq=71
+[RX] sub status seq=71
+[RX] sub status seq=71
+[RX] sub1 status seq=71
+--- sub1 status ---
+  seq=71
+  val_a=0.355  val_b=28.188
+  uptime=92009 ms
+--- sub status ---
+  seq=71
+  val_a=0.731  val_b=84.377
+  uptime=455008 ms
+[RX] sub status seq=71
+[RX] sub status seq=71
+[RX] sub1 status seq=71
+[TX] Poll #72  total_sent=72
+--- sub1 status ---
+  seq=71
+  val_a=0.023  val_b=17.735
+  uptime=92509 ms
+--- sub status ---
+  seq=71
+  val_a=0.001  val_b=99.312
+  uptime=455508 ms
+[RX] sub status seq=71
+[RX] sub status seq=71
+[RX] sub1 status seq=72
+--- sub1 status ---
+  seq=72
+  val_a=0.090  val_b=9.288
+  uptime=93009 ms
+--- sub status ---
+  seq=71
+  val_a=0.613  val_b=114.263
+  uptime=456008 ms
+[RX] sub status seq=71
+[RX] sub status seq=71
+[TX] Poll #73  total_sent=73
+--- sub status ---
+  seq=71
+  val_a=2.237  val_b=128.895
+  uptime=456508 ms
+[RX] sub1 status seq=73
+[RX] sub status seq=73
+[RX] sub status seq=0
+[RX] sub status seq=73
+[RX] sub status seq=73
+--- sub1 status ---
+  seq=73
+  val_a=0.861  val_b=1.547
+  uptime=93749 ms
+--- sub status ---
+  seq=73
+  val_a=4.003  val_b=142.876
+  uptime=457008 ms
+[RX] sub status seq=73
+[RX] sub status seq=73
+[RX] sub1 status seq=73
+[TX] Poll #74  total_sent=74
+--- sub1 status ---
+  seq=73
+  val_a=2.076  val_b=0.426
+  uptime=94509 ms
+--- sub status ---
+  seq=73
+  val_a=4.961  val_b=155.896
+  uptime=457508 ms
+[RX] sub status seq=74
+[RX] sub status seq=74
+[RX] sub status seq=74
+[RX] sub1 status seq=74
+--- sub1 status ---
+  seq=74
+  val_a=2.788  val_b=3.578
+  uptime=95009 ms
+--- sub status ---
+  seq=74
+  val_a=4.599  val_b=167.659
+  uptime=458008 ms
+[RX] sub status seq=74
+[RX] sub status seq=74
+[RX] sub1 status seq=74
+[TX] Poll #75  total_sent=75
+--- sub1 status ---
+  seq=74
+  val_a=3.222  val_b=9.617
+  uptime=95509 ms
+--- sub status ---
+  seq=74
+  val_a=3.111  val_b=177.903
+  uptime=458508 ms
+[RX] sub1 status seq=75
+[RX] sub status seq=75
+[RX] sub status seq=75
+[RX] sub status seq=75
+[RX] sub1 status seq=75
+--- sub1 status ---
+  seq=75
+  val_a=3.270  val_b=18.166
+  uptime=96009 ms
+--- sub status ---
+  seq=75
+  val_a=1.294  val_b=186.398
+  uptime=459008 ms
+[RX] sub status seq=75
+[RX] sub1 status seq=75
+[TX] Poll #76  total_sent=76
+--- sub1 status ---
+  seq=75
+  val_a=2.922  val_b=28.695
+  uptime=96509 ms
+--- sub status ---
+  seq=75
+  val_a=0.125  val_b=192.952
+  uptime=459508 ms
+[RX] sub1 status seq=76
+[RX] sub status seq=75
+[RX] sub1 status seq=76
+--- sub1 status ---
+  seq=76
+  val_a=2.263  val_b=40.548
+  uptime=97009 ms
+--- sub status ---
+  seq=75
+  val_a=0.230  val_b=197.420
+  uptime=460008 ms
+[RX] sub status seq=75
+[RX] sub status seq=75
+[RX] sub1 status seq=76
+[TX] Poll #77  total_sent=77
+--- sub1 status ---
+  seq=76
+  val_a=1.453  val_b=52.989
+  uptime=97509 ms
+--- sub status ---
+  seq=75
+  val_a=1.553  val_b=199.699
+  uptime=460508 ms
+[RX] sub status seq=77
+[RX] sub status seq=77
+[RX] sub status seq=77
+[RX] sub status seq=77
+[RX] sub1 status seq=77
+--- sub1 status ---
+  seq=77
+  val_a=0.692  val_b=65.244
+  uptime=98009 ms
+--- sub status ---
+  seq=77
+  val_a=3.384  val_b=199.739
+  uptime=461008 ms
+[RX] sub status seq=77
+[RX] sub status seq=77
+[RX] sub1 status seq=77
+[TX] Poll #78  total_sent=78
+--- sub1 status ---
+  seq=77
+  val_a=0.165  val_b=76.551
+  uptime=98509 ms
+--- sub status ---
+  seq=77
+  val_a=4.741  val_b=197.539
+  uptime=461508 ms
+[RX] sub status seq=78
+[RX] sub status seq=78
+[RX] sub status seq=78
+[RX] sub status seq=78
+--- sub status ---
+  seq=78
+  val_a=4.895  val_b=193.148
+  uptime=462008 ms
+[RX] sub status seq=78
+[RX] sub1 status seq=78
+[TX] Poll #79  total_sent=79
+--- sub1 status ---
+  seq=78
+  val_a=0.242  val_b=93.613
+  uptime=99509 ms
+--- sub status ---
+  seq=78
+  val_a=3.764  val_b=186.666
+  uptime=462508 ms
+[RX] sub1 status seq=79
+[RX] sub status seq=79
+[RX] sub status seq=79
+[RX] sub status seq=79
+[RX] sub status seq=79
+[RX] sub1 status seq=79
+--- sub1 status ---
+  seq=79
+  val_a=0.827  val_b=98.307
+  uptime=100009 ms
+--- sub status ---
+  seq=79
+  val_a=1.954  val_b=178.237
+  uptime=463008 ms
+[RX] sub status seq=79
+[RX] sub status seq=79
+[RX] sub1 status seq=79
+[TX] Poll #80  total_sent=80
+--- sub1 status ---
+  seq=79
+  val_a=1.614  val_b=99.997
+  uptime=100509 ms
+--- sub status ---
+  seq=79
+  val_a=0.438  val_b=168.052
+  uptime=463508 ms
+[RX] sub1 status seq=80
+[RX] sub status seq=80
+[RX] sub status seq=80
+[RX] sub1 status seq=80
+--- sub1 status ---
+  seq=80
+  val_a=2.409  val_b=98.579
+  uptime=101009 ms
+--- sub status ---
+  seq=80
+  val_a=0.028  val_b=156.338
+  uptime=464008 ms
+[RX] sub status seq=80
+[RX] sub status seq=80
+[TX] Poll #81  total_sent=81
+--- sub status ---
+  seq=80
+  val_a=0.944  val_b=143.359
+  uptime=464508 ms
+[RX] sub status seq=81
+[RX] sub1 status seq=81
+--- sub1 status ---
+  seq=81
+  val_a=3.293  val_b=86.956
+  uptime=102009 ms
+--- sub status ---
+  seq=81
+  val_a=2.415  val_b=131.549
+  uptime=464933 ms
+[RX] sub status seq=81
+[RX] sub status seq=81
+[TX] Poll #82  total_sent=82
+--- sub status ---
+  seq=81
+  val_a=4.342  val_b=114.792
+  uptime=465508 ms
+[RX] sub status seq=82
+[RX] sub status seq=82
+[RX] sub status seq=82
+[RX] sub status seq=82
+[RX] sub1 status seq=82
+--- sub1 status ---
+  seq=82
+  val_a=2.666  val_b=66.286
+  uptime=103009 ms
+--- sub status ---
+  seq=82
+  val_a=5.000  val_b=99.847
+  uptime=466008 ms
+[RX] sub status seq=82
+[RX] sub status seq=82
+[RX] sub1 status seq=82
+[TX] Poll #83  total_sent=83
+--- sub1 status ---
+  seq=82
+  val_a=1.919  val_b=54.084
+  uptime=103509 ms
+--- sub status ---
+  seq=82
+  val_a=4.316  val_b=84.904
+  uptime=466508 ms
+[RX] sub status seq=83
+[RX] sub status seq=83
+[RX] sub1 status seq=83
+--- sub1 status ---
+  seq=83
+  val_a=1.105  val_b=41.628
+  uptime=104009 ms
+--- sub status ---
+  seq=83
+  val_a=2.658  val_b=70.302
+  uptime=467008 ms
+[RX] sub status seq=83
+[RX] sub1 status seq=83
+[TX] Poll #84  total_sent=84
+--- sub1 status ---
+  seq=83
+  val_a=0.423  val_b=29.648
+  uptime=104511 ms
+--- sub status ---
+  seq=83
+  val_a=0.915  val_b=56.365
+  uptime=467508 ms
+[RX] sub1 status seq=84
+[RX] sub status seq=83
+--- sub1 status ---
+  seq=84
+  val_a=0.081  val_b=20.615
+  uptime=104929 ms
+--- sub status ---
+  seq=83
+  val_a=0.022  val_b=43.409
+  uptime=468008 ms
+[RX] sub1 status seq=84
+[RX] sub status seq=83
+[RX] sub status seq=83
+[TX] Poll #85  total_sent=85
+--- sub1 status ---
+  seq=84
+  val_a=0.058  val_b=10.274
+  uptime=105509 ms
+--- sub status ---
+  seq=83
+  val_a=0.460  val_b=31.725
+  uptime=468508 ms
+[RX] sub1 status seq=85
+[RX] sub status seq=85
+[RX] sub status seq=85
+[RX] sub1 status seq=85
+[RX] sub status seq=85
+[RX] sub status seq=85
+--- sub1 status ---
+  seq=85
+  val_a=0.460  val_b=3.997
+  uptime=106009 ms
+--- sub status ---
+  seq=85
+  val_a=1.992  val_b=21.572
+  uptime=469008 ms
+[RX] sub1 status seq=85
+[RX] sub status seq=85
+[TX] Poll #86  total_sent=86
+--- sub1 status ---
+  seq=85
+  val_a=1.154  val_b=0.581
+  uptime=106509 ms
+--- sub status ---
+  seq=85
+  val_a=3.796  val_b=13.182
+  uptime=469508 ms
+[RX] sub1 status seq=86
+[RX] sub status seq=86
+[RX] sub1 status seq=86
+[RX] sub status seq=86
+[RX] sub status seq=86
+--- sub1 status ---
+  seq=86
+  val_a=1.969  val_b=0.237
+  uptime=107009 ms
+--- sub status ---
+  seq=86
+  val_a=4.906  val_b=6.740
+  uptime=470008 ms
+[RX] sub1 status seq=86
+[RX] sub status seq=86
+[RX] sub status seq=86
+[TX] Poll #87  total_sent=87
+--- sub1 status ---
+  seq=86
+  val_a=2.706  val_b=2.987
+  uptime=107509 ms
+--- sub status ---
+  seq=86
+  val_a=4.724  val_b=2.394
+  uptime=470508 ms
+[RX] sub1 status seq=87
+[RX] sub status seq=0
+[RX] sub status seq=0
+--- sub1 status ---
+  seq=87
+  val_a=3.166  val_b=8.243
+  uptime=107979 ms
+--- sub status ---
+  seq=0
+  val_a=3.349  val_b=0.240
+  uptime=471008 ms
+[RX] sub1 status seq=87
+[RX] sub status seq=0
+[RX] sub status seq=0
+[TX] Poll #88  total_sent=88
+--- sub1 status ---
+  seq=87
+  val_a=3.287  val_b=16.904
+  uptime=108509 ms
+--- sub status ---
+  seq=0
+  val_a=1.518  val_b=0.326
+  uptime=471508 ms
+[RX] sub1 status seq=88
+[RX] sub status seq=88
+[RX] sub status seq=88
+[RX] sub status seq=88
+--- sub1 status ---
+  seq=88
+  val_a=3.003  val_b=26.872
+  uptime=108994 ms
+--- sub status ---
+  seq=88
+  val_a=0.214  val_b=2.650
+  uptime=472008 ms
+[RX] sub1 status seq=88
+[RX] sub status seq=88
+[RX] sub status seq=88
+[TX] Poll #89  total_sent=89
+--- sub1 status ---
+  seq=88
+  val_a=2.363  val_b=38.924
+  uptime=109509 ms
+--- sub status ---
+  seq=88
+  val_a=0.137  val_b=7.161
+  uptime=472508 ms
+[RX] sub status seq=88
