@@ -5882,6 +5882,18 @@
 		)
 		(uuid eb69389a-17e1-4890-b973-f7f93731b56c)
 	)
+	(rectangle
+		(start 262.89 39.37)
+		(end 276.86 46.99)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid f4ac0293-2889-4c91-9b95-0c0a620fe15c)
+	)
 	(text "CONNECTION ICSP"
 		(exclude_from_sim no)
 		(at 174.244 16.764 0)
@@ -5901,6 +5913,16 @@
 			)
 		)
 		(uuid "96287222-f77c-4f67-91f0-3a33a3632d29")
+	)
+	(text "向きに気をつけよう"
+		(exclude_from_sim no)
+		(at 270.51 49.022 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "bae9acef-9dd6-4834-b787-1ecb9c2d75c2")
 	)
 	(text "CONNECTION USB"
 		(exclude_from_sim no)
@@ -10942,6 +10964,28 @@
 			)
 		)
 	)
+	(global_label "USB_D-"
+		(shape bidirectional)
+		(at 264.16 41.91 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2e883d99-e2ba-4c66-9034-f7d407f88dd8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 275.8765 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "VREF_THERMISTOR"
 		(shape input)
 		(at 91.44 165.1 0)
@@ -10955,6 +10999,28 @@
 		(uuid "2f640fe3-7e94-471f-95b6-9208bac7b01d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 111.4605 165.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "USB_D+"
+		(shape bidirectional)
+		(at 264.16 44.45 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2f9ec74a-2d7b-43cc-a134-6bbc27449041")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 275.8765 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11219,28 +11285,6 @@
 		(uuid "53a9f1e4-29f4-41a9-b973-cda88bf47eec")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 255.7567 113.03 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "USB_D-"
-		(shape bidirectional)
-		(at 264.16 44.45 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "54e9b9a3-bf39-403c-a2e2-b52725310aed")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 275.8765 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12253,28 +12297,6 @@
 		(uuid "f832fff7-7932-44d5-a69a-11a8c26f6e7b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 102.3287 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "USB_D+"
-		(shape bidirectional)
-		(at 264.16 41.91 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f9c3ed1b-f1b4-4ce8-adc0-fd47db5db2e6")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 275.8765 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
