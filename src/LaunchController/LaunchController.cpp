@@ -167,6 +167,8 @@ namespace simulation
 
 void setup()
 {
+  pinMode(PIN_PB7, OUTPUT);
+  digitalWrite(PIN_PB7, HIGH);
   power::loadSwitch.on();
   power::powerLamp.on();
 
@@ -276,7 +278,15 @@ void power::measureTask()
                                 !control::dump.isManualRaised() &&
                                 !sequence::emergencyStopSequenceIsActive;
 
-  // Serial.println(power::thermal.getTemperature_degC()); // 温度モニター
+  // Teleplot 用
+  // Serial.print(">Tempelature_degC:"); // 12V-5V レギュレーターの温度モニター
+  // Serial.println(power::thermal.getTemperature_degC());
+  // Serial.print(">inputVoltage_V:"); // 入力電圧モニター
+  // Serial.println(power::input.getVoltage_V());
+  // Serial.print(">inputAmpere_A:"); // 入力電流モニター
+  // Serial.println(power::input.getAmpere_A());
+  // Serial.print(">bus12Voltage_V:"); // 12Vバス電圧モニター
+  // Serial.println(power::bus12.getVoltage_V());
 
   if (isOverloadedInput || isOverloadedBus || isOverheated)
   {
