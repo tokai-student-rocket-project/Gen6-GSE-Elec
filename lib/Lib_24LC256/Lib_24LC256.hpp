@@ -11,7 +11,10 @@ public:
 
   void begin();
 
-  void writeByte(uint16_t memAdress, uint8_t data);
+  void writeByte(uint16_t memAddress, uint8_t data);
+  uint8_t readByte(uint16_t memAddress);
 
-  uint8_t readByte(uint16_t memAdress);
+  // 複数バイトのまとめ読み書き機能（配列バッファ用）
+  void writeBuffer(uint16_t memAddress, const uint8_t* data, uint16_t length);
+  void readBuffer(uint16_t memAddress, uint8_t* data, uint16_t length);
 };
