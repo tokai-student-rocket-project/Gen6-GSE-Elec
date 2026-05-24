@@ -1,9 +1,10 @@
-#include "VESIM10.hpp"
+#include "VESIM10_2.0.hpp"
 
-VESIM10::VESIM10(uint8_t pin, float shuntResistance_Ohm,
+VESIM10::VESIM10(Lib_ADS1115* ads, uint8_t channel, float shuntResistance_Ohm,
                  float fullScaleRange_MPa)
 {
-  _pin = pin;
+  _ads = ads;
+  _channel = channel;
   _shuntResistance_Ohm = shuntResistance_Ohm;
 
   setFullScale(fullScaleRange_MPa);
@@ -42,10 +43,11 @@ void VESIM10::sample()
   if (_isDummyMode)
     return;
   
-  // ATmega2560のADCは10ビット(0-1023)、基準電圧5.0Vと仮定
-  float voltage = (analogRead(_pin) * 5.0) / 1024.0;
-  _voltageSum += voltage;
-  _sampleCount++;
+  if (_ads != nullptr)
+  {
+    _voltageSum += _ads->readVoltage(_channel);
+    _sampleCount++;
+  }
 }
 
 float VESIM10::read(bool raw)

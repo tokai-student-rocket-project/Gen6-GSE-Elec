@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Arduino.h>
+#include "Lib_ADS1115.hpp"
 
 class VESIM10
 {
 public:
-  VESIM10(uint8_t pin, float shuntResistance_Ohm,
+  VESIM10(Lib_ADS1115* ads, uint8_t channel, float shuntResistance_Ohm,
           float fullScaleRange_MPa);
 
   float read(bool raw = false);
@@ -23,7 +24,8 @@ public:
   void disableDummy();
 
 private:
-  uint8_t _pin;
+  Lib_ADS1115* _ads;
+  uint8_t _channel;
 
   float _shuntResistance_Ohm;
 
