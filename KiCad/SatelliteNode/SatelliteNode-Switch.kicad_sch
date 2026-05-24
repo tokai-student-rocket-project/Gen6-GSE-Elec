@@ -1535,7 +1535,7 @@
 		)
 		(uuid "6fb7264b-44f5-4f60-b97f-2e3b4bd46d4f")
 	)
-	(text "NO"
+	(text "NC"
 		(exclude_from_sim no)
 		(at 100.33 69.342 0)
 		(effects
