@@ -2,7 +2,7 @@
 #include "Output.hpp"
 #include "PowerMonitor.hpp"
 #include "SemiAutoControl.hpp"
-#include "SolenoidMonitor.hpp"
+#include "SolenoidMonitor2.0.hpp"
 #include "TM1637.hpp"
 #include "Thermistor.hpp"
 #include "VESIM10.hpp"
@@ -12,10 +12,10 @@
 
 namespace power
 {
-  Input killButton(PIN_PJ1, false);
-  Output loadSwitch(PIN_PF5);
-  Output powerLamp(PIN_PG5);
-  Output lowVoltageLamp(PIN_PK7);
+  Input killButton(PIN_PJ1, false); // CTL_KILL
+  Output loadSwitch(PIN_PF5);       // CTL_POWER
+  Output powerLamp(PIN_PG5);        // LED_POWER
+  Output lowVoltageLamp(PIN_PK7);   // LED_LOW_VOLTAGE
 
   PowerMonitor input(0x40);
   PowerMonitor bus12(0x41);
@@ -26,31 +26,29 @@ namespace power
 
 namespace control
 {
-  SemiAutoControl safetyArmed(PIN_PC2, true, PIN_PH7);
+  SemiAutoControl safetyArmed(PIN_PH7, true, PIN_PG3); // CTL_SAFETY, LED_SAFTEY
 
-  Output shift(PIN_PD4);
-  Output fill(PIN_PD5);
-  Output dump(PIN_PG1);
-  Output oxygen(PIN_PC3);
-  Output igniter(PIN_PD7);
-  Output open(PIN_PD6);
-  Output close(PIN_PG0);
+  Output shift(PIN_PD4);   // CTL_SHIFT
+  Output fill(PIN_PD7);    // CTL_FILL
+  Output dump(PIN_PD6);    // CTL_DUMP
+  Output oxygen(PIN_PG0);  // CTL_O2
+  Output igniter(PIN_PD5); // CTL_IGNITOR
+  Output open(PIN_PG1);    // CTL_OPEN
+  Output close(PIN_PC0);   // CTL_CLOSE
+  Output purge(PIN_PC2);   // CTL_PURGE
+
   // SemiAutoControl purge(PIN_PC0, false, PIN_PG3);
-  SemiAutoControl purgeSwitch(PIN_PG4, true, PIN_PG3);
-  Output purge(PIN_PC0);
+  SemiAutoControl check(PIN_PC1, false, PIN_PB6); // CTL_CHECK, LED_CHECK
 
-  // Output purge(PIN_PB6);
-  // SemiAutoControl check(PIN_PC0, true, PIN_PB6);
-
-  Output shiftFB(PIN_PH5);
-  Output fillFB(PIN_PB0);
-  Output dumpFB(PIN_PB5);
-  Output oxygenFB(PIN_PL4);
-  Output igniterFB(PIN_PH4);
-  Output openFB(PIN_PH6);
-  Output closeFB(PIN_PB4);
-  Output purgeFB(PIN_PH1);
-  Output statusLamp(PIN_PK4);
+  Output shiftFB(PIN_PH5);    // LED_FB_SHIFT
+  Output fillFB(PIN_PB0);     // LED_FB_FILL
+  Output dumpFB(PIN_PB5);     // LED_FB_DUMP
+  Output oxygenFB(PIN_PH0);   // LED_FB_O2
+  Output igniterFB(PIN_PH4);  // LED_FB_IGNITOR
+  Output openFB(PIN_PH6);     // LED_FB_OPEN
+  Output closeFB(PIN_PB4);    // LED_FB_CLOSE
+  Output purgeFB(PIN_PH1);    // LED_FB_PURGE
+  Output statusLamp(PIN_PK4); // LED_TASK
 
   void handleManualTask();
   void setChristmasTreeStart();
@@ -60,12 +58,12 @@ namespace control
 namespace error
 {
   // HACK LEDだけでなく処理もする
-  Output statusLamp(PIN_PK6);
+  Output statusLamp(PIN_PK6); // LED_ERROR
 } // namespace error
 
 namespace solenoid
 {
-  SolenoidMonitor monitor(PIN_PC4);
+  SolenoidMonitor monitor(PIN_PC5); // CS_ADC
 
   void checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name);
   void measureTask();
@@ -73,8 +71,13 @@ namespace solenoid
 
 namespace n2o
 {
-  TM1637 tm1637(PIN_PK0, PIN_PK1);
-  VESIM10 vesim10(PIN_PK2, 240.0, 10.0);
+  TM1637 tm1637(PIN_PK0, PIN_PK1); // 7SEG_CLK, 7SEG_DIO
+
+  // ADS1115のインスタンスを作成
+  Lib_ADS1115 ads1115;
+
+  // ADS1115に置き換え箇所: 回路図に合わせてシャント抵抗を100Ωに変更、チャンネル0を使用
+  VESIM10 vesim10(&ads1115, 0, 100.0, 10.0);
 
   // --- ゼロ点校正の安全設定 ---
   // 大気圧下において許容される生電流の範囲 (mA)
@@ -91,8 +94,8 @@ namespace n2o
 
 namespace umbilical
 {
-  Output flightMode(PIN_PH3);
-  Output valveMode(PIN_PH2);
+  Output flightMode(PIN_PL7);
+  Output valveMode(PIN_PL6);
 } // namespace umbilical
 
 namespace communication
@@ -112,8 +115,8 @@ namespace communication
 
   };
 
-  Output sendEnableControl(PIN_PA2);
-  Output accessLamp(PIN_PA4); // RS485
+  Output sendEnableControl(PIN_PC3); // CTL_RS485_DERE
+  Output accessLamp(PIN_PC4);        // LED_RS485_ACCESS
 
   uint8_t syncState;
   unsigned long preReceivedTime = 0;
@@ -134,7 +137,7 @@ namespace communication
   void onSensorCalibCoeffReceived(float a, float b);
   void onSensorZeroCalibReqReceived();
 
-  Output statusLamp(PIN_PK5); // COM
+  Output statusLamp(PIN_PK5); // LED_COM
 } // namespace communication
 
 /// @brief 送信を有効にする
@@ -149,11 +152,25 @@ void communication::disableOutput() { communication::sendEnableControl.off(); }
 
 void power::measureTask()
 {
-  bool isLowVoltage =
-      power::input.getVoltage_V() < 10.5; // 電磁弁の許容電流に設定
-  bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
+  bool isLowVoltage = power::input.getVoltage_V() < 10.5; // 電磁弁の許容電流に設定
+  // teleplot 入力電圧
+  Serial.print(">inputVoltage_V:");
+  Serial.println(input.getVoltage_V());
+
+  bool isOverloadedInput = power::input.getAmpere_A() > 5.0;
+  // teleplot 入力電流
+  Serial.print(">inputAmpere_A:");
+  Serial.println(input.getAmpere_A());
+
   bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
+  // teleplot 12Vバス電流
+  Serial.print(">bus12Ampere_A:");
+  Serial.println(bus12.getAmpere_A());
+
   bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
+  // teleplot 3端子レギュレーター温度
+  Serial.print(">regulatorTemperature_degC:");
+  Serial.println(thermal.getTemperature_degC());
 
   power::lowVoltageLamp.set(isLowVoltage);
 
@@ -325,11 +342,11 @@ void solenoid::checkSolenoid(SolenoidMonitor::Solenoid solenoid,
     break;
   }
   // 結果の出力
-  // Serial.print(name);
-  // Serial.print(": Voltage=");
-  // Serial.print(voltage);
-  // Serial.print("mV, Status=");
-  // Serial.println(statusStr);
+  Serial.print(name);
+  Serial.print(": Voltage=");
+  Serial.print(voltage);
+  Serial.print("mV, Status=");
+  Serial.println(statusStr);
 }
 
 void n2o::measureTask()
@@ -357,21 +374,23 @@ void communication::sendFeedbackSync()
       (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
 
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC),
-      state);
+  communication::enableOutput(); // DE=HIGH
+
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+
+  // 【最重要】すべてのデータが物理的に送り出されるのを待つ
   Serial1.flush();
-  communication::disableOutput();
+
+  communication::disableOutput(); // DE=LOW
 }
 
 void communication::sendPressureSync()
 {
   communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC),
-      n2o::pressure_MPa);
+
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
   Serial1.flush();
+
   communication::disableOutput();
 }
 
@@ -379,9 +398,7 @@ void communication::sendCurrentSync()
 {
   float current_mA = n2o::vesim10.getCurrent_mA();
   communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC),
-      current_mA);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), current_mA);
   Serial1.flush();
   communication::disableOutput();
 }
@@ -389,8 +406,7 @@ void communication::sendCurrentSync()
 void communication::sendComCheck()
 {
   communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
   Serial1.flush();
   communication::disableOutput();
 }
@@ -398,7 +414,7 @@ void communication::sendComCheck()
 void communication::onControlSyncReceived(uint8_t state)
 {
   bool isArmed = control::safetyArmed.isManualRaised();
-  Serial.println(isArmed);
+  // Serial.println(isArmed);
 
   communication::syncState = state;
   // communication::preReceivedTime = millis(); // ★Heartbeat: 受信時刻を更新
@@ -533,8 +549,8 @@ void control::handleManualTask()
   }
 
   // 手動制御
-  control::purgeSwitch.setManual();
-  if (control::purgeSwitch.isManualRaised())
+  control::check.setManual();
+  if (control::check.isManualRaised())
   {
     control::purge.on();
   }
@@ -563,7 +579,7 @@ void control::setChristmasTreeStart()
   control::openFB.setTestOn();
   control::closeFB.setTestOn();
   control::purgeFB.setTestOn();
-  control::purgeSwitch.setTestOn();
+  control::check.setTestOn();
 }
 
 void control::setChristmasTreeStop()
@@ -583,7 +599,7 @@ void control::setChristmasTreeStop()
   control::openFB.setTestOff();
   control::closeFB.setTestOff();
   control::purgeFB.setTestOff();
-  control::purgeSwitch.setTestOff();
+  control::check.setTestOff();
 }
 
 void setup()
@@ -624,40 +640,33 @@ void setup()
   power::input.begin();
   power::bus12.begin();
 
+  // ADS1115 (N2O Pressure Sensor)
+  if (n2o::ads1115.init()) {
+    // 4-20mAが100Ωに流れた時の最大電圧は2.0Vなので、±2.048Vの範囲が最適
+    n2o::ads1115.setVoltageRange(2);
+  } else {
+    Serial.println("Error: ADS1115 Initialization Failed.");
+  }
+
   // VESIM10 (N2O Pressure Sensor)
   // n2o::vesim10.calibrateBlocking(10);
 
-  Tasks.add(&power::measureTask)->startFps(10);
-  Tasks.add(&solenoid::measureTask)->startFps(10);
-  Tasks.add(&n2o::samplingTask)->startFps(100); // 100Hzでサンプリング
-  Tasks.add(&n2o::measureTask)->startFps(2);    // 亜酸化窒素の圧力を計測
-  Tasks.add(&control::handleManualTask)->startFps(10);
-  Tasks.add(&communication::sendFeedbackSync)->startFps(10);
+  Tasks.add(&power::measureTask)->startFps(5);
+  Tasks.add(&solenoid::measureTask)->startFps(5);
+  Tasks.add(&n2o::samplingTask)->startFps(20); // 20Hzでサンプリング
+  Tasks.add(&n2o::measureTask)->startFps(2);   // 亜酸化窒素の圧力を計測
+  Tasks.add(&control::handleManualTask)->startFps(5);
+  Tasks.add(&communication::sendFeedbackSync)->startFps(5);
   Tasks.add(&communication::sendPressureSync)->startFps(2);
   Tasks.add(&communication::sendCurrentSync)->startFps(2); // 2Hzで電流値を送信
   Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
-  MsgPacketizer::subscribe(
-      Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),
-      &communication::onControlSyncReceived);
-  MsgPacketizer::subscribe(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S),
-      &communication::onComCheckReceived);
-  MsgPacketizer::subscribe(
-      Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC),
-      &communication::onSensorConfigReceived);
-  MsgPacketizer::subscribe(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC),
-      &communication::onSensorDummyCurrentReceived);
-  MsgPacketizer::subscribe(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC),
-      &communication::onSensorCalibCoeffReceived);
-  MsgPacketizer::subscribe(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ),
-      &communication::onSensorZeroCalibReqReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC), &communication::onSensorConfigReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC), &communication::onSensorDummyCurrentReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC), &communication::onSensorCalibCoeffReceived);
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ), &communication::onSensorZeroCalibReqReceived);
 
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
