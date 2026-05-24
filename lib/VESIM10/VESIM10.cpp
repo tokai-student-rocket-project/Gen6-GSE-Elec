@@ -1,9 +1,10 @@
 #include "VESIM10.hpp"
 
-VESIM10::VESIM10(uint8_t analogPinNumber, float shuntResistance_Ohm,
+VESIM10::VESIM10(Lib_ADS1115* ads, uint8_t channel, float shuntResistance_Ohm,
                  float fullScaleRange_MPa)
 {
-  _analogPinNumber = analogPinNumber;
+  _ads = ads;
+  _channel = channel;
   _shuntResistance_Ohm = shuntResistance_Ohm;
 
   setFullScale(fullScaleRange_MPa);
@@ -41,8 +42,12 @@ void VESIM10::sample()
 {
   if (_isDummyMode)
     return;
-  _adcSum += analogRead(_analogPinNumber);
-  _adcCount++;
+  
+  if (_ads != nullptr)
+  {
+    _voltageSum += _ads->readVoltage(_channel);
+    _sampleCount++;
+  }
 }
 
 float VESIM10::read(bool raw)
@@ -54,15 +59,14 @@ float VESIM10::read(bool raw)
   }
   else
   {
-    if (_adcCount > 0)
+    if (_sampleCount > 0)
     {
-      float avgAdc = (float)_adcSum / (float)_adcCount;
-      float voltage_V = avgAdc * 5.0 / 1024.0;
-      currentRaw_mA = voltage_V / _shuntResistance_Ohm * 1000.0;
+      float avgVoltage_V = _voltageSum / (float)_sampleCount;
+      currentRaw_mA = avgVoltage_V / _shuntResistance_Ohm * 1000.0;
 
       // アキュムレーターをリセット
-      _adcSum = 0;
-      _adcCount = 0;
+      _voltageSum = 0.0;
+      _sampleCount = 0;
     }
     else
     {
