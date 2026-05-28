@@ -12,14 +12,14 @@
 
 namespace power
 {
-  // キルスイッチ入力 (CTL_KILL): システムを強制停止するためのボタン
-  Input killButton(PIN_PJ1, false); 
+  // キルスイッチ入力 (CTL_KILL): 電源を落とすためのボタン
+  Input killButton(PIN_PJ1, false);
   // 電源供給用ロードスイッチ (CTL_POWER): 各部への電源供給を制御
-  Output loadSwitch(PIN_PF5);       
+  Output loadSwitch(PIN_PF5);
   // 電源ランプ (LED_POWER): 電源がONであることを示すLED
-  Output powerLamp(PIN_PG5);        
+  Output powerLamp(PIN_PG5);
   // 低電圧警告ランプ (LED_LOW_VOLTAGE): 入力電圧が低下した際に点灯
-  Output lowVoltageLamp(PIN_PK7);   
+  Output lowVoltageLamp(PIN_PK7);
 
   // 入力系統の電力・電流モニタ (I2Cアドレス: 0x40)
   PowerMonitor input(0x40);
@@ -51,15 +51,15 @@ namespace control
   SemiAutoControl check(PIN_PC1, false, PIN_PB6); // CTL_CHECK, LED_CHECK
 
   // 各種制御状態のフィードバック(確認)用LED出力ピン
-  Output shiftFB(PIN_PH5);    // シフト弁状態表示用LED (LED_FB_SHIFT)
-  Output fillFB(PIN_PB0);     // FILL弁状態表示用LED (LED_FB_FILL)
-  Output dumpFB(PIN_PB5);     // DUMP弁状態表示用LED (LED_FB_DUMP)
-  Output oxygenFB(PIN_PH0);   // O2弁状態表示用LED (LED_FB_O2)
-  Output igniterFB(PIN_PH4);  // 点火状態表示用LED (LED_FB_IGNITOR)
-  Output openFB(PIN_PH6);     // 主流路弁開状態表示用LED (LED_FB_OPEN)
-  Output closeFB(PIN_PB4);    // 主流路弁閉状態表示用LED (LED_FB_CLOSE)
-  Output purgeFB(PIN_PH1);    // パージ弁状態表示用LED (LED_FB_PURGE)
-  
+  Output shiftFB(PIN_PH5);   // シフト弁状態表示用LED (LED_FB_SHIFT)
+  Output fillFB(PIN_PB0);    // FILL弁状態表示用LED (LED_FB_FILL)
+  Output dumpFB(PIN_PB5);    // DUMP弁状態表示用LED (LED_FB_DUMP)
+  Output oxygenFB(PIN_PH0);  // O2弁状態表示用LED (LED_FB_O2)
+  Output igniterFB(PIN_PH4); // 点火状態表示用LED (LED_FB_IGNITOR)
+  Output openFB(PIN_PH6);    // 主流路弁開状態表示用LED (LED_FB_OPEN)
+  Output closeFB(PIN_PB4);   // 主流路弁閉状態表示用LED (LED_FB_CLOSE)
+  Output purgeFB(PIN_PH1);   // パージ弁状態表示用LED (LED_FB_PURGE)
+
   // 制御タスクが正常に動作しているかを示すランプ
   Output statusLamp(PIN_PK4); // LED_TASK
 
@@ -143,7 +143,7 @@ namespace communication
   // RS485の送信許可ピン (HIGHで送信有効)
   Output sendEnableControl(PIN_PC3); // CTL_RS485_DERE
   // 通信アクセスランプ
-  Output accessLamp(PIN_PC4);        // LED_RS485_ACCESS
+  Output accessLamp(PIN_PC4); // LED_RS485_ACCESS
 
   // ランチコントローラから受信した最新の制御状態
   uint8_t syncState;
@@ -162,10 +162,10 @@ namespace communication
   // 圧力値を送信する
   void sendPressureSync();
   // 生の電流値を送信する
-  void sendCurrentSync(); 
+  void sendCurrentSync();
   // 通信チェック(生存確認)を送信する
   void sendComCheck();
-  
+
   // 各種パケット受信時のコールバック関数群
   void onControlSyncReceived(uint8_t state);
   void onComCheckReceived();
@@ -193,7 +193,7 @@ void communication::disableOutput() { communication::sendEnableControl.off(); }
 void power::measureTask()
 {
   // 入力電圧が電磁弁の動作下限（約10.5V）を下回っているかチェック
-  bool isLowVoltage = power::input.getVoltage_V() < 10.5; 
+  bool isLowVoltage = power::input.getVoltage_V() < 10.5;
   // teleplot 用: 入力電圧のシリアル出力
   Serial.print(">inputVoltage_V:");
   Serial.println(input.getVoltage_V());
@@ -234,7 +234,7 @@ void solenoid::measureTask()
   // bool isArmed = control::safetyArmed.isManualRaised();
 
   // (正常・故障の判定用ロジックのバックアップはコメントアウト済)
-  
+
   // シリアルモニタへの表示とデバッグのため、各電磁弁の電圧とステータスを読み出して出力
   checkSolenoid(SolenoidMonitor::Solenoid::FILL, "FILL");
   checkSolenoid(SolenoidMonitor::Solenoid::DUMP, "DUMP");
@@ -375,6 +375,9 @@ void n2o::measureTask()
   // フィルタリング後の電流値(mA)を取得
   float current_mA = n2o::vesim10.read();
 
+  Serial.print("N2OsensorCurrent_mA: ");
+  Serial.println(current_mA);
+
   // 電流が0.1mA未満の場合はセンサ未接続などと判断し、ディスプレイを消去
   if (current_mA < 0.1)
   {
@@ -455,8 +458,8 @@ void communication::onControlSyncReceived(uint8_t state)
   // 受信した制御状態を保存
   communication::syncState = state;
   // ★受信成功したので通信ランプを点灯し、エラーランプを消灯
-  communication::statusLamp.on(); 
-  error::statusLamp.off();        
+  communication::statusLamp.on();
+  error::statusLamp.off();
 
   // 受信したビットマップデータ(state)を展開し、さらにArmed状態なら電磁弁等を作動させる
   // control::shift.set(state & (1 << 0) && isArmed); // シフト弁 (現在は無効化)
@@ -606,7 +609,7 @@ void control::handleManualTask()
   // (旧パージスイッチのロジックはコメントアウト済)
 
   // アンビリカル（地上と接続されているケーブル）への状態出力
-  umbilical::flightMode.set(control::igniter.isHigh()); // 点火中ならフライトモードとして出力
+  umbilical::flightMode.set(control::igniter.isHigh());                         // 点火中ならフライトモードとして出力
   umbilical::valveMode.set(control::open.isHigh() && !control::close.isHigh()); // 開弁状態ならバルブモードとして出力
 }
 
@@ -677,7 +680,7 @@ void setup()
   // ランチコントローラーと通信するRS485用ハードウェアシリアルの初期化
   Serial1.begin(115200);
   // 初期状態でタイムアウトにならないよう、過去の時刻をセットしておく
-  communication::preReceivedTime = millis() - communication::timeout;
+  communication::preReceivedTime = millis();
 
   // SPI通信（MCP3208のADC用）の初期化
   SPI.begin();
@@ -706,16 +709,16 @@ void setup()
   // n2o::vesim10.calibrateBlocking(10);
 
   // TaskManagerへ各種タスクを登録し、実行頻度（Hz）を設定する
-  Tasks.add(&power::measureTask)->startFps(5);             // 5Hzで電源状態を監視
-  Tasks.add(&solenoid::measureTask)->startFps(5);          // 5Hzで電磁弁の状態を監視
-  Tasks.add(&n2o::samplingTask)->startFps(20);             // 20Hzで圧力センサをサンプリング
-  Tasks.add(&n2o::measureTask)->startFps(2);               // 2Hzで圧力を計算・表示
-  Tasks.add(&control::handleManualTask)->startFps(5);      // 5Hzで手動スイッチ入力をチェック
-  Tasks.add(&communication::sendFeedbackSync)->startFps(5);// 5Hzで電磁弁状態をRS485で送信
-  Tasks.add(&communication::sendPressureSync)->startFps(2);// 2Hzで圧力値をRS485で送信
-  Tasks.add(&communication::sendCurrentSync)->startFps(2); // 2Hzでセンサ電流値をRS485で送信
-  Tasks.add(&communication::sendComCheck)->startFps(2);    // 2Hzで生存確認パケットを送信
-  Tasks.add(&communication::onComCheckFailed)->startFps(2);// 2Hzで通信途絶の監視を行う
+  Tasks.add(&power::measureTask)->startFps(5);              // 5Hzで電源状態を監視
+  Tasks.add(&solenoid::measureTask)->startFps(5);           // 5Hzで電磁弁の状態を監視
+  Tasks.add(&n2o::samplingTask)->startFps(20);              // 20Hzで圧力センサをサンプリング
+  Tasks.add(&n2o::measureTask)->startFps(2);                // 2Hzで圧力を計算・表示
+  Tasks.add(&control::handleManualTask)->startFps(5);       // 5Hzで手動スイッチ入力をチェック
+  Tasks.add(&communication::sendFeedbackSync)->startFps(5); // 5Hzで電磁弁状態をRS485で送信
+  Tasks.add(&communication::sendPressureSync)->startFps(2); // 2Hzで圧力値をRS485で送信
+  Tasks.add(&communication::sendCurrentSync)->startFps(2);  // 2Hzでセンサ電流値をRS485で送信
+  Tasks.add(&communication::sendComCheck)->startFps(2);     // 2Hzで生存確認パケットを送信
+  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで通信途絶の監視を行う
 
   // MsgPacketizer（パケット通信ライブラリ）の受信設定。対応するパケットが届いた際のコールバックを登録
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
@@ -742,4 +745,6 @@ void loop()
   // 通信アクセスランプと制御状態ランプの更新処理（点滅管理）
   communication::accessLamp.update(); // RS485用
   control::statusLamp.update();       // タスク稼働確認用
+
+  Serial.println(communication::preReceivedTime);
 }
