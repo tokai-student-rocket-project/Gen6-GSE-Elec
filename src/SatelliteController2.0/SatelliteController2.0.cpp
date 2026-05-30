@@ -82,6 +82,51 @@ namespace solenoid
   // 電磁弁の電圧や状態を監視するADC
   SolenoidMonitor monitor(PIN_PC5); // CS_ADC
 
+  // チャタリング防止（デバウンス）用設定
+  // 5Hzの監視周期で5回連続同じ状態を検出した場合に状態を確定する (約1秒)
+  constexpr uint8_t FAULT_CONFIRM_COUNT = 5;
+
+  struct Debouncer
+  {
+    SolenoidMonitor::Status lastRawStatus = SolenoidMonitor::Status::OFF;
+    SolenoidMonitor::Status confirmedStatus = SolenoidMonitor::Status::OFF;
+    uint8_t count = 0;
+
+    /// @brief 状態を更新し、デバウンス済みの確定ステータスを返す
+    SolenoidMonitor::Status update(SolenoidMonitor::Status newStatus)
+    {
+      if (newStatus == lastRawStatus)
+      {
+        count++;
+      }
+      else
+      {
+        lastRawStatus = newStatus;
+        count = 1;
+      }
+
+      if (count >= FAULT_CONFIRM_COUNT)
+      {
+        confirmedStatus = newStatus;
+      }
+      return confirmedStatus;
+    }
+
+    /// @brief デバウンサの状態を初期状態にリセットする
+    void reset()
+    {
+      lastRawStatus = SolenoidMonitor::Status::OFF;
+      confirmedStatus = SolenoidMonitor::Status::OFF;
+      count = 0;
+    }
+  };
+
+  // 各電磁弁用のデバウンサインスタンス
+  Debouncer fillDebouncer;
+  Debouncer dumpDebouncer;
+  Debouncer oxygenDebouncer;
+  Debouncer purgeDebouncer;
+
   // 特定の電磁弁の電圧・状態をチェックしシリアル出力する関数
   void checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name);
   // すべての電磁弁の状態を監視・判定するタスク
@@ -138,6 +183,7 @@ namespace communication
     SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
     SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
     SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
+    LIMIT_SWITCH_SYNC,         // SatelliteNode からのリミットスイッチ状態同期 (bit5=ch5 など)
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -152,6 +198,14 @@ namespace communication
   // 通信タイムアウト時間 (ミリ秒)
   const long timeout = 5000;
 
+  // SatelliteNode から受信した最新のリミットスイッチ状態
+  // bit0=ch0, bit1=ch1, ..., bit5=ch5 (SatelliteNode::ioexp::remapSwitchBits の出力と同じ形式)
+  uint8_t limitSwitchState = 0;
+
+  /// @brief ch5 リミットスイッチが押されているか判定するヘルパー
+  /// @return true: ch5が押されている（bit5=1）, false: 押されていない
+  inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
+
   // RS485の送信を有効化する関数
   void enableOutput();
   // RS485の送信を無効化する関数
@@ -165,6 +219,8 @@ namespace communication
   void sendCurrentSync();
   // 通信チェック(生存確認)を送信する
   void sendComCheck();
+  // リミットスイッチ状態をランチコントローラーへ転送する
+  void sendLimitSwitchSync();
 
   // 各種パケット受信時のコールバック関数群
   void onControlSyncReceived(uint8_t state);
@@ -174,6 +230,8 @@ namespace communication
   void onSensorDummyCurrentReceived(float dummyCurrent_mA);
   void onSensorCalibCoeffReceived(float a, float b);
   void onSensorZeroCalibReqReceived();
+  // SatelliteNode からリミットスイッチ状態を受信した際のコールバック
+  void onLimitSwitchSyncReceived(uint8_t state);
 
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
@@ -242,24 +300,36 @@ void solenoid::measureTask()
   checkSolenoid(SolenoidMonitor::Solenoid::PURGE, "PURGE");
 
   // SolenoidMonitor を使って、ADCの読み取り値から電磁弁の状態（正常・断線・短絡など）を判定
-  SolenoidMonitor::Status fillStatus =
+  SolenoidMonitor::Status rawFillStatus =
       monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
-  SolenoidMonitor::Status dumpStatus =
+  SolenoidMonitor::Status rawDumpStatus =
       monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
-  SolenoidMonitor::Status oxygenStatus =
+  SolenoidMonitor::Status rawOxygenStatus =
       monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
-  SolenoidMonitor::Status purgeStatus =
+  SolenoidMonitor::Status rawPurgeStatus =
       monitor.getStatus(SolenoidMonitor::Solenoid::PURGE);
 
   // 安全装置（Armedスイッチ）がONになっていない場合は、フィードバック状態をすべてOFFにして終了
   if (!control::safetyArmed.isManualRaised())
   {
+    // 安全装置が解除されているときは、デバウンサ状態もリセットしておく
+    fillDebouncer.reset();
+    dumpDebouncer.reset();
+    oxygenDebouncer.reset();
+    purgeDebouncer.reset();
+
     control::fillFB.off();
     control::dumpFB.off();
     control::oxygenFB.off();
     control::purgeFB.off();
     return;
   }
+
+  // デバウンスを適用して確定ステータスを取得
+  SolenoidMonitor::Status fillStatus = fillDebouncer.update(rawFillStatus);
+  SolenoidMonitor::Status dumpStatus = dumpDebouncer.update(rawDumpStatus);
+  SolenoidMonitor::Status oxygenStatus = oxygenDebouncer.update(rawOxygenStatus);
+  SolenoidMonitor::Status purgeStatus = purgeDebouncer.update(rawPurgeStatus);
 
   // 以下の主要弁と点火装置については、単純に出力指示と同じ状態をフィードバックとして反映する
   control::openFB.set(control::open.isHigh());
@@ -437,6 +507,31 @@ void communication::sendCurrentSync()
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), current_mA);
   Serial1.flush();
   communication::disableOutput();
+}
+
+/// @brief SatelliteNode から受信したリミットスイッチ状態をランチコントローラーへ転送する
+/// SatelliteNode → SatelliteController → LaunchController という中継パスです。
+/// ランチコントローラー側がこのデータを使い、ch5未押下の場合にシーケンスを止めます。
+void communication::sendLimitSwitchSync()
+{
+  communication::enableOutput();
+  // LIMIT_SWITCH_SYNC パケットとして、SatelliteNode から受信した状態をそのまま転送
+  MsgPacketizer::send(Serial1,
+                      static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
+                      communication::limitSwitchState);
+  Serial1.flush();
+  communication::disableOutput();
+}
+
+/// @brief SatelliteNode からリミットスイッチ状態パケットを受信した際のコールバック
+/// 受信した状態を変数に保存し、次の sendLimitSwitchSync() でランチ側へ転送します。
+void communication::onLimitSwitchSyncReceived(uint8_t state)
+{
+  communication::limitSwitchState = state;
+
+  // teleplot / デバッグ用: ch5 の状態をシリアルで確認できるようにする
+  Serial.print(">limitSwitch_ch5:");
+  Serial.println(communication::isCh5Pressed() ? 1 : 0);
 }
 
 /// @brief サテライトからランチに対して生存確認（ハートビート）を送信する
@@ -717,8 +812,11 @@ void setup()
   Tasks.add(&communication::sendFeedbackSync)->startFps(5); // 5Hzで電磁弁状態をRS485で送信
   Tasks.add(&communication::sendPressureSync)->startFps(2); // 2Hzで圧力値をRS485で送信
   Tasks.add(&communication::sendCurrentSync)->startFps(2);  // 2Hzでセンサ電流値をRS485で送信
-  Tasks.add(&communication::sendComCheck)->startFps(2);     // 2Hzで生存確認パケットを送信
-  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで通信途絶の監視を行う
+  Tasks.add(&communication::sendComCheck)->startFps(2);          // 2Hzで生存確認パケットを送信
+  Tasks.add(&communication::onComCheckFailed)->startFps(2);      // 2Hzで通信途絶の監視を行う
+  // SatelliteNode から受信したリミットスイッチ状態をランチ側に転送するタスク
+  // SatelliteNode が 10Hz で送信しているため、こちらも 10Hz で転送する
+  Tasks.add(&communication::sendLimitSwitchSync)->startFps(10);
 
   // MsgPacketizer（パケット通信ライブラリ）の受信設定。対応するパケットが届いた際のコールバックを登録
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
@@ -727,6 +825,8 @@ void setup()
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC), &communication::onSensorDummyCurrentReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC), &communication::onSensorCalibCoeffReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ), &communication::onSensorZeroCalibReqReceived);
+  // SatelliteNode からのリミットスイッチパケットを受信するコールバックを登録
+  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC), &communication::onLimitSwitchSyncReceived);
 
   // 起動時のLED全点灯テスト（クリスマスツリーテスト）を開始
   control::setChristmasTreeStart();

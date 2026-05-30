@@ -140,6 +140,26 @@ namespace error
   Output statusLamp(PIN_PK6); // ERR
 } // namespace error
 
+namespace solenoid
+{
+  // -------------------------------------------------------
+  // チャタリング防止用デバウンス設定
+  // -------------------------------------------------------
+  // コマンド ≠ FB（サテライトコントローラー側の故障検知）をこの回数連続で検出した場合にエラー確定とする
+  // onFeedbackSyncReceived は 5Hz で呈送されるため、5回 = 1秒間連続不一致で確定
+  constexpr uint8_t FAULT_CONFIRM_COUNT = 5;
+
+  // 各弁の「コマンド/FB不一致連続検出カウンタ」
+  // 「弁をONに指示したのにFBがOFF」 or 「OFFに指示したのにFBがON」を連続検出した回数
+  // 一致した場合はリセット
+  uint8_t fillFaultCount   = 0;
+  uint8_t dumpFaultCount   = 0;
+  uint8_t oxygenFaultCount = 0;
+  uint8_t purgeFaultCount  = 0;
+  uint8_t openFaultCount   = 0;
+  uint8_t closeFaultCount  = 0;
+} // namespace solenoid
+
 namespace communication
 {
   // 通信パケットの種類を定義
@@ -155,6 +175,7 @@ namespace communication
     SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)の同期用
     SENSOR_ZERO_CALIB_REQ,     // 機体に対するゼロ点校正実行の要求
     SENSOR_CURRENT_SYNC,       // 機体から送信される生の電流値(mA)の同期
+    LIMIT_SWITCH_SYNC,         // SatelliteNode のリミットスイッチ状態同期 (bit5=ch5)
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -166,6 +187,14 @@ namespace communication
   unsigned long preReceivedTime = 0;
   // 通信タイムアウト時間 (ミリ秒)
   const long timeout = 5000;
+
+  // SatelliteController 経由で転送された SatelliteNode のリミットスイッチ状態
+  // bit0=ch0, bit1=ch1, ..., bit5=ch5
+  uint8_t limitSwitchState = 0;
+
+  /// @brief ch5 リミットスイッチが押されているか判定するヘルパー
+  /// @return true: ch5が押されている（bit5=1）, false: 未押下
+  inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
 
   // RS485の送信を有効/無効化する関数
   void enableOutput();
@@ -186,6 +215,8 @@ namespace communication
   void onCurrentSyncReceived(float current_mA);
   void onComCheckReceived();
   void onComCheckFailed(); // タイムアウト時のフェールセーフ処理
+  // SatelliteController 経由でリミットスイッチ状態を受信した際のコールバック
+  void onLimitSwitchSyncReceived(uint8_t state);
 
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
@@ -277,6 +308,10 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
+  // SatelliteController が転送してくるリミットスイッチパケットを受信するコールバックを登録
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
+      &communication::onLimitSwitchSyncReceived);
 
   // ================= シーケンス関係のタスク登録 =================
   // ※ここでは登録のみ行い、後から startOnceAfterSec() などで呼び出す
@@ -500,6 +535,18 @@ void communication::sendComCheck()
   communication::disableOutput();
 }
 
+/// @brief SatelliteController から転送されたリミットスイッチ状態を受信するコールバック
+/// SatelliteNode (ch0〝ch5) → SatelliteController → (LIMIT_SWITCH_SYNCパケット) → LaunchController
+/// 内部変数 limitSwitchState に保存し、isCh5Pressed() で参照する。
+void communication::onLimitSwitchSyncReceived(uint8_t state)
+{
+  communication::limitSwitchState = state;
+
+  // teleplot / デバッグ用: ch5 の状態をシリアルモニターで確認できるようにする
+  Serial.print(">limitSwitch_ch5:");
+  Serial.println(communication::isCh5Pressed() ? 1 : 0);
+}
+
 /// @brief 機体から実際の電磁弁状態（フィードバック）を受信した際のコールバック
 void communication::onFeedbackSyncReceived(uint8_t state)
 {
@@ -512,6 +559,79 @@ void communication::onFeedbackSyncReceived(uint8_t state)
   control::openFB.set(state & (1 << 5));
   control::closeFB.set(state & (1 << 6));
   control::purgeFB.set(state & (1 << 7));
+
+  // コマンド vs FB の不一致による故障デバウンスチェック
+  // 「弁をONに指示したのにFBがOFF」 or 「OFFに指示したのにFBがON」を連続検出する
+  // ※ Armed状態のときのみチェックする（未展開時は常にFB=OFFなので誤検知防止）
+  if (control::safetyArmed.isManualRaised())
+  {
+    // 各弁 of コマンド状態（isRaised）とFB状態を比較するラムダ
+    // mismatchが継続したらカウントアップし、一定回数に達したら故障確定（trueを返す）
+    auto checkFault = [](bool cmdOn, bool fbOn,
+                         uint8_t &count, const char *name) -> bool
+    {
+      bool mismatch = (cmdOn != fbOn);
+      if (mismatch)
+      {
+        if (count < solenoid::FAULT_CONFIRM_COUNT)
+          count++;
+
+        if (count >= solenoid::FAULT_CONFIRM_COUNT)
+        {
+          Serial.print("[SOLENOID FAULT] ");
+          Serial.print(name);
+          Serial.print(": CMD=");
+          Serial.print(cmdOn ? "ON" : "OFF");
+          Serial.print(" FB=");
+          Serial.print(fbOn ? "ON" : "OFF");
+          Serial.print(" (mismatch confirmed ");
+          Serial.print(solenoid::FAULT_CONFIRM_COUNT);
+          Serial.println(" times)");
+          return true;
+        }
+      }
+      else
+      {
+        // 一致したのでカウンタリセット
+        count = 0;
+      }
+      return false;
+    };
+
+    bool hasFault = false;
+    hasFault |= checkFault(control::fill.isRaised(),   (state & (1 << 1)) != 0,
+                           solenoid::fillFaultCount,   "FILL");
+    hasFault |= checkFault(control::dump.isRaised(),   (state & (1 << 2)) != 0,
+                           solenoid::dumpFaultCount,   "DUMP");
+    hasFault |= checkFault(control::oxygen.isRaised(), (state & (1 << 3)) != 0,
+                           solenoid::oxygenFaultCount, "OXYGEN");
+    hasFault |= checkFault(control::purge.isRaised(),  (state & (1 << 7)) != 0,
+                           solenoid::purgeFaultCount,  "PURGE");
+    hasFault |= checkFault(control::open.isRaised(),   (state & (1 << 5)) != 0,
+                           solenoid::openFaultCount,   "OPEN");
+    hasFault |= checkFault(control::close.isRaised(),  (state & (1 << 6)) != 0,
+                           solenoid::closeFaultCount,  "CLOSE");
+
+    if (hasFault)
+    {
+      error::statusLamp.on();
+    }
+    else
+    {
+      // 故障判定がすべてクリアされた（またはデバウンス回数未満）場合はエラーランプを消灯
+      error::statusLamp.off();
+    }
+  }
+  else
+  {
+    // Armed解除中はカウンタをリセット
+    solenoid::fillFaultCount   = 0;
+    solenoid::dumpFaultCount   = 0;
+    solenoid::oxygenFaultCount = 0;
+    solenoid::purgeFaultCount  = 0;
+    solenoid::openFaultCount   = 0;
+    solenoid::closeFaultCount  = 0;
+  }
 
   // communication::statusLamp.blink();
 }
@@ -804,6 +924,15 @@ void sequence::fill()
     return;
   }
 
+  // ★ ch5 リミットスイッチによる安全ゲート
+  // SatelliteNode の ch5 が押されていない場合は充填シーケンスを開始しない
+  // if (!communication::isCh5Pressed())
+  // {
+  //   Serial.println("[GATE] sequence::fill() blocked: ch5 limit switch not pressed.");
+  //   error::statusLamp.on(); // ch5 未押下をエラーランプで通知
+  //   return;
+  // }
+
   // フラグ更新
   sequence::fillSequenceIsActive = true;
   sequence::canConfirm = false;
@@ -843,6 +972,15 @@ void sequence::ignition()
   if (control::fill.isManualRaised())
     return;
 
+  // ★ ch5 リミットスイッチによる安全ゲート
+  // SatelliteNode の ch5 が押されていない場合は点火シーケンスに進めない
+  // if (!communication::isCh5Pressed())
+  // {
+  //   Serial.println("[GATE] sequence::ignition() blocked: ch5 limit switch not pressed.");
+  //   error::statusLamp.on(); // ch5 未押下をエラーランプで通知
+  //   return;
+  // }
+
   // フラグ更新
   sequence::ignitionSequenceIsActive = true;
   sequence::canConfirm = false;
@@ -850,14 +988,14 @@ void sequence::ignition()
   control::sequenceStart.setAutomaticOn();
   mp3_play(4); // 0104_ignitionSequenceStart
 
-  Tasks[control::OXYGEN_START]->startOnceAfterSec(
-      4.5); // 「充填が確認されました．点火します．5秒前...」←これが4.5秒くらいかかる
+  // Tasks[control::OXYGEN_START]->startOnceAfterSec(
+  //     4.5); // 「充填が確認されました．点火します．5秒前...」←これが4.5秒くらいかかる
 
-  // Tasks[control::OXYGEN_START]->startOnceAfterMsec(50); // THR-E820L で点火
+  Tasks[control::OXYGEN_START]->startOnceAfterMsec(50); // THR-E820L で点火
 
   // 点火器の通電開始 (6秒後)
-  Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
-  // Tasks[control::IGNITER_START]->startOnceAfterSec(1.0); // THR-E820L で点火
+  // Tasks[control::IGNITER_START]->startOnceAfterSec(6.0);
+  Tasks[control::IGNITER_START]->startOnceAfterSec(1.0); // THR-E820L で点火
 
   // 充填(FILL)バルブを閉じる (10秒後: カウントダウン終了付近)
   Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
@@ -869,9 +1007,9 @@ void sequence::ignition()
   Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
 
   // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする (20.5秒後)
-  Tasks[control::PURGE_START]->startOnceAfterSec(20.5);
+  Tasks[control::PURGE_START]->startOnceAfterSec(30.5);
   // パージを終了する (25.5秒後)
-  Tasks[control::PURGE_STOP]->startOnceAfterSec(25.5);
+  Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
 }
 
 /// @brief 起動時にすべてのLEDやフィードバックランプをテスト点灯する
