@@ -73785,6 +73785,14 @@
 		(uuid "ca05b9cd-c433-48f8-8c19-ca1fceaa4019")
 	)
 	(segment
+		(start 117.638224 126.105913)
+		(end 117.638224 128.052113)
+		(width 0.2)
+		(layer "F.Cu")
+		(net 186)
+		(uuid "01dc778b-a184-414e-98f9-731f101f0e97")
+	)
+	(segment
 		(start 101.768224 137.378913)
 		(end 99.470224 135.080913)
 		(width 0.5)
@@ -73841,14 +73849,6 @@
 		(uuid "3387bb49-f46b-4286-9a1c-0fd55d20659f")
 	)
 	(segment
-		(start 117.638224 128.052113)
-		(end 118.320224 128.734113)
-		(width 0.2)
-		(layer "F.Cu")
-		(net 186)
-		(uuid "33a7cddb-7cf8-4cb2-9ae3-23610381a124")
-	)
-	(segment
 		(start 90.098721 130.02741)
 		(end 90.098721 129.967913)
 		(width 0.5)
@@ -73857,12 +73857,12 @@
 		(uuid "49cb8237-dde3-485d-932c-ab9e421978b5")
 	)
 	(segment
-		(start 120.027724 130.289213)
+		(start 120.027724 130.441613)
 		(end 120.027724 131.742913)
 		(width 0.2)
 		(layer "F.Cu")
 		(net 186)
-		(uuid "4dfcf03d-83c8-4284-bb63-c49df7bdf7d5")
+		(uuid "518c7d57-73a3-49fc-bf32-c78ce0d18c87")
 	)
 	(segment
 		(start 90.098721 129.967913)
@@ -73905,14 +73905,6 @@
 		(uuid "8389ca46-0ad6-4faa-b44d-029e58010c2b")
 	)
 	(segment
-		(start 118.320224 128.734113)
-		(end 118.472624 128.734113)
-		(width 0.2)
-		(layer "F.Cu")
-		(net 186)
-		(uuid "851f92f3-8334-4849-b41f-4fa2d8ad3f9b")
-	)
-	(segment
 		(start 101.768224 138.157913)
 		(end 101.768224 143.157913)
 		(width 0.5)
@@ -73921,12 +73913,12 @@
 		(uuid "87d1c706-8e68-47b9-a6f4-e3298956a235")
 	)
 	(segment
-		(start 117.638224 126.105913)
-		(end 117.638224 128.052113)
+		(start 117.638224 128.052113)
+		(end 120.027724 130.441613)
 		(width 0.2)
 		(layer "F.Cu")
 		(net 186)
-		(uuid "9656832b-9984-4efb-b984-c7a10307add6")
+		(uuid "afdeff81-d870-4619-93a9-7fe725f4dbfb")
 	)
 	(segment
 		(start 117.638224 126.105913)
@@ -73959,14 +73951,6 @@
 		(layer "F.Cu")
 		(net 186)
 		(uuid "d1c3be33-158c-41d3-86d7-8a26d49ec95e")
-	)
-	(segment
-		(start 118.472624 128.734113)
-		(end 120.027724 130.289213)
-		(width 0.2)
-		(layer "F.Cu")
-		(net 186)
-		(uuid "dc4ca166-6eca-46f0-90b9-50a7dacd562a")
 	)
 	(segment
 		(start 92.539224 132.467913)
