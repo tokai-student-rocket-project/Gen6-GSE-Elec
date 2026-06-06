@@ -183,7 +183,9 @@ namespace communication
     SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
     SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
     SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
-    LIMIT_SWITCH_SYNC,         // SatelliteNode からのリミットスイッチ状態同期 (bit5=ch5 など)
+    LIMIT_SWITCH_SYNC,         // SatelliteNode からのリミットスイッチ状態同期
+    COM_CHECK_L_TO_N,          // 【新規】ランチ → ノード 生存確認
+    COM_CHECK_N_TO_L,          // 【新規】ノード → ランチ 生存確認
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -198,14 +200,10 @@ namespace communication
   // 通信タイムアウト時間 (ミリ秒)
   const long timeout = 5000;
 
-  // SatelliteNode から受信した最新のリミットスイッチ状態
-  // bit0=ch0, bit1=ch1, ..., bit5=ch5 (SatelliteNode::ioexp::remapSwitchBits の出力と同じ形式)
-  uint8_t limitSwitchState = 0;
+
 
   /// @brief ch5 リミットスイッチが押されているか判定するヘルパー
   /// @return true: ch5が押されている（bit5=1）, false: 押されていない
-  inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
-
   // RS485の送信を有効化する関数
   void enableOutput();
   // RS485の送信を無効化する関数
@@ -219,8 +217,6 @@ namespace communication
   void sendCurrentSync();
   // 通信チェック(生存確認)を送信する
   void sendComCheck();
-  // リミットスイッチ状態をランチコントローラーへ転送する
-  void sendLimitSwitchSync();
 
   // 各種パケット受信時のコールバック関数群
   void onControlSyncReceived(uint8_t state);
@@ -230,8 +226,6 @@ namespace communication
   void onSensorDummyCurrentReceived(float dummyCurrent_mA);
   void onSensorCalibCoeffReceived(float a, float b);
   void onSensorZeroCalibReqReceived();
-  // SatelliteNode からリミットスイッチ状態を受信した際のコールバック
-  void onLimitSwitchSyncReceived(uint8_t state);
 
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
@@ -509,30 +503,7 @@ void communication::sendCurrentSync()
   communication::disableOutput();
 }
 
-/// @brief SatelliteNode から受信したリミットスイッチ状態をランチコントローラーへ転送する
-/// SatelliteNode → SatelliteController → LaunchController という中継パスです。
-/// ランチコントローラー側がこのデータを使い、ch5未押下の場合にシーケンスを止めます。
-void communication::sendLimitSwitchSync()
-{
-  communication::enableOutput();
-  // LIMIT_SWITCH_SYNC パケットとして、SatelliteNode から受信した状態をそのまま転送
-  MsgPacketizer::send(Serial1,
-                      static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
-                      communication::limitSwitchState);
-  Serial1.flush();
-  communication::disableOutput();
-}
 
-/// @brief SatelliteNode からリミットスイッチ状態パケットを受信した際のコールバック
-/// 受信した状態を変数に保存し、次の sendLimitSwitchSync() でランチ側へ転送します。
-void communication::onLimitSwitchSyncReceived(uint8_t state)
-{
-  communication::limitSwitchState = state;
-
-  // teleplot / デバッグ用: ch5 の状態をシリアルで確認できるようにする
-  Serial.print(">limitSwitch_ch5:");
-  Serial.println(communication::isCh5Pressed() ? 1 : 0);
-}
 
 /// @brief サテライトからランチに対して生存確認（ハートビート）を送信する
 void communication::sendComCheck()
@@ -814,10 +785,6 @@ void setup()
   Tasks.add(&communication::sendCurrentSync)->startFps(2);  // 2Hzでセンサ電流値をRS485で送信
   Tasks.add(&communication::sendComCheck)->startFps(2);          // 2Hzで生存確認パケットを送信
   Tasks.add(&communication::onComCheckFailed)->startFps(2);      // 2Hzで通信途絶の監視を行う
-  // SatelliteNode から受信したリミットスイッチ状態をランチ側に転送するタスク
-  // SatelliteNode が 10Hz で送信しているため、こちらも 10Hz で転送する
-  Tasks.add(&communication::sendLimitSwitchSync)->startFps(10);
-
   // MsgPacketizer（パケット通信ライブラリ）の受信設定。対応するパケットが届いた際のコールバックを登録
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
@@ -825,8 +792,6 @@ void setup()
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC), &communication::onSensorDummyCurrentReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC), &communication::onSensorCalibCoeffReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ), &communication::onSensorZeroCalibReqReceived);
-  // SatelliteNode からのリミットスイッチパケットを受信するコールバックを登録
-  MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC), &communication::onLimitSwitchSyncReceived);
 
   // 起動時のLED全点灯テスト（クリスマスツリーテスト）を開始
   control::setChristmasTreeStart();

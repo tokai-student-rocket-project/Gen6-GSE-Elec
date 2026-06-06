@@ -165,17 +165,19 @@ namespace communication
   // 通信パケットの種類を定義
   enum class Packet : uint8_t
   {
-    CONTROL_SYNC,              // 操作卓(Launch)からの制御コマンド同期（電磁弁開閉など）
-    FEEDBACK_SYNC,             // サテライトコントローラーからのフィードバック（電磁弁の実際の状態など）
-    PRESSURE_SYNC,             // 機体から送信される算出された圧力値(MPa)の同期
-    COM_CHECK_L_TO_S,          // 操作卓から機体への生存確認（ハートビート）
-    COM_CHECK_S_TO_L,          // 機体から操作卓への生存確認（ハートビート）
-    SENSOR_CONFIG_SYNC,        // センサの基本設定（フルスケールなど）の機体への同期
-    SENSOR_DUMMY_CURRENT_SYNC, // シミュレーション用のダミー電流値の同期
-    SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)の同期用
-    SENSOR_ZERO_CALIB_REQ,     // 機体に対するゼロ点校正実行の要求
-    SENSOR_CURRENT_SYNC,       // 機体から送信される生の電流値(mA)の同期
-    LIMIT_SWITCH_SYNC,         // SatelliteNode のリミットスイッチ状態同期 (bit5=ch5)
+    CONTROL_SYNC = 0,              // 操作卓(Launch)からの制御コマンド同期（電磁弁開閉など）
+    FEEDBACK_SYNC = 1,             // サテライトコントローラーからのフィードバック（電磁弁の実際の状態など）
+    PRESSURE_SYNC = 2,             // 算出された圧力値(MPa)の同期
+    COM_CHECK_L_TO_S = 3,          // 操作卓から機体への生存確認（ハートビート）
+    COM_CHECK_S_TO_L = 4,          // 機体から操作卓への生存確認（ハートビート）
+    SENSOR_CONFIG_SYNC = 5,        // センサの基本設定（フルスケールなど）の機体への同期
+    SENSOR_DUMMY_CURRENT_SYNC = 6, // シミュレーション用のダミー電流値の同期
+    SENSOR_CALIB_COEFF_SYNC = 7,   // 校正係数(a, b)の同期用
+    SENSOR_ZERO_CALIB_REQ = 8,     // 機体に対するゼロ点校正実行の要求
+    SENSOR_CURRENT_SYNC = 9,       // 機体から送信される生の電流値(mA)の同期
+    LIMIT_SWITCH_SYNC = 10,        // SatelliteNode のリミットスイッチ状態同期 (bit5=ch5)
+    COM_CHECK_L_TO_N = 11,         // ランチ → ノード 生存確認
+    COM_CHECK_N_TO_L = 12,         // ノード → ランチ 生存確認
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -185,6 +187,8 @@ namespace communication
 
   // 機体側から最後に通信を受信した時刻 (タイムアウト判定用)
   unsigned long preReceivedTime = 0;
+  // ノード側から最後に通信を受信した時刻 (タイムアウト判定用)
+  unsigned long preReceivedTime_Node = 0;
   // 通信タイムアウト時間 (ミリ秒)
   const long timeout = 5000;
 
@@ -192,8 +196,12 @@ namespace communication
   // bit0=ch0, bit1=ch1, ..., bit5=ch5
   uint8_t limitSwitchState = 0;
 
-  /// @brief ch5 リミットスイッチが押されているか判定するヘルパー
-  /// @return true: ch5が押されている（bit5=1）, false: 未押下
+  /// @brief リミットスイッチが押されているか判定するヘルパー
+  inline bool isCh0Pressed() { return (limitSwitchState >> 0) & 0x01; }
+  inline bool isCh1Pressed() { return (limitSwitchState >> 1) & 0x01; }
+  inline bool isCh2Pressed() { return (limitSwitchState >> 2) & 0x01; }
+  inline bool isCh3Pressed() { return (limitSwitchState >> 3) & 0x01; }
+  inline bool isCh4Pressed() { return (limitSwitchState >> 4) & 0x01; }
   inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
 
   // RS485の送信を有効/無効化する関数
@@ -203,6 +211,7 @@ namespace communication
   // パケット送信関数
   void sendControlSync();
   void sendComCheck();
+  void sendComCheckNode(); // ノード向け生存確認送信
   void sendSensorConfigSync();
   void sendSensorDummyCurrent(float current_mA);
   void sendSensorCalibCoeff(float a, float b);
@@ -214,6 +223,7 @@ namespace communication
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA);
   void onComCheckReceived();
+  void onComCheckNodeReceived(); // ノード向け生存確認受信
   void onComCheckFailed(); // タイムアウト時のフェールセーフ処理
   // SatelliteController 経由でリミットスイッチ状態を受信した際のコールバック
   void onLimitSwitchSyncReceived(uint8_t state);
@@ -256,6 +266,7 @@ void setup()
   Serial1.begin(115200);
   // 初期状態でタイムアウト判定にならないよう、過去の時刻をセットしておく
   communication::preReceivedTime = millis();
+  communication::preReceivedTime_Node = millis();
 
   // DFPlayer Mini (音声再生用シリアル2)
   Serial2.begin(9600);
@@ -282,6 +293,7 @@ void setup()
   Tasks.add(&communication::sendControlSync)->startFps(20); // 20Hzで実行
   // 生存確認(ハートビート)を定期的に送信するタスク
   Tasks.add(&communication::sendComCheck)->startFps(2); // 2Hzで実行
+  Tasks.add(&communication::sendComCheckNode)->startFps(2); // 2Hzで実行
   // 通信がタイムアウトしていないか監視するタスク
   Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
@@ -308,6 +320,9 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L),
+      &communication::onComCheckNodeReceived);
   // SatelliteController が転送してくるリミットスイッチパケットを受信するコールバックを登録
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
@@ -535,14 +550,34 @@ void communication::sendComCheck()
   communication::disableOutput();
 }
 
+/// @brief ノードへ通信生存確認（ハートビート）を送信するタスク
+void communication::sendComCheckNode()
+{
+  communication::enableOutput();
+  MsgPacketizer::send(
+      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
+  Serial1.flush();
+  communication::disableOutput();
+}
+
 /// @brief SatelliteController から転送されたリミットスイッチ状態を受信するコールバック
-/// SatelliteNode (ch0〝ch5) → SatelliteController → (LIMIT_SWITCH_SYNCパケット) → LaunchController
-/// 内部変数 limitSwitchState に保存し、isCh5Pressed() で参照する。
+/// SatelliteNode (ch0〜ch5) → SatelliteController → (LIMIT_SWITCH_SYNCパケット) → LaunchController
+/// 内部変数 limitSwitchState に保存し、isCh0Pressed() 〜 isCh5Pressed() で参照する。
 void communication::onLimitSwitchSyncReceived(uint8_t state)
 {
   communication::limitSwitchState = state;
 
-  // teleplot / デバッグ用: ch5 の状態をシリアルモニターで確認できるようにする
+  // teleplot / デバッグ用: リミットスイッチ各chの状態をシリアルモニターで確認できるようにする
+  Serial.print(">limitSwitch_ch0:");
+  Serial.println(communication::isCh0Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch1:");
+  Serial.println(communication::isCh1Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch2:");
+  Serial.println(communication::isCh2Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch3:");
+  Serial.println(communication::isCh3Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch4:");
+  Serial.println(communication::isCh4Pressed() ? 1 : 0);
   Serial.print(">limitSwitch_ch5:");
   Serial.println(communication::isCh5Pressed() ? 1 : 0);
 }
@@ -657,19 +692,54 @@ void communication::onCurrentSyncReceived(float current_mA)
 /// @brief 機体から通信生存確認（ハートビート）を受信した際のコールバック
 void communication::onComCheckReceived()
 {
-  // 通信正常ランプを点灯、エラーランプを消灯
-  communication::statusLamp.on();
-  error::statusLamp.off();
   // 通信受信時刻を更新
   communication::preReceivedTime = millis();
+
+  // 両方がタイムアウト以内の場合のみ通信正常ランプを点灯
+  if (millis() - communication::preReceivedTime <= communication::timeout &&
+      millis() - communication::preReceivedTime_Node <= communication::timeout)
+  {
+    communication::statusLamp.on();
+    error::statusLamp.off();
+  }
 }
 
-/// @brief 機体との通信が途絶した（タイムアウト）場合に実行されるフェールセーフタスク
+/// @brief ノードから通信生存確認（ハートビート）を受信した際のコールバック
+void communication::onComCheckNodeReceived()
+{
+  // 通信受信時刻を更新
+  communication::preReceivedTime_Node = millis();
+
+  // 両方がタイムアウト以内の場合のみ通信正常ランプを点灯
+  if (millis() - communication::preReceivedTime <= communication::timeout &&
+      millis() - communication::preReceivedTime_Node <= communication::timeout)
+  {
+    communication::statusLamp.on();
+    error::statusLamp.off();
+  }
+}
+
+/// @brief 機体またはノードとの通信が途絶した（タイムアウト）場合に実行されるフェールセーフタスク
 void communication::onComCheckFailed()
 {
-  // 最後に受信した時刻から規定時間(timeout)経過しているか判定
-  if (millis() - communication::preReceivedTime > communication::timeout)
+  bool controllerTimeout = (millis() - communication::preReceivedTime > communication::timeout);
+  bool nodeTimeout = (millis() - communication::preReceivedTime_Node > communication::timeout);
+
+  if (controllerTimeout || nodeTimeout)
   {
+    static unsigned long lastLogTime = 0;
+    if (millis() - lastLogTime > 2000) // 2秒おきに出力
+    {
+      if (controllerTimeout && nodeTimeout) {
+        Serial.println("[COM ERROR] Both SatelliteController and SatelliteNode timed out!");
+      } else if (controllerTimeout) {
+        Serial.println("[COM ERROR] SatelliteController timed out!");
+      } else {
+        Serial.println("[COM ERROR] SatelliteNode timed out!");
+      }
+      lastLogTime = millis();
+    }
+
     communication::statusLamp.off();
     error::statusLamp.on();
 
