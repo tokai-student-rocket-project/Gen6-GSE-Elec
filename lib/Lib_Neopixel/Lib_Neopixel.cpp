@@ -128,6 +128,13 @@ void Neopixel::noticedBlueBreath(uint32_t periodMs) {
 
 void Neopixel::update() {
   uint32_t now = millis();
+  
+  // ★追加: 約30fps（33ms間隔）に更新を制限し、割り込みの占有を防ぐ
+  static uint32_t lastUpdate = 0;
+  if (now - lastUpdate < 33) {
+      return;
+  }
+  lastUpdate = now;
 
   switch (_mode) {
     case Mode::STATIC:
