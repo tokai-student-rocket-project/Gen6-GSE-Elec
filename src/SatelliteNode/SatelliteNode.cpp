@@ -183,8 +183,8 @@ namespace power
         supplyVoltage_V = vAdc / dividerRatio;
 
         // teleplot 用シリアル出力
-        Serial.print(">supplyVoltage_V:");
-        Serial.println(supplyVoltage_V);
+        // Serial.print(">supplyVoltage_V:");
+        // Serial.println(supplyVoltage_V);
     }
 
 } // namespace power
@@ -199,65 +199,38 @@ namespace power
  */
 void sendLimitSwitchTask()
 {
-    Serial.println("[Debug] --- sendLimitSwitchTask Start ---");
+    // Serial.println("[Debug] --- sendLimitSwitchTask Start ---");
 
     // GPA を一括読み取り (GPA0〜GPA5 がスイッチ入力)
-    Serial.println("[Debug] Calling readPort(A)...");
     uint8_t rawGPA = ioexp::mcp.readPort(Lib_MCP23017::Port::A);
-    Serial.print("[Debug] readPort(A) returned: 0x");
-    Serial.println(rawGPA, HEX);
-
-    // ---- デバッグ: 各ビットをピン名・チャンネル番号付きで個別出力 ----
-    Serial.print(">rawGPA_hex:0x");
-    Serial.println(rawGPA, HEX);
-    Serial.print(">GPA0(ch2):");
-    Serial.println((rawGPA >> 0) & 1); // INPUT 1
-    Serial.print(">GPA1(ch1):");
-    Serial.println((rawGPA >> 1) & 1); // INPUT 2
-    Serial.print(">GPA2(ch0):");
-    Serial.println((rawGPA >> 2) & 1); // INPUT 0
-    Serial.print(">GPA3(ch5):");
-    Serial.println((rawGPA >> 3) & 1); // INPUT 5
-    Serial.print(">GPA4(ch4):");
-    Serial.println((rawGPA >> 4) & 1); // INPUT 4
-    Serial.print(">GPA5(ch3):");
-    Serial.println((rawGPA >> 5) & 1); // INPUT 3
-    // ----------------------------------------
-
-    // ビット反転なし
     uint8_t validGPA = rawGPA & 0x3F;
-
-    // チャンネル順に並び替えた状態 (bit0=ch0 〜 bit5=ch5)
     uint8_t limitSwitchState = ioexp::remapSwitchBits(validGPA);
 
     // LED をスイッチ状態と連動させる (ch0〜ch5 → GPB0〜GPB5)
-    // LEDの点灯はスイッチが押されている (HIGH) ときに行う
     uint8_t writeVal = limitSwitchState & 0x3F;
-    Serial.print("[Debug] Calling writePort(B) with value: 0x");
-    Serial.println(writeVal, HEX);
-
     ioexp::mcp.writePort(Lib_MCP23017::Port::B, writeVal);
 
-    Serial.println("[Debug] writePort(B) completed successfully.");
+
+    // Serial.println("[Debug] writePort(B) completed successfully.");
 
     // teleplot 用シリアル出力
-    Serial.print(">limitSwitch:");
-    Serial.println(limitSwitchState, BIN);
+    // Serial.print(">limitSwitch:");
+    // Serial.println(limitSwitchState, BIN);
 
     // RS485 でパケット送信
-    Serial.println("[Debug] Sending RS485 packet...");
+    // Serial.println("[Debug] Sending RS485 packet...");
     communication::enableOutput();
     MsgPacketizer::send(
         Serial1,
         static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
         limitSwitchState);
-    Serial1.flush();
-    delay(2); // 確実な送信完了のためのウェイト
+    Serial1.flush(); // 送信完了まで待機
+    delay(2); // RS485トランシーバの切り替え待機
     communication::disableOutput();
 
-    Serial.println("[Debug] --- sendLimitSwitchTask End ---");
+    // Serial.println("[Debug] --- sendLimitSwitchTask End ---");
 
-    communication::status.noticedBlueBreath(800);
+    communication::status.noticedBlueBlink(800);
 }
 
 /**
@@ -275,8 +248,8 @@ void sendComCheckTask()
 {
     communication::enableOutput();
     MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L));
-    Serial1.flush();
-    delay(2); // 確実な送信完了のためのウェイト
+    Serial1.flush(); // 送信完了まで待機
+    delay(2); // RS485トランシーバの切り替え待機
     communication::disableOutput();
 }
 
@@ -286,9 +259,9 @@ void sendComCheckTask()
 void onComCheckReceived()
 {
     communication::preReceivedTime = millis();
-    Serial.println(">ComCheck received.");
-    Serial.print(">preReceiverTime_sec:");
-    Serial.println(communication::preReceivedTime / 1000.0);
+    // Serial.println(">ComCheck received.");
+    // Serial.print(">preReceiverTime_sec:");
+    // Serial.println(communication::preReceivedTime / 1000.0);
 }
 
 // ============================================================
@@ -308,16 +281,18 @@ void setup()
     communication::disableOutput(); // 初期状態は受信モード
 
     // ---- RS485 ハードウェアシリアル初期化 ----
-    // XIAO SAMD21 の Serial1 は D6(TX)/D7(RX) に対応
-#if defined(ARDUINO_ARCH_ESP32)
-    Serial1.begin(115200, SERIAL_8N1, D7, D6);
-#else
     Serial1.begin(115200);
-#endif
+    // ★追加: 送信中(RE=High)にRXピンがハイインピーダンスになってノイズを拾うのを防ぐため、内部プルアップを有効にする
+    pinMode(D7, INPUT_PULLUP);
+    
     communication::preReceivedTime = millis();
 
     // ---- I2C / MCP23017 初期化 ----
     Wire.begin(); // D4(SDA) / D5(SCL)
+#if defined(WIRE_HAS_TIMEOUT)
+    Wire.setWireTimeout(3000, true); // I2Cの無限ループ（フリーズ）を防ぐ
+#endif
+    
     if (!ioexp::mcp.begin())
     {
         Serial.println("Error: MCP23017 not found! Check wiring.");
@@ -326,8 +301,6 @@ void setup()
     // GPA0〜GPA5 を入力に設定 (GPA6, GPA7 も未使用のため全ビット入力)
     ioexp::mcp.setPinMode(Lib_MCP23017::Port::A, 0xFF);
     // MCP23017 内部プルアップは無効 (74HC14 入力側の外部 10kΩ pull-up に委ねる)
-    // 74HC14 は push-pull 出力のため、内部プルアップは信号に干渉しない程度だが
-    // 外部 pull-up が正しく実装されていれば不要。
     ioexp::mcp.setPullup(Lib_MCP23017::Port::A, 0x00);
 
     // GPB0〜GPB5 を出力に設定 (0xC0 = 0b11000000 で GPB6, GPB7 は入力)
@@ -339,8 +312,8 @@ void setup()
     analogReadResolution(10); // 10bit 分解能
 
     // ---- タスク登録 ----
-    Tasks.add(&sendLimitSwitchTask)->startFps(10); // 10Hz でスイッチ状態送信
-    Tasks.add(&measureVoltageTask)->startFps(5);   // 5Hz で電源電圧計測
+    Tasks.add(&sendLimitSwitchTask)->startFps(11); // 11Hz でスイッチ状態送信
+    // Tasks.add(&measureVoltageTask)->startFps(5);   // 5Hz で電源電圧計測
     Tasks.add(&sendComCheckTask)->startFps(2);     // 2Hz で生存確認送信
 
     // ---- パケット受信コールバック登録 ----
