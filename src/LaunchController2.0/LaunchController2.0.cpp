@@ -290,10 +290,10 @@ void setup()
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
   Tasks.add(&control::handleManualTask)->startFps(10); // 10Hzで実行
   // 機体側へ操作卓のスイッチ状態（コマンド）を送信するタスク
-  Tasks.add(&communication::sendControlSync)->startFps(20); // 20Hzで実行
+  Tasks.add(&communication::sendControlSync)->startFps(19); // 19Hzで実行
   // 生存確認(ハートビート)を定期的に送信するタスク
-  Tasks.add(&communication::sendComCheck)->startFps(2); // 2Hzで実行
-  Tasks.add(&communication::sendComCheckNode)->startFps(2); // 2Hzで実行
+  Tasks.add(&communication::sendComCheck)->startFps(3); // 3Hzで実行
+  Tasks.add(&communication::sendComCheckNode)->startFps(3); // 3Hzで実行
   // 通信がタイムアウトしていないか監視するタスク
   Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
