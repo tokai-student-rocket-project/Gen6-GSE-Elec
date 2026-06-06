@@ -780,7 +780,7 @@ void setup()
   Tasks.add(&n2o::samplingTask)->startFps(20);              // 20Hzで圧力センサをサンプリング
   Tasks.add(&n2o::measureTask)->startFps(2);                // 2Hzで圧力を計算・表示
   Tasks.add(&control::handleManualTask)->startFps(5);       // 5Hzで手動スイッチ入力をチェック
-  Tasks.add(&communication::sendFeedbackSync)->startFps(5); // 5Hzで電磁弁状態をRS485で送信
+  Tasks.add(&communication::sendFeedbackSync)->startFps(7); // 5Hzで電磁弁状態をRS485で送信
   Tasks.add(&communication::sendPressureSync)->startFps(2); // 2Hzで圧力値をRS485で送信
   Tasks.add(&communication::sendCurrentSync)->startFps(2);  // 2Hzでセンサ電流値をRS485で送信
   Tasks.add(&communication::sendComCheck)->startFps(2);          // 2Hzで生存確認パケットを送信
