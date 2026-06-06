@@ -42,6 +42,7 @@
  */
 
 #include "Lib_MCP23017.hpp"
+#include "Lib_NeoPixel.hpp"
 #include <Arduino.h>
 #include <MsgPacketizer.h>
 #include <TaskManager.h>
@@ -58,6 +59,12 @@ static constexpr uint8_t PIN_VOLTAGE_IN = A1; // D1/A1
 
 /// @brief MCP23017 の I2C アドレス (A0〜A2 = GND の場合)
 static constexpr uint8_t MCP23017_ADDRESS = 0x20;
+
+/// @brief NeoPixel の制御ピン
+static constexpr uint8_t RGB_LED = 20;
+
+/// @brief NeoPixel の電源制御ピン
+static constexpr uint8_t RGB_LED_EN = 21;
 
 // ============================================================
 // 通信パケット定義
@@ -80,8 +87,10 @@ namespace communication
         SENSOR_CURRENT_SYNC = 9,       ///< 生電流値同期
 
         /// @brief リミットスイッチ状態をサテライトノードから送信するパケット
-        /// SatelliteController2.0 側に追加が必要です（後述の注意事項を参照）。
-        LIMIT_SWITCH_SYNC = 10,
+        LIMIT_SWITCH_SYNC = 10, ///< ノード → ランチ 生存確認
+
+        COM_CHECK_L_TO_N = 11, ///< ランチ → ノード 生存確認
+        COM_CHECK_N_TO_L = 12, ///< ノード → ランチ 生存確認
     };
 
     /// @brief RS485 送信を有効化する
@@ -101,6 +110,8 @@ namespace communication
 
     /// @brief 通信タイムアウト時間 (ミリ秒)
     static constexpr unsigned long TIMEOUT_MS = 5000;
+
+    Neopixel status(RGB_LED);
 
 } // namespace communication
 
@@ -188,56 +199,65 @@ namespace power
  */
 void sendLimitSwitchTask()
 {
+    Serial.println("[Debug] --- sendLimitSwitchTask Start ---");
+
     // GPA を一括読み取り (GPA0〜GPA5 がスイッチ入力)
+    Serial.println("[Debug] Calling readPort(A)...");
     uint8_t rawGPA = ioexp::mcp.readPort(Lib_MCP23017::Port::A);
+    Serial.print("[Debug] readPort(A) returned: 0x");
+    Serial.println(rawGPA, HEX);
 
     // ---- デバッグ: 各ビットをピン名・チャンネル番号付きで個別出力 ----
     Serial.print(">rawGPA_hex:0x");
     Serial.println(rawGPA, HEX);
-    // 各 GPA ピンの値を個別に表示（どのビットが変化しているか確認用）
-    // GPA ピン → 論理チャンネルの対応:
-    //   GPA0=ch2, GPA1=ch1, GPA2=ch0, GPA3=ch5, GPA4=ch4, GPA5=ch3
     Serial.print(">GPA0(ch2):");
-    Serial.println((rawGPA >> 0) & 1);
+    Serial.println((rawGPA >> 0) & 1); // INPUT 1
     Serial.print(">GPA1(ch1):");
-    Serial.println((rawGPA >> 1) & 1);
+    Serial.println((rawGPA >> 1) & 1); // INPUT 2
     Serial.print(">GPA2(ch0):");
-    Serial.println((rawGPA >> 2) & 1); // ch0 を確認中
+    Serial.println((rawGPA >> 2) & 1); // INPUT 0
     Serial.print(">GPA3(ch5):");
-    Serial.println((rawGPA >> 3) & 1);
+    Serial.println((rawGPA >> 3) & 1); // INPUT 5
     Serial.print(">GPA4(ch4):");
-    Serial.println((rawGPA >> 4) & 1);
+    Serial.println((rawGPA >> 4) & 1); // INPUT 4
     Serial.print(">GPA5(ch3):");
-    Serial.println((rawGPA >> 5) & 1);
+    Serial.println((rawGPA >> 5) & 1); // INPUT 3
     // ----------------------------------------
 
     // ビット反転なし
-    // 回路の動作 (NO接点 + pull-up + 74HC14インバータ):
-    //   SW 未押下 → pull-up → 74HC14入力 HIGH → 出力 LOW → GPA bit = 0
-    //   SW 押下   → GNDへ  → 74HC14入力 LOW  → 出力 HIGH → GPA bit = 1
-    // → rawGPA の HIGH bit がそのまま「スイッチが押された」を意味する
     uint8_t validGPA = rawGPA & 0x3F;
-
 
     // チャンネル順に並び替えた状態 (bit0=ch0 〜 bit5=ch5)
     uint8_t limitSwitchState = ioexp::remapSwitchBits(validGPA);
 
     // LED をスイッチ状態と連動させる (ch0〜ch5 → GPB0〜GPB5)
     // LEDの点灯はスイッチが押されている (HIGH) ときに行う
-    ioexp::mcp.writePort(Lib_MCP23017::Port::B, limitSwitchState & 0x3F);
+    uint8_t writeVal = limitSwitchState & 0x3F;
+    Serial.print("[Debug] Calling writePort(B) with value: 0x");
+    Serial.println(writeVal, HEX);
+
+    ioexp::mcp.writePort(Lib_MCP23017::Port::B, writeVal);
+
+    Serial.println("[Debug] writePort(B) completed successfully.");
 
     // teleplot 用シリアル出力
     Serial.print(">limitSwitch:");
     Serial.println(limitSwitchState, BIN);
 
     // RS485 でパケット送信
+    Serial.println("[Debug] Sending RS485 packet...");
     communication::enableOutput();
     MsgPacketizer::send(
         Serial1,
         static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
         limitSwitchState);
     Serial1.flush();
+    delay(2); // 確実な送信完了のためのウェイト
     communication::disableOutput();
+
+    Serial.println("[Debug] --- sendLimitSwitchTask End ---");
+
+    communication::status.noticedBlueBreath(800);
 }
 
 /**
@@ -254,10 +274,9 @@ void measureVoltageTask()
 void sendComCheckTask()
 {
     communication::enableOutput();
-    MsgPacketizer::send(
-        Serial1,
-        static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L));
     Serial1.flush();
+    delay(2); // 確実な送信完了のためのウェイト
     communication::disableOutput();
 }
 
@@ -268,6 +287,8 @@ void onComCheckReceived()
 {
     communication::preReceivedTime = millis();
     Serial.println(">ComCheck received.");
+    Serial.print(">preReceiverTime_sec:");
+    Serial.println(communication::preReceivedTime / 1000.0);
 }
 
 // ============================================================
@@ -278,8 +299,9 @@ void setup()
 {
     // ---- シリアル初期化 ----
     Serial.begin(115200); // USB シリアル（デバッグ用）
-    // while (!Serial)
-    //     ;
+
+    // ---- NeoPixel 初期化 ----
+    communication::status.init(RGB_LED_EN);
 
     // ---- RS485 制御ピン初期化 ----
     pinMode(PIN_RS485_DERE, OUTPUT);
@@ -287,7 +309,11 @@ void setup()
 
     // ---- RS485 ハードウェアシリアル初期化 ----
     // XIAO SAMD21 の Serial1 は D6(TX)/D7(RX) に対応
+#if defined(ARDUINO_ARCH_ESP32)
+    Serial1.begin(115200, SERIAL_8N1, D7, D6);
+#else
     Serial1.begin(115200);
+#endif
     communication::preReceivedTime = millis();
 
     // ---- I2C / MCP23017 初期化 ----
@@ -318,10 +344,7 @@ void setup()
     Tasks.add(&sendComCheckTask)->startFps(2);     // 2Hz で生存確認送信
 
     // ---- パケット受信コールバック登録 ----
-    MsgPacketizer::subscribe(
-        Serial1,
-        static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S),
-        &onComCheckReceived);
+    MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N), &onComCheckReceived);
 
     Serial.println("SatelliteNode: Initialized.");
 }
@@ -330,6 +353,7 @@ void loop()
 {
     // 受信バッファを解析しコールバックを呼び出す
     MsgPacketizer::parse();
+    communication::status.update();
 
     // 登録されたタスクを実行
     Tasks.update();
