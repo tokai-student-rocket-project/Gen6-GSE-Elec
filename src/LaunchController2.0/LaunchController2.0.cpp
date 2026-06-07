@@ -204,14 +204,20 @@ namespace communication
   inline bool isCh4Pressed() { return (limitSwitchState >> 4) & 0x01; }
   inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
 
+  // 監視対象とするリミットスイッチのビットマスク (Bit5 = ch5)
+  // 将来的に他の弁/リミットスイッチを増やす場合は、このマスクや判定ロジックを変更する
+  constexpr uint8_t SAFETY_GATE_MASK = (1 << 5); // ch5のみを監視
+
+  /// @brief 安全ゲート（必要なリミットスイッチがすべて押されているか）の判定
+  /// @return true: 安全（すべて押されている）、false: 危険（どれかが押されていない）
+  inline bool isSafetyGateMet() { return (limitSwitchState & SAFETY_GATE_MASK) == SAFETY_GATE_MASK; }
+
   // RS485の送信を有効/無効化する関数
   void enableOutput();
   void disableOutput();
 
   // パケット送信関数
-  void sendControlSync();
-  void sendComCheck();
-  void sendComCheckNode(); // ノード向け生存確認送信
+  void pollingTask();
   void sendSensorConfigSync();
   void sendSensorDummyCurrent(float current_mA);
   void sendSensorCalibCoeff(float a, float b);
@@ -289,11 +295,8 @@ void setup()
   Tasks.add(&power::measureTask)->startFps(10); // 10Hzで実行
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
   Tasks.add(&control::handleManualTask)->startFps(10); // 10Hzで実行
-  // 機体側へ操作卓のスイッチ状態（コマンド）を送信するタスク
-  Tasks.add(&communication::sendControlSync)->startFps(19); // 19Hzで実行
-  // 生存確認(ハートビート)を定期的に送信するタスク
-  Tasks.add(&communication::sendComCheck)->startFps(3); // 3Hzで実行
-  Tasks.add(&communication::sendComCheckNode)->startFps(3); // 3Hzで実行
+  // 機体およびノードへポーリング要求を送信するタスク (各10Hz相当)
+  Tasks.add(&communication::pollingTask)->startFps(20);
   // 通信がタイムアウトしていないか監視するタスク
   Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
@@ -461,33 +464,34 @@ void power::measureTask()
   }
 }
 
-/// @brief 現在の操作卓のスイッチ状態（電磁弁の開閉指令）をサテライトコントローラーに送信するタスク
-void communication::sendControlSync()
+/// @brief 各ノードへリクエストを順番に送信するポーリングタスク
+void communication::pollingTask()
 {
-  // ★重要：通信失敗（タイムアウト）している間は、送信処理自体をスキップする
-  // (現在はコメントアウトされており、常に送信を試みるようになっている)
-  // if (millis() - communication::preReceivedTime > communication::timeout) {
-  //   return;
-  // }
+  static bool pollNode = false;
+  if (pollNode)
+  {
+    // SatelliteNodeへのリクエスト (COM_CHECK_L_TO_N)
+    communication::enableOutput();
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
+    Serial1.flush();
+    communication::disableOutput();
+  }
+  else
+  {
+    // SatelliteControllerへのリクエスト (CONTROL_SYNC & COM_CHECK_L_TO_S)
+    uint8_t state =
+        (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
+        (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
+        (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
+        (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
 
-  // 各スイッチの状態（isRaised）を1ビットずつシフトして、1つのバイト(8ビット)にまとめる
-  uint8_t state =
-      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
-      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
-      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
-      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
-
-  // Serial.println(state, BIN); // ビット列を表示
-
-  communication::enableOutput(); // 送信モードON
-
-  // パケット送信
-  MsgPacketizer::send(Serial1,
-                      static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),
-                      state);
-
-  Serial1.flush();                // 全てのデータが配線に送り出されるのを待つ
-  communication::disableOutput(); // 受信モードに戻す
+    communication::enableOutput();
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), state);
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
+    Serial1.flush();
+    communication::disableOutput();
+  }
+  pollNode = !pollNode;
 }
 
 /// @brief センサの基本設定（フルスケール圧など）を機体側に同期する
@@ -540,32 +544,40 @@ void communication::sendSensorZeroCalibReq()
   communication::disableOutput();
 }
 
-/// @brief 機体へ通信生存確認（ハートビート）を送信するタスク
-void communication::sendComCheck()
-{
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
-  Serial1.flush();
-  communication::disableOutput();
-}
-
-/// @brief ノードへ通信生存確認（ハートビート）を送信するタスク
-void communication::sendComCheckNode()
-{
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
-  Serial1.flush();
-  communication::disableOutput();
-}
+// sendComCheck, sendComCheckNode was replaced by pollingTask
 
 /// @brief SatelliteController から転送されたリミットスイッチ状態を受信するコールバック
 /// SatelliteNode (ch0〜ch5) → SatelliteController → (LIMIT_SWITCH_SYNCパケット) → LaunchController
 /// 内部変数 limitSwitchState に保存し、isCh0Pressed() 〜 isCh5Pressed() で参照する。
 void communication::onLimitSwitchSyncReceived(uint8_t state)
 {
+  // ソフトウェア・デバウンス（チャタリング防止）処理
+  // コメントアウトすることでデバウンスを無効化できます
+#define DEBOUNCE_LIMIT_SWITCH
+
+#ifdef DEBOUNCE_LIMIT_SWITCH
+  static uint8_t lastRawState = 0;
+  static uint8_t stableState = 0;
+  static uint8_t confirmCount = 0;
+  constexpr uint8_t REQUIRED_CONFIRMS = 2; // 10Hz周期で2回連続一致(約200ms)で状態確定
+
+  if (state == lastRawState)
+  {
+    confirmCount++;
+    if (confirmCount >= REQUIRED_CONFIRMS)
+    {
+      stableState = state;
+    }
+  }
+  else
+  {
+    lastRawState = state;
+    confirmCount = 1;
+  }
+  communication::limitSwitchState = stableState;
+#else
   communication::limitSwitchState = state;
+#endif
 
   // teleplot / デバッグ用: リミットスイッチ各chの状態をシリアルモニターで確認できるようにする
   Serial.print(">limitSwitch_ch0:");
@@ -667,8 +679,6 @@ void communication::onFeedbackSyncReceived(uint8_t state)
     solenoid::openFaultCount   = 0;
     solenoid::closeFaultCount  = 0;
   }
-
-  // communication::statusLamp.blink();
 }
 
 /// @brief 機体から算出された圧力値を受信した際のコールバック
@@ -676,8 +686,6 @@ void communication::onPressureSyncReceived(float pressure)
 {
   // 7セグメントディスプレイに圧力を表示
   n2o::tm1637.displayNumber(pressure);
-
-  // communication::statusLamp.blink();
 }
 
 /**
@@ -832,6 +840,18 @@ void control::handleManualTask()
     return;
   }
 
+  // ★ リミットスイッチによる安全ゲートの常時監視 (シーケンス中)
+  // シーケンス実行中に安全状態が崩れたら、強制的にシーケンスを止める
+  if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
+  {
+    if (!communication::isSafetyGateMet())
+    {
+      Serial.println("[GATE] Limit switch released during sequence! Stopping sequence.");
+      sequence::peacefulStop();
+      error::statusLamp.on();
+    }
+  }
+
   // ================= エマージェンシーストップ（緊急停止）処理 =================
   control::emergencyStop.setManual();
   if (control::emergencyStop.isManualRaised())
@@ -896,7 +916,32 @@ void control::handleManualTask()
   // 各電磁弁の手動トグルスイッチの状態を読み取り、出力設定に反映させる
   // (シーケンスによってAutomaticに制御されていない場合のみ有効)
   control::shift.setManual();
+
+  // FILLのみリミットスイッチによる安全ゲートで制限する
   control::fill.setManual();
+  static bool lastFillBlocked = false;
+  if (!communication::isSafetyGateMet())
+  {
+    if (control::fill.isManualRaised())
+    {
+      control::fill.setManualOff();
+      if (!lastFillBlocked)
+      {
+        Serial.println("[GATE] Manual FILL blocked: limit switch safety gate not met.");
+        lastFillBlocked = true;
+        error::statusLamp.on(); // エラーランプ点灯
+      }
+    }
+  }
+  else
+  {
+    if (lastFillBlocked)
+    {
+      error::statusLamp.off();
+      lastFillBlocked = false;
+    }
+  }
+
   control::dump.setManual();
   control::oxygen.setManual();
   control::igniter.setManual();
@@ -994,14 +1039,16 @@ void sequence::fill()
     return;
   }
 
-  // ★ ch5 リミットスイッチによる安全ゲート
-  // SatelliteNode の ch5 が押されていない場合は充填シーケンスを開始しない
-  // if (!communication::isCh5Pressed())
-  // {
-  //   Serial.println("[GATE] sequence::fill() blocked: ch5 limit switch not pressed.");
-  //   error::statusLamp.on(); // ch5 未押下をエラーランプで通知
-  //   return;
-  // }
+  // ★ リミットスイッチによる安全ゲート
+  // 安全ゲート（必要なリミットスイッチ）が満たされていない場合は充填シーケンスを開始しない
+  if (!communication::isSafetyGateMet())
+  {
+    Serial.println("[GATE] sequence::fill() blocked: limit switch safety gate not met.");
+    error::statusLamp.on(); // 未押下をエラーランプで通知
+    mp3_play(13); // エラー音再生
+    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    return;
+  }
 
   // フラグ更新
   sequence::fillSequenceIsActive = true;
@@ -1042,14 +1089,15 @@ void sequence::ignition()
   if (control::fill.isManualRaised())
     return;
 
-  // ★ ch5 リミットスイッチによる安全ゲート
-  // SatelliteNode の ch5 が押されていない場合は点火シーケンスに進めない
-  // if (!communication::isCh5Pressed())
-  // {
-  //   Serial.println("[GATE] sequence::ignition() blocked: ch5 limit switch not pressed.");
-  //   error::statusLamp.on(); // ch5 未押下をエラーランプで通知
-  //   return;
-  // }
+  // ★ リミットスイッチによる安全ゲート
+  // 安全ゲート（必要なリミットスイッチ）が満たされていない場合は点火シーケンスに進めない
+  if (!communication::isSafetyGateMet())
+  {
+    Serial.println("[GATE] sequence::ignition() blocked: limit switch safety gate not met.");
+    error::statusLamp.on(); // 未押下をエラーランプで通知
+    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    return;
+  }
 
   // フラグ更新
   sequence::ignitionSequenceIsActive = true;

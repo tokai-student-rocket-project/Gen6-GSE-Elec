@@ -194,13 +194,10 @@ namespace power
 // ============================================================
 
 /**
- * @brief リミットスイッチの状態を MCP23017 から読み取り，
- *        RS485 経由で SatelliteController2.0 に送信するタスク
+ * @brief LaunchControllerからの要求受信時に一括でステータスを返信する
  */
-void sendLimitSwitchTask()
+void sendReplyToLaunch()
 {
-    // Serial.println("[Debug] --- sendLimitSwitchTask Start ---");
-
     // GPA を一括読み取り (GPA0〜GPA5 がスイッチ入力)
     uint8_t rawGPA = ioexp::mcp.readPort(Lib_MCP23017::Port::A);
     uint8_t validGPA = rawGPA & 0x3F;
@@ -210,47 +207,18 @@ void sendLimitSwitchTask()
     uint8_t writeVal = limitSwitchState & 0x3F;
     ioexp::mcp.writePort(Lib_MCP23017::Port::B, writeVal);
 
-
-    // Serial.println("[Debug] writePort(B) completed successfully.");
-
-    // teleplot 用シリアル出力
-    // Serial.print(">limitSwitch:");
-    // Serial.println(limitSwitchState, BIN);
-
-    // RS485 でパケット送信
-    // Serial.println("[Debug] Sending RS485 packet...");
+    // RS485 でパケット一括送信
     communication::enableOutput();
     MsgPacketizer::send(
         Serial1,
         static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
         limitSwitchState);
-    Serial1.flush(); // 送信完了まで待機
-    delay(2); // RS485トランシーバの切り替え待機
-    communication::disableOutput();
-
-    // Serial.println("[Debug] --- sendLimitSwitchTask End ---");
-
-    communication::status.noticedBlueBlink(800);
-}
-
-/**
- * @brief 5V 電源電圧を計測するタスク
- */
-void measureVoltageTask()
-{
-    power::measure();
-}
-
-/**
- * @brief 生存確認パケットをサテライトコントローラーへ送信するタスク
- */
-void sendComCheckTask()
-{
-    communication::enableOutput();
     MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L));
     Serial1.flush(); // 送信完了まで待機
     delay(2); // RS485トランシーバの切り替え待機
     communication::disableOutput();
+
+    communication::status.noticedBlueBreath(500);
 }
 
 /**
@@ -259,9 +227,8 @@ void sendComCheckTask()
 void onComCheckReceived()
 {
     communication::preReceivedTime = millis();
-    // Serial.println(">ComCheck received.");
-    // Serial.print(">preReceiverTime_sec:");
-    // Serial.println(communication::preReceivedTime / 1000.0);
+    // 受信完了後、直ちにLaunchControllerへ状態を一括返信する
+    sendReplyToLaunch();
 }
 
 // ============================================================
@@ -281,9 +248,9 @@ void setup()
     communication::disableOutput(); // 初期状態は受信モード
 
     // ---- RS485 ハードウェアシリアル初期化 ----
-    Serial1.begin(115200);
-    // ★追加: 送信中(RE=High)にRXピンがハイインピーダンスになってノイズを拾うのを防ぐため、内部プルアップを有効にする
+    // ★重要: pinModeはSerial1.begin()の前に呼ぶ必要があります。（後に呼ぶとUART機能が無効化されピンがGPIOになってしまいます）
     pinMode(D7, INPUT_PULLUP);
+    Serial1.begin(115200);
     
     communication::preReceivedTime = millis();
 
@@ -312,9 +279,8 @@ void setup()
     analogReadResolution(10); // 10bit 分解能
 
     // ---- タスク登録 ----
-    Tasks.add(&sendLimitSwitchTask)->startFps(11); // 11Hz でスイッチ状態送信
+    // 非同期送信タスクは削除し、ポーリング受信時に返信するように変更しました
     // Tasks.add(&measureVoltageTask)->startFps(5);   // 5Hz で電源電圧計測
-    Tasks.add(&sendComCheckTask)->startFps(2);     // 2Hz で生存確認送信
 
     // ---- パケット受信コールバック登録 ----
     MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N), &onComCheckReceived);

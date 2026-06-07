@@ -216,7 +216,8 @@ namespace communication
   // 生の電流値を送信する
   void sendCurrentSync();
   // 通信チェック(生存確認)を送信する
-  void sendComCheck();
+  // void sendComCheck(); // Replaced by sendReplyToLaunch
+  void sendReplyToLaunch();
 
   // 各種パケット受信時のコールバック関数群
   void onControlSyncReceived(uint8_t state);
@@ -459,58 +460,23 @@ void n2o::measureTask()
 /// @brief N2O圧力センサ(ADC)からの値を高頻度でサンプリングし、内部のバッファに蓄積するタスク
 void n2o::samplingTask() { n2o::vesim10.sample(); }
 
-/// @brief 現在の電磁弁の実際の状態（フィードバック）をパッキングし、RS485経由でランチコントローラー側に送信する
-void communication::sendFeedbackSync()
+/// @brief LaunchControllerからの要求受信時に一括でステータスを返信する
+void communication::sendReplyToLaunch()
 {
-  // 各LED状態からビットフラグを生成し、1バイト(uint8_t)にまとめる
   uint8_t state =
       (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
       (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
       (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
 
-  communication::enableOutput(); // DE=HIGHにして送信モードへ切り替え
+  communication::enableOutput(); 
 
-  // FEEDBACK_SYNC パケットとして状態データをシリアル1(RS485)へ送信
+  // FEEDBACK_SYNC, PRESSURE_SYNC, SENSOR_CURRENT_SYNC, COM_CHECK_S_TO_L を一括送信
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
-
-  // 送信バッファのデータがすべて物理的に配線に送り出されるのを待つ
-  Serial1.flush();
-
-  communication::disableOutput(); // 送信完了後、DE=LOWにして受信モードへ戻す
-}
-
-/// @brief 算出されたN2O圧力値(MPa)をRS485経由でランチコントローラー側に送信する
-void communication::sendPressureSync()
-{
-  communication::enableOutput();
-
-  // PRESSURE_SYNC パケットとして圧力値(float)を送信
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
-  Serial1.flush();
-
-  communication::disableOutput();
-}
-
-/// @brief センサから取得した生の電流値(mA)をRS485経由でランチコントローラー側に送信する
-void communication::sendCurrentSync()
-{
-  float current_mA = n2o::vesim10.getCurrent_mA(); // 生の電流値を取得
-  communication::enableOutput();
-  // SENSOR_CURRENT_SYNC パケットとして電流値を送信
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), current_mA);
-  Serial1.flush();
-  communication::disableOutput();
-}
-
-
-
-/// @brief サテライトからランチに対して生存確認（ハートビート）を送信する
-void communication::sendComCheck()
-{
-  communication::enableOutput();
-  // COM_CHECK_S_TO_L パケット（データなし）を送信
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
+
   Serial1.flush();
   communication::disableOutput();
 }
@@ -542,6 +508,9 @@ void communication::onControlSyncReceived(uint8_t state)
   {
     control::dump.off();
   }
+
+  // 受信完了後、直ちにLaunchControllerへ状態を一括返信する
+  communication::sendReplyToLaunch();
 }
 
 /// @brief ランチ側からの生存確認（ハートビート）を受信した際のコールバック
@@ -780,10 +749,7 @@ void setup()
   Tasks.add(&n2o::samplingTask)->startFps(20);              // 20Hzで圧力センサをサンプリング
   Tasks.add(&n2o::measureTask)->startFps(2);                // 2Hzで圧力を計算・表示
   Tasks.add(&control::handleManualTask)->startFps(5);       // 5Hzで手動スイッチ入力をチェック
-  Tasks.add(&communication::sendFeedbackSync)->startFps(7); // 5Hzで電磁弁状態をRS485で送信
-  Tasks.add(&communication::sendPressureSync)->startFps(2); // 2Hzで圧力値をRS485で送信
-  Tasks.add(&communication::sendCurrentSync)->startFps(2);  // 2Hzでセンサ電流値をRS485で送信
-  Tasks.add(&communication::sendComCheck)->startFps(2);          // 2Hzで生存確認パケットを送信
+  // 非同期送信タスクは削除し、ポーリング受信時に返信するように変更しました
   Tasks.add(&communication::onComCheckFailed)->startFps(2);      // 2Hzで通信途絶の監視を行う
   // MsgPacketizer（パケット通信ライブラリ）の受信設定。対応するパケットが届いた際のコールバックを登録
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
