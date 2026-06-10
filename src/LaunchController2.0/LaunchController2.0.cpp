@@ -917,30 +917,35 @@ void control::handleManualTask()
   // (シーケンスによってAutomaticに制御されていない場合のみ有効)
   control::shift.setManual();
 
-  // FILLのみリミットスイッチによる安全ゲートで制限する
+
   control::fill.setManual();
-  static bool lastFillBlocked = false;
-  if (!communication::isSafetyGateMet())
-  {
-    if (control::fill.isManualRaised())
-    {
-      control::fill.setManualOff();
-      if (!lastFillBlocked)
-      {
-        Serial.println("[GATE] Manual FILL blocked: limit switch safety gate not met.");
-        lastFillBlocked = true;
-        error::statusLamp.on(); // エラーランプ点灯
-      }
-    }
-  }
-  else
-  {
-    if (lastFillBlocked)
-    {
-      error::statusLamp.off();
-      lastFillBlocked = false;
-    }
-  }
+  
+  // FILLのみリミットスイッチによる安全ゲートで制限しようと思ったが，
+  // FILL弁からN2OをDUMPしたいときに不都合なためコメントアウト
+  ///////////////////////////////////////////////////////////////////////////
+  // static bool lastFillBlocked = false;
+  // if (!communication::isSafetyGateMet())
+  // {
+  //   if (control::fill.isManualRaised())
+  //   {
+  //     control::fill.setManualOff();
+  //     if (!lastFillBlocked)
+  //     {
+  //       Serial.println("[GATE] Manual FILL blocked: limit switch safety gate not met.");
+  //       lastFillBlocked = true;
+  //       error::statusLamp.on(); // エラーランプ点灯
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   if (lastFillBlocked)
+  //   {
+  //     error::statusLamp.off();
+  //     lastFillBlocked = false;
+  //   }
+  // }
+  ///////////////////////////////////////////////////////////////////////////
 
   control::dump.setManual();
   control::oxygen.setManual();
@@ -1045,8 +1050,8 @@ void sequence::fill()
   {
     Serial.println("[GATE] sequence::fill() blocked: limit switch safety gate not met.");
     error::statusLamp.on(); // 未押下をエラーランプで通知
-    mp3_play(13); // エラー音再生
     sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13); // エラー音再生
     return;
   }
 
@@ -1096,6 +1101,7 @@ void sequence::ignition()
     Serial.println("[GATE] sequence::ignition() blocked: limit switch safety gate not met.");
     error::statusLamp.on(); // 未押下をエラーランプで通知
     sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13); // エラー音再生
     return;
   }
 
