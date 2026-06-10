@@ -193,40 +193,48 @@ namespace power
 // タスク関数
 // ============================================================
 
+uint8_t currentLimitSwitchState = 0;
+
+void updateLocalIO()
+{
+    // Serial.println("[DEBUG] I2C Read Start");
+    uint8_t rawGPA = ioexp::mcp.readPort(Lib_MCP23017::Port::A);
+    // Serial.println("[DEBUG] I2C Read End");
+    uint8_t validGPA = rawGPA & 0x3F;
+    currentLimitSwitchState = ioexp::remapSwitchBits(validGPA);
+
+    uint8_t writeVal = currentLimitSwitchState & 0x3F;
+    // Serial.println("[DEBUG] I2C Write Start");
+    ioexp::mcp.writePort(Lib_MCP23017::Port::B, writeVal);
+    // Serial.println("[DEBUG] I2C Write End");
+}
+
 /**
  * @brief LaunchControllerからの要求受信時に一括でステータスを返信する
  */
 void sendReplyToLaunch()
 {
-    // GPA を一括読み取り (GPA0〜GPA5 がスイッチ入力)
-    uint8_t rawGPA = ioexp::mcp.readPort(Lib_MCP23017::Port::A);
-    uint8_t validGPA = rawGPA & 0x3F;
-    uint8_t limitSwitchState = ioexp::remapSwitchBits(validGPA);
-
-    // LED をスイッチ状態と連動させる (ch0〜ch5 → GPB0〜GPB5)
-    uint8_t writeVal = limitSwitchState & 0x3F;
-    ioexp::mcp.writePort(Lib_MCP23017::Port::B, writeVal);
-
     // RS485 でパケット一括送信
     communication::enableOutput();
     MsgPacketizer::send(
         Serial1,
         static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
-        limitSwitchState);
+        currentLimitSwitchState);
     MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L));
     Serial1.flush(); // 送信完了まで待機
     delay(2); // RS485トランシーバの切り替え待機
     communication::disableOutput();
 
     communication::status.noticedBlueBreath(500);
+    Serial.println("OK");
 }
 
-/**
- * @brief ランチコントローラーからの生存確認受信コールバック
- */
+static unsigned long rxPacketCount = 0;
+
 void onComCheckReceived()
 {
     communication::preReceivedTime = millis();
+    rxPacketCount++;
     // 受信完了後、直ちにLaunchControllerへ状態を一括返信する
     sendReplyToLaunch();
 }
@@ -283,17 +291,52 @@ void setup()
     // Tasks.add(&measureVoltageTask)->startFps(5);   // 5Hz で電源電圧計測
 
     // ---- パケット受信コールバック登録 ----
-    MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N), &onComCheckReceived);
+    // MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N), &onComCheckReceived);
 
     Serial.println("SatelliteNode: Initialized.");
 }
 
 void loop()
 {
-    // 受信バッファを解析しコールバックを呼び出す
-    MsgPacketizer::parse();
+    // IOの更新を定期的に実行 (20Hz)
+    static unsigned long lastIoUpdate = 0;
+    if (millis() - lastIoUpdate > 50) {
+        lastIoUpdate = millis();
+        updateLocalIO();
+    }
+
+    // MsgPacketizerによるパース処理の代わりに、特定のパケットだけを手動でフィルタリングする
+    // MsgPacketizerが長いパケット（LaunchController <-> SatelliteController間の通信）を
+    // パースしようとして内部メモリリークや無限ループ（フリーズ）を起こすのを防ぐための専用処理です。
+    static uint8_t rxBuffer[256];
+    static uint8_t rxIndex = 0;
+
+    while (Serial1.available()) {
+        uint8_t b = Serial1.read();
+        
+        if (rxIndex < sizeof(rxBuffer)) {
+            rxBuffer[rxIndex++] = b;
+        }
+
+        if (b == 0x00) { // COBSの終端
+            // COM_CHECK_L_TO_N (Index 11 = 0x0B) のみを検出する
+            // COBSエンコードでは通常、[0]がオーバヘッド(0x02等)、[1]がインデックス(0x0B)となる
+            if (rxIndex >= 3 && rxBuffer[1] == 0x0B) {
+                onComCheckReceived();
+            }
+            rxIndex = 0; // バッファをリセット
+        }
+    }
+
     communication::status.update();
 
     // 登録されたタスクを実行
     Tasks.update();
+
+    // 動作確認用ハートビート
+    static unsigned long lastHb = 0;
+    if (millis() - lastHb > 2000) {
+        lastHb = millis();
+        Serial.println("[DEBUG] Node loop is running...");
+    }
 }
