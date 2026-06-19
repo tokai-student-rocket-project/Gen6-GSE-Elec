@@ -188,19 +188,19 @@ class SolenoidVisualizer(ctk.CTk):
         time.sleep(5.0) # Filling
         
         # 3. Ignition Seq Start (Simulated T=0 relative to logic)
-        # 4. Oxygen Open (T+4.5s)
+        # 4. Oxygen Open (T+0.05s)
         if not self.is_auto_running: return
-        time.sleep(4.5)
+        time.sleep(0.05)
         self.debug_vars["OXYGEN"].set(True)
         
-        # 5. Igniter On (T+6.0s -> +1.5s from prev)
+        # 5. Igniter On (T+1.0s -> +0.95s from prev)
         if not self.is_auto_running: return
-        time.sleep(1.5)
+        time.sleep(0.95)
         self.debug_vars["IGNITER"].set(True)
         
-        # 6. Burn Start (T+10.0s -> +4.0s from prev)
+        # 6. Burn Start (T+10.0s -> +9.0s from prev)
         if not self.is_auto_running: return
-        time.sleep(4.0)
+        time.sleep(9.0)
         self.debug_vars["FILL"].set(False) # Close Fill
         self.debug_vars["OPEN"].set(True) # Open Main
         
@@ -210,12 +210,12 @@ class SolenoidVisualizer(ctk.CTk):
         self.debug_vars["OXYGEN"].set(False)
         self.debug_vars["IGNITER"].set(False)
         
-        # 8. Purge Start (T+20.5s -> +10.0s from prev)
+        # 8. Purge Start (T+30.5s -> +20.0s from prev)
         if not self.is_auto_running: return
-        time.sleep(10.0)
+        time.sleep(20.0)
         self.debug_vars["PURGE"].set(True)
         
-        # 9. End (T+25.5s -> +5.0s from prev)
+        # 9. End (T+35.5s -> +5.0s from prev)
         if not self.is_auto_running: return
         time.sleep(5.0)
         self.debug_vars["PURGE"].set(False)
@@ -282,9 +282,11 @@ class SolenoidVisualizer(ctk.CTk):
                 label_y = y - size - 20
                 self.canvas.create_text(x, label_y, text=name, fill=C_TEXT, font=FONT_BOLD)
 
-        def draw_box(x1, y1, x2, y2, label, color=C_BOX):
+        def draw_box(x1, y1, x2, y2, label, color=C_BOX, text_color=None):
+            if text_color is None:
+                text_color = color
             self.canvas.create_rectangle(x1, y1, x2, y2, outline=color, width=2, dash=(6,6)) # Scaled dash
-            self.canvas.create_text(x1+10, y1+15, text=label, fill=color, font=(FONT_FAMILY, 11), anchor="w") # Scaled font 14->11
+            self.canvas.create_text(x1+10, y1+15, text=label, fill=text_color, font=(FONT_FAMILY, 11), anchor="w") # Scaled font 14->11
 
         def draw_tank(x, y, label, color, level=1.0):
             w, h = 34, 82 # Scaled 45->34, 110->82
@@ -354,7 +356,7 @@ class SolenoidVisualizer(ctk.CTk):
         # --- DRAWING ---
 
         # 1. GN2 System
-        draw_tank(X_LEFT, Y_N2, "GN2\n0.65MPa", C_N2)
+        draw_tank(X_LEFT, Y_N2, "GN2", C_N2)
         
         # Manifold
         draw_pipe(X_LEFT + 38, Y_N2, X_SATELLITE + 45, Y_N2, active=True, color=C_N2) # +50->38, +60->45
@@ -397,7 +399,7 @@ class SolenoidVisualizer(ctk.CTk):
                  self.canvas.create_text(ax - 110, vy - 22, text=p_text, fill=p_color, font=("Meiryo UI", 15, "bold")) # -150->-110, -30->-22, 20->15
 
         # 2. LN2O System
-        draw_tank(X_LEFT, Y_N2O, "LN2O\n5.5MPa", C_N2O)
+        draw_tank(X_LEFT, Y_N2O, "LN2O", C_N2O)
         draw_pipe(X_LEFT + 38, Y_N2O, X_PNEUMATIC - 68, Y_N2O, active=True, color=C_N2O) # +50->38, -90->-68
         
         # FILL
@@ -418,7 +420,7 @@ class SolenoidVisualizer(ctk.CTk):
         self.canvas.create_text(X_PNEUMATIC + 210, Y_N2O - 52, text="● 排気 (EXHAUST)", fill="#e67e22", font=FONT_BOLD) # +280->+210
 
         # 3. Oxygen System
-        draw_tank(X_LEFT, Y_O2, "GO2\n0.2MPa", C_O2)
+        draw_tank(X_LEFT, Y_O2, "GO2", C_O2)
         draw_pipe(X_LEFT + 38, Y_O2, X_SATELLITE + 128, Y_O2, active=True, color=C_O2) # +50->38, +170->128
         
         draw_box(X_SATELLITE + 75, Y_O2 - 75, X_SATELLITE + 210, Y_O2 + 45, "電磁弁ユニット(O2)") # +100->75, -100->-75, +280->210, +60->45
@@ -457,7 +459,7 @@ class SolenoidVisualizer(ctk.CTk):
             self.tank_level = 0.0
 
         # 6. Airframe & Engine
-        draw_box(X_AIRFRAME - 60, 38, X_AIRFRAME + 262, 712, "機体 (AIRFRAME) & モータ") # -80->-60, 50->38, +350->262, 950->712
+        draw_box(X_AIRFRAME - 60, 38, X_AIRFRAME + 262, 712, "機体 & モータ", text_color="#333333") # -80->-60, 50->38, +350->262, 950->712
         
         # Signals Entering
         draw_signal_line(X_UMB_BOX, Y_UMB_SIGNALS_OPEN, X_AIRFRAME + 38, Y_UMB_SIGNALS_OPEN, active=is_open_signal_on) # +50->38
