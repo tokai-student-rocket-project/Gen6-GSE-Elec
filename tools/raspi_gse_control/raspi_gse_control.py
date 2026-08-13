@@ -419,6 +419,8 @@ def simulator_worker():
             if gse_state.can_confirm: seq_flag |= (1 << 3)
             seq_flag |= (1 << 4) # Wireless OK
             gse_state.sequence_flag = seq_flag
+            gse_state.last_heartbeat_rx = time.time()
+            gse_state.connected = True
 
         time.sleep(0.1)
 
@@ -532,7 +534,10 @@ def cli_worker():
                     print(f"Unknown valve name: {vname}. Valid: {VALVE_NAMES}")
             else:
                 print(f"Unknown command: '{main_cmd}'. Type 'help' for available commands.")
-        except (KeyboardInterrupt, EOFError):
+        except EOFError:
+            print("[CLI] No interactive TTY detected. CLI shell thread exiting gracefully.")
+            break
+        except KeyboardInterrupt:
             print("\nExiting GSE Debug Server...")
             os._exit(0)
 
@@ -1882,8 +1887,13 @@ def api_valve_toggle():
     if valve_name not in VALVE_NAMES:
         return jsonify({"status": "invalid_valve", "valid": VALVE_NAMES}), 400
 
-    # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
+    # 安全保護: セーフティ未解除時は手動弁トグルを拒否
     with gse_state.lock:
+        if not gse_state.armed_state:
+            print("[SERVER REJECT] Valve toggle blocked: Safety is DISARMED!")
+            return jsonify({"status": "blocked", "message": "Safety is DISARMED"}), 403
+
+        # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
         if gse_state.fill_active or gse_state.ignition_active:
             print("[SERVER REJECT] Valve toggle blocked during active automatic sequence!")
             return jsonify({"status": "blocked", "message": "Sequence is currently active"}), 403
@@ -1981,9 +1991,10 @@ def main():
     t_log = threading.Thread(target=logger_worker, daemon=True)
     t_log.start()
 
-    # CLI プロンプトの起動
-    t_cli = threading.Thread(target=cli_worker, daemon=True)
-    t_cli.start()
+    # CLI プロンプトの起動 (オプション指定時のみ)
+    if args.cli:
+        t_cli = threading.Thread(target=cli_worker, daemon=True)
+        t_cli.start()
 
     print(f"\n[RASPI GSE SERVER] Starting Web Remote Control Dashboard at http://0.0.0.0:{args.web_port}")
     app.run(host='0.0.0.0', port=args.web_port, debug=False)
