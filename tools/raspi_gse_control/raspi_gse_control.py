@@ -463,29 +463,29 @@ HTML_TEMPLATE = """
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
-            padding: 12px;
+            padding: 10px;
             min-height: 100vh;
         }
 
         /* ===== Header ===== */
         .header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
         }
         .header-title {
-            font-size: 1.1rem; font-weight: 700; color: var(--blue);
-            display: flex; align-items: center; gap: 10px;
+            font-size: 1.05rem; font-weight: 700; color: var(--blue);
+            display: flex; align-items: center; gap: 8px;
         }
         .mode-tag {
-            background: #6366f1; padding: 3px 8px; border-radius: 4px;
-            font-size: 0.7rem; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+            background: #6366f1; padding: 2px 7px; border-radius: 4px;
+            font-size: 0.68rem; font-weight: 600; color: #fff; letter-spacing: 0.5px;
         }
         .conn-badge {
-            padding: 5px 14px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;
+            padding: 4px 12px; border-radius: 16px; font-weight: 600; font-size: 0.75rem;
             transition: all 0.3s;
         }
         .conn-ok { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.4); }
@@ -496,48 +496,48 @@ HTML_TEMPLATE = """
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: auto auto;
-            gap: 12px;
+            gap: 8px;
         }
-        @media (max-width: 820px) { .main-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
 
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 12px 14px;
         }
         .card h3 {
-            font-size: 0.85rem; font-weight: 600; color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+            font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
             border-bottom: 1px solid var(--border);
         }
 
         /* ===== Pressure ===== */
         .pressure-value {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 3.6rem; font-weight: 700;
+            font-size: 3.0rem; font-weight: 700;
             text-align: center;
             color: var(--blue);
-            text-shadow: 0 0 30px rgba(56,189,248,0.3);
+            text-shadow: 0 0 25px rgba(56,189,248,0.3);
             line-height: 1.1;
-            padding: 8px 0;
+            padding: 4px 0;
         }
-        .pressure-unit { font-size: 1.1rem; color: var(--text-dim); font-weight: 400; }
+        .pressure-unit { font-size: 1.0rem; color: var(--text-dim); font-weight: 400; }
 
         /* ===== Status LEDs ===== */
         .led-row {
-            display: flex; gap: 18px; justify-content: center;
+            display: flex; gap: 14px; justify-content: center;
             flex-wrap: wrap;
-            margin: 12px 0 8px;
+            margin: 8px 0 6px;
         }
         .led-item {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.75rem; font-weight: 500; color: var(--text-dim);
+            display: flex; align-items: center; gap: 5px;
+            font-size: 0.72rem; font-weight: 500; color: var(--text-dim);
         }
         .led {
-            width: 10px; height: 10px; border-radius: 50%;
+            width: 9px; height: 9px; border-radius: 50%;
             background: #334155;
             transition: all 0.3s;
         }
@@ -548,23 +548,23 @@ HTML_TEMPLATE = """
         /* ===== Toggle Switch (Safety & Valves) ===== */
         .toggle-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
         }
-        .toggle-label { font-size: 0.9rem; font-weight: 600; }
-        .toggle-sub { font-size: 0.7rem; color: var(--text-dim); }
+        .toggle-label { font-size: 0.85rem; font-weight: 600; }
+        .toggle-sub { font-size: 0.68rem; color: var(--text-dim); }
         .toggle-track {
-            width: 52px; height: 28px;
+            width: 48px; height: 26px;
             background: #334155;
-            border-radius: 14px;
+            border-radius: 13px;
             position: relative;
             cursor: pointer;
             transition: background 0.3s;
             flex-shrink: 0;
         }
-        .toggle-track.on { background: var(--green); box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+        .toggle-track.on { background: var(--green); box-shadow: 0 0 10px rgba(34,197,94,0.4); }
         .toggle-track.disabled { opacity: 0.35; pointer-events: none; }
         .toggle-knob {
-            width: 22px; height: 22px;
+            width: 20px; height: 20px;
             background: #fff;
             border-radius: 50%;
             position: absolute;
@@ -572,25 +572,25 @@ HTML_TEMPLATE = """
             transition: left 0.2s;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
-        .toggle-track.on .toggle-knob { left: 27px; }
+        .toggle-track.on .toggle-knob { left: 25px; }
 
         /* ===== E-STOP ===== */
         .estop-zone {
-            margin: 10px 0;
+            margin: 8px 0;
             text-align: center;
         }
         .estop-btn {
-            width: 130px; height: 130px;
+            width: 105px; height: 105px;
             border-radius: 50%;
-            border: 6px solid #991b1b;
+            border: 5px solid #991b1b;
             background: radial-gradient(circle at 40% 35%, #f87171, #dc2626 50%, #991b1b);
             color: #fff;
-            font-size: 0.85rem; font-weight: 800;
+            font-size: 0.8rem; font-weight: 800;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.2;
-            box-shadow: 0 6px 20px rgba(239,68,68,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+            box-shadow: 0 4px 16px rgba(239,68,68,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
             transition: all 0.15s;
             position: relative;
         }
@@ -606,19 +606,19 @@ HTML_TEMPLATE = """
         }
         .estop-btn.locked::after {
             content: '🔒 ロック中';
-            position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
-            font-size: 0.7rem; color: var(--red); white-space: nowrap;
+            position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+            font-size: 0.68rem; color: var(--red); white-space: nowrap;
         }
         .estop-reset-btn {
             display: none;
             width: 100%;
-            margin-top: 14px;
-            padding: 10px 14px;
+            margin-top: 10px;
+            padding: 8px 12px;
             background: #1e293b;
             color: var(--orange);
             border: 1px solid var(--orange);
-            border-radius: 8px;
-            font-size: 0.85rem; font-weight: 700;
+            border-radius: 6px;
+            font-size: 0.8rem; font-weight: 700;
             text-align: center;
             white-space: nowrap;
             cursor: pointer;
@@ -634,11 +634,11 @@ HTML_TEMPLATE = """
         /* ===== Momentary (Tact) Button ===== */
         .tact-btn {
             width: 100%;
-            padding: 12px 16px;
-            margin: 5px 0;
+            padding: 10px 14px;
+            margin: 4px 0;
             border: none;
-            border-radius: 8px;
-            font-size: 0.9rem; font-weight: 700;
+            border-radius: 7px;
+            font-size: 0.85rem; font-weight: 700;
             cursor: pointer;
             transition: all 0.1s;
             position: relative;
@@ -682,11 +682,11 @@ HTML_TEMPLATE = """
         /* Sequence status indicator */
         .seq-status {
             text-align: center;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
-            margin: 8px 0;
+            margin: 6px 0;
             background: var(--bg);
             border: 1px solid var(--border);
         }
@@ -697,27 +697,27 @@ HTML_TEMPLATE = """
 
         /* ===== Timers ===== */
         .timer-row {
-            display: flex; gap: 8px; margin: 8px 0;
+            display: flex; gap: 6px; margin: 6px 0;
         }
         .timer-box {
             flex: 1;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 6px 8px;
+            padding: 5px 6px;
             text-align: center;
         }
         .timer-label {
-            font-size: 0.6rem; font-weight: 600;
+            font-size: 0.58rem; font-weight: 600;
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .timer-value {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.3rem; font-weight: 700;
+            font-size: 1.2rem; font-weight: 700;
             color: var(--text-dim);
-            line-height: 1.3;
+            line-height: 1.2;
         }
         .timer-value.active { color: var(--blue); text-shadow: 0 0 10px rgba(56,189,248,0.3); }
         .timer-value.warn   { color: var(--orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
@@ -725,12 +725,12 @@ HTML_TEMPLATE = """
         /* ===== Prominent Large Status Banner ===== */
         .status-banner-large {
             text-align: center;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 1.0rem;
             font-weight: 800;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
             background: #1e293b;
             border: 2px solid var(--border);
             transition: all 0.3s;
@@ -749,37 +749,45 @@ HTML_TEMPLATE = """
 
         /* ===== MCU Health Grid ===== */
         .mcu-status-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0;
         }
         .mcu-box {
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
+            border-radius: 6px;
+            padding: 6px 8px;
         }
         .mcu-header {
-            font-size: 0.75rem; font-weight: 700; color: var(--blue);
-            border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px;
+            font-size: 0.72rem; font-weight: 700; color: var(--blue);
+            border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-bottom: 4px;
         }
         .mcu-metric {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.7rem; margin: 4px 0;
+            font-size: 0.68rem; margin: 2px 0;
         }
         .mcu-label { color: var(--text-dim); }
         .mcu-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
         .mcu-tag {
-            font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; font-weight: 700;
+            font-size: 0.58rem; padding: 1px 4px; border-radius: 3px; font-weight: 700;
         }
         .mcu-tag.ok { background: rgba(34,197,94,0.2); color: var(--green); }
         .mcu-tag.warn { background: rgba(239,68,68,0.2); color: var(--red); }
 
-        /* ===== Valve Grid ===== */
-        .valve-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* ===== Valve Grid (4 cols on Desktop for 14" Full HD Single Screen) ===== */
+        .valve-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        @media (min-width: 900px) {
+            .valve-grid { grid-template-columns: repeat(4, 1fr); }
+        }
         .valve-item {
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
             display: flex;
             align-items: center;
             justify-content: space-between;
