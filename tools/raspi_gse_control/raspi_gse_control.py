@@ -1082,8 +1082,8 @@ HTML_TEMPLATE = """
             <div class="andon-item" id="andon3">
                 <div class="andon-light yellow"></div>
                 <div class="andon-text">
-                    <div class="andon-step">3. 確認・点火準備</div>
-                    <div class="andon-sub">CONFIRM & IGNITE</div>
+                    <div class="andon-step">3. 点火シーケンス</div>
+                    <div class="andon-sub">IGNITION SEQUENCE</div>
                 </div>
             </div>
             <div class="andon-item" id="andon4">
@@ -1390,7 +1390,7 @@ HTML_TEMPLATE = """
             const btnConf = document.getElementById('btnConfirm');
             if (canConfirmState) {
                 btnConf.classList.add('ready');
-                btnConf.innerText = "⛽ 充填確認 OK → 🔥 点火開始 (CONFIRM & IGNITE)";
+                btnConf.innerText = "⛽ 目視確認 OK → 🔥 点火開始 (IGNITE)";
             } else {
                 btnConf.classList.remove('ready');
                 btnConf.innerText = "⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
@@ -1574,12 +1574,12 @@ HTML_TEMPLATE = """
                         }
                         if (pyValveTag) pyValveTag.innerText = '⛔ 点火中: 手動弁操作ロック中';
                     } else if (data.can_confirm) {
-                        a3.classList.add('active');
+                        a2.classList.add('active');
                         if (pyBadge) {
                             pyBadge.className = 'pokayoke-badge safe';
-                            pyBadge.innerText = '🟠 [充填完了・点火準備完了] 充填完了 ➔ Confirmボタンで点火開始可能';
+                            pyBadge.innerText = '🟠 [充填完了] 目視確認待ち ➔ 確認後に点火シーケンス開始可能';
                         }
-                        if (pyValveTag) pyValveTag.innerText = '⛔ 点火準備OK: 手動弁操作ロック中';
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 充填完了: 手動弁操作ロック中';
                     } else if (data.fill_active) {
                         a2.classList.add('active');
                         if (pyBadge) {
@@ -1639,7 +1639,7 @@ HTML_TEMPLATE = """
                 } else if (data.fill_active) {
                     ss.className = 'seq-status seq-fill';
                     ss.innerText = data.can_confirm
-                        ? '⛽ 充填完了 → 点火確認待ち (CONFIRM 可能)'
+                        ? '⛽ 充填完了 → 目視確認待ち (点火可能)'
                         : '⛽ 充填シーケンス実行中...';
                 } else {
                     ss.className = 'seq-status seq-idle'; ss.innerText = 'IDLE: シーケンス待機中';
