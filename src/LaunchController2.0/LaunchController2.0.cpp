@@ -178,6 +178,9 @@ namespace communication
     LIMIT_SWITCH_SYNC = 10,        // SatelliteNode のリミットスイッチ状態同期 (bit5=ch5)
     COM_CHECK_L_TO_N = 11,         // ランチ → ノード 生存確認
     COM_CHECK_N_TO_L = 12,         // ノード → ランチ 生存確認
+    COM_CHECK_L_TO_RN = 13,        // 親機 ➔ ロケットノード 生存確認
+    COM_CHECK_RN_TO_L = 14,        // ロケットノード ➔ 親機 生存確認
+    ROCKET_NODE_STATE_SYNC = 15,   // 親機 ➔ 状態同期（イグニッション/OPEN状態）
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -189,6 +192,10 @@ namespace communication
   unsigned long preReceivedTime = 0;
   // ノード側から最後に通信を受信した時刻 (タイムアウト判定用)
   unsigned long preReceivedTime_Node = 0;
+  // ロケットノード側から最後に通信を受信した時刻 (タイムアウト判定用)
+  unsigned long preReceivedTime_RocketNode = 0;
+  // ロケットノード離脱検知済みフラグ
+  bool isRocketNodeDisconnected = false;
   // 通信タイムアウト時間 (ミリ秒)
   const long timeout = 5000;
 
@@ -230,6 +237,7 @@ namespace communication
   void onCurrentSyncReceived(float current_mA);
   void onComCheckReceived();
   void onComCheckNodeReceived(); // ノード向け生存確認受信
+  void onComCheckRocketNodeReceived(); // ロケットノード向け生存確認受信
   void onComCheckFailed(); // タイムアウト時のフェールセーフ処理
   // SatelliteController 経由でリミットスイッチ状態を受信した際のコールバック
   void onLimitSwitchSyncReceived(uint8_t state);
@@ -273,6 +281,7 @@ void setup()
   // 初期状態でタイムアウト判定にならないよう、過去の時刻をセットしておく
   communication::preReceivedTime = millis();
   communication::preReceivedTime_Node = millis();
+  communication::preReceivedTime_RocketNode = millis();
 
   // DFPlayer Mini (音声再生用シリアル2)
   Serial2.begin(9600);
@@ -294,9 +303,9 @@ void setup()
   // 各種センサー(電圧、電流、温度など)の計測タスク
   Tasks.add(&power::measureTask)->startFps(10); // 10Hzで実行
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
-  Tasks.add(&control::handleManualTask)->startFps(10); // 10Hzで実行
+  Tasks.add(&control::handleManualTask)->startFps(9); // 10Hzで実行
   // 機体およびノードへポーリング要求を送信するタスク (各10Hz相当)
-  Tasks.add(&communication::pollingTask)->startFps(20);
+  Tasks.add(&communication::pollingTask)->startFps(5);
   // 通信がタイムアウトしていないか監視するタスク
   Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
@@ -326,6 +335,9 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L),
       &communication::onComCheckNodeReceived);
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_RN_TO_L),
+      &communication::onComCheckRocketNodeReceived);
   // SatelliteController が転送してくるリミットスイッチパケットを受信するコールバックを登録
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
@@ -467,18 +479,13 @@ void power::measureTask()
 /// @brief 各ノードへリクエストを順番に送信するポーリングタスク
 void communication::pollingTask()
 {
-  static bool pollNode = false;
-  if (pollNode)
+  static uint8_t pollTarget = 0; // 0: Controller, 1: SatelliteNode, 2: RocketNode
+
+  if (pollTarget == 0)
   {
-    // SatelliteNodeへのリクエスト (COM_CHECK_L_TO_N)
-    communication::enableOutput();
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
-    Serial1.flush();
-    communication::disableOutput();
-  }
-  else
-  {
-    // SatelliteControllerへのリクエスト (CONTROL_SYNC & COM_CHECK_L_TO_S)
+    // ----------------------------------------------------
+    // 1. SatelliteControllerへのリクエスト (CONTROL_SYNC & COM_CHECK_L_TO_S)
+    // ----------------------------------------------------
     uint8_t state =
         (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
         (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
@@ -491,7 +498,34 @@ void communication::pollingTask()
     Serial1.flush();
     communication::disableOutput();
   }
-  pollNode = !pollNode;
+  else if (pollTarget == 1)
+  {
+    // ----------------------------------------------------
+    // 2. SatelliteNodeへのリクエスト (COM_CHECK_L_TO_N)
+    // ----------------------------------------------------
+    communication::enableOutput();
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
+    Serial1.flush();
+    communication::disableOutput();
+  }
+  else if (pollTarget == 2)
+  {
+    // ----------------------------------------------------
+    // 3. ロケットノード（RocketNode）へのリクエスト（状態同期 ＆ 生存確認）
+    // ----------------------------------------------------
+    uint8_t syncState = 0;
+    if (control::igniter.isRaised()) syncState |= (1 << 0);
+    if (control::open.isRaised()) syncState |= (1 << 1);
+
+    communication::enableOutput();
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::ROCKET_NODE_STATE_SYNC), syncState);
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_RN));
+    Serial1.flush();
+    communication::disableOutput();
+  }
+
+  // ターゲットを 0 ➔ 1 ➔ 2 ➔ 0 ... とローテーションする
+  pollTarget = (pollTarget + 1) % 3;
 }
 
 /// @brief センサの基本設定（フルスケール圧など）を機体側に同期する
@@ -727,13 +761,25 @@ void communication::onComCheckNodeReceived()
   }
 }
 
+/// @brief ロケットノードからの生存確認パケット受信時の処理
+void communication::onComCheckRocketNodeReceived()
+{
+  communication::preReceivedTime_RocketNode = millis(); // 時刻を更新
+  
+  if (communication::isRocketNodeDisconnected) {
+      communication::isRocketNodeDisconnected = false;
+      Serial.println("[INFO] RocketNode Connected");
+  }
+}
+
 /// @brief 機体またはノードとの通信が途絶した（タイムアウト）場合に実行されるフェールセーフタスク
 void communication::onComCheckFailed()
 {
   bool controllerTimeout = (millis() - communication::preReceivedTime > communication::timeout);
   bool nodeTimeout = (millis() - communication::preReceivedTime_Node > communication::timeout);
+  bool rocketNodeTimeout = (millis() - communication::preReceivedTime_RocketNode > communication::timeout);
 
-  if (controllerTimeout || nodeTimeout)
+  if (controllerTimeout || nodeTimeout || rocketNodeTimeout)
   {
     static unsigned long lastLogTime = 0;
     if (millis() - lastLogTime > 2000) // 2秒おきに出力
@@ -742,12 +788,19 @@ void communication::onComCheckFailed()
         Serial.println("[COM ERROR] Both SatelliteController and SatelliteNode timed out!");
       } else if (controllerTimeout) {
         Serial.println("[COM ERROR] SatelliteController timed out!");
-      } else {
+      } else if (nodeTimeout) {
         Serial.println("[COM ERROR] SatelliteNode timed out!");
+      }
+
+      if (rocketNodeTimeout) {
+        Serial.println("[WARN] RocketNode is currently DISCONNECTED (Umbilical Released)!");
       }
       lastLogTime = millis();
     }
+  }
 
+  if (controllerTimeout || nodeTimeout)
+  {
     communication::statusLamp.off();
     error::statusLamp.on();
 
@@ -765,6 +818,12 @@ void communication::onComCheckFailed()
     control::openFB.off();
     control::closeFB.off();
     control::purgeFB.off();
+  }
+
+  // ロケットノードがタイムアウトした場合はエラーにせず、フラグの更新のみ行う
+  if (rocketNodeTimeout && !communication::isRocketNodeDisconnected)
+  {
+    communication::isRocketNodeDisconnected = true;
   }
 }
 
