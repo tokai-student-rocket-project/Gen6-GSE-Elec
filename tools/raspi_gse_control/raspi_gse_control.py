@@ -88,6 +88,12 @@ class GSEState:
         self.armed_state = False
         self.auto_purge_enabled = True
 
+        # MCU Health & Voltages (LaunchController3.0 & SatelliteController3.0)
+        self.launch_voltage_V = 12.4
+        self.sat_voltage_V = 12.1
+        self.rs485_ok = True
+        self.rocket_node_ok = True
+
     def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b):
         with self.lock:
             self.cmd_state = cmd_b
@@ -120,6 +126,11 @@ class GSEState:
                 "armed_state": self.armed_state,
                 "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
+                "launch_voltage_V": round(self.launch_voltage_V, 1),
+                "sat_voltage_V": round(self.sat_voltage_V, 1),
+                "vesim_current_mA": round(4.0 + self.pressure_MPa * 1.6, 2),
+                "rs485_ok": self.rs485_ok,
+                "rocket_node_ok": self.rocket_node_ok,
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
                 "last_update": round(time.time() - self.last_heartbeat_rx, 1) if not self.demo_mode else 0.0
@@ -282,6 +293,10 @@ def simulator_worker():
             dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
             noise = random.uniform(-0.005, 0.005)
             gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
+
+            # 電圧ジッター
+            gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
+            gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
 
             # フィードバック状態を追従させる
             if gse_state.armed_state:
@@ -694,6 +709,57 @@ HTML_TEMPLATE = """
         .timer-value.active { color: var(--blue); text-shadow: 0 0 10px rgba(56,189,248,0.3); }
         .timer-value.warn   { color: var(--orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
 
+        /* ===== Prominent Large Status Banner ===== */
+        .status-banner-large {
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            background: #1e293b;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+        .status-banner-large.idle    { background: rgba(51,65,85,0.4); border-color: #475569; color: var(--text-dim); }
+        .status-banner-large.armed   { background: rgba(234,179,8,0.15); border-color: var(--yellow); color: var(--yellow); box-shadow: 0 0 15px rgba(234,179,8,0.2); }
+        .status-banner-large.fill    { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #60a5fa; box-shadow: 0 0 15px rgba(59,130,246,0.2); }
+        .status-banner-large.ready   { background: rgba(249,115,22,0.2); border-color: var(--orange); color: var(--orange); box-shadow: 0 0 20px rgba(249,115,22,0.4); }
+        .status-banner-large.ignite  { background: rgba(239,68,68,0.2); border-color: var(--red); color: #fca5a5; box-shadow: 0 0 25px rgba(239,68,68,0.5); }
+        .status-banner-large.estop   { background: rgba(239,68,68,0.3); border-color: var(--red); color: #fff; box-shadow: 0 0 30px rgba(239,68,68,0.7); animation: pulse-red 1s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+            50% { box-shadow: 0 0 30px rgba(239,68,68,0.9); }
+            100% { box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+        }
+
+        /* ===== MCU Health Grid ===== */
+        .mcu-status-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0;
+        }
+        .mcu-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .mcu-header {
+            font-size: 0.75rem; font-weight: 700; color: var(--blue);
+            border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px;
+        }
+        .mcu-metric {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.7rem; margin: 4px 0;
+        }
+        .mcu-label { color: var(--text-dim); }
+        .mcu-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+        .mcu-tag {
+            font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; font-weight: 700;
+        }
+        .mcu-tag.ok { background: rgba(34,197,94,0.2); color: var(--green); }
+        .mcu-tag.warn { background: rgba(239,68,68,0.2); color: var(--red); }
+
         /* ===== Valve Grid ===== */
         .valve-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .valve-item {
@@ -736,19 +802,73 @@ HTML_TEMPLATE = """
     </div>
 
     <div class="main-grid">
-        <!-- ===== Left Top: Status & Pressure ===== -->
+        <!-- ===== Left Top: Status & Pressure & MCU Health ===== -->
         <div class="card">
-            <h3>📊 N2O Pressure & Status</h3>
+            <h3>📊 SYSTEM STATUS & CONTROLLER HEALTH</h3>
+
+            <!-- Large Prominent Status Banner -->
+            <div class="status-banner-large idle" id="largeStatusBanner">
+                SYSTEM STANDBY
+            </div>
+
+            <!-- Pressure Display -->
             <div class="pressure-value">
                 <span id="pressureVal">0.000</span>
                 <span class="pressure-unit">MPa</span>
             </div>
+
             <div class="led-row">
                 <div class="led-item"><div class="led" id="ledCom"></div>COM</div>
                 <div class="led-item"><div class="led" id="ledErr"></div>ERR</div>
                 <div class="led-item"><div class="led" id="ledArm"></div>ARM</div>
                 <div class="led-item"><div class="led" id="ledLimit"></div>LIMIT</div>
             </div>
+
+            <!-- MCU Voltage & Status Grid -->
+            <div class="mcu-status-grid">
+                <div class="mcu-box">
+                    <div class="mcu-header">🚀 Launch3.0 (操作卓)</div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">入力電圧:</span>
+                        <span class="mcu-val" id="launchVolts">12.4 V</span>
+                        <span class="mcu-tag ok" id="launchVoltTag">正常</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">RS485通信:</span>
+                        <span class="mcu-val" id="rs485Val">● 接続</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">ロケットノード:</span>
+                        <span class="mcu-val" id="rocketNodeVal">● 結合</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">リミットch5:</span>
+                        <span class="mcu-val" id="limitSwCh5Val">CLOSED</span>
+                    </div>
+                </div>
+
+                <div class="mcu-box">
+                    <div class="mcu-header">🛰️ Satellite3.0 (機体)</div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">機体電圧:</span>
+                        <span class="mcu-val" id="satVolts">12.1 V</span>
+                        <span class="mcu-tag ok" id="satVoltTag">正常</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">電磁弁診断:</span>
+                        <span class="mcu-val" id="solenoidHealthVal" style="color:var(--green)">全弁正常</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">生電流:</span>
+                        <span class="mcu-val" id="vesimCurrentVal">4.02 mA</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">無線リンク:</span>
+                        <span class="mcu-val" id="satWirelessVal" style="color:var(--green)">良好</span>
+                    </div>
+                </div>
+            </div>
+
             <button class="tact-btn tact-zero" onmousedown="sendCmdOnce(7, 0)">ゼロ点校正要求 (Zero Calib)</button>
         </div>
 
@@ -1021,8 +1141,56 @@ HTML_TEMPLATE = """
                     badge.innerText = '● DISCONNECTED';
                 }
 
-                // Pressure
+                // Pressure & Sensor mA
                 document.getElementById('pressureVal').innerText = data.pressure_MPa.toFixed(3);
+                if (data.vesim_current_mA !== undefined) {
+                    document.getElementById('vesimCurrentVal').innerText = data.vesim_current_mA.toFixed(2) + ' mA';
+                }
+
+                // MCU Voltages & Status Health
+                if (data.launch_voltage_V !== undefined) {
+                    document.getElementById('launchVolts').innerText = data.launch_voltage_V.toFixed(1) + ' V';
+                    const lTag = document.getElementById('launchVoltTag');
+                    if (data.launch_voltage_V < 11.5) {
+                        lTag.className = 'mcu-tag warn'; lTag.innerText = '低電圧';
+                    } else {
+                        lTag.className = 'mcu-tag ok'; lTag.innerText = '正常';
+                    }
+                }
+                if (data.sat_voltage_V !== undefined) {
+                    document.getElementById('satVolts').innerText = data.sat_voltage_V.toFixed(1) + ' V';
+                    const sTag = document.getElementById('satVoltTag');
+                    if (data.sat_voltage_V < 10.5) {
+                        sTag.className = 'mcu-tag warn'; sTag.innerText = '低電圧';
+                    } else {
+                        sTag.className = 'mcu-tag ok'; sTag.innerText = '正常';
+                    }
+                }
+
+                document.getElementById('limitSwCh5Val').innerText = data.limit_switch_ch5 ? "CLOSED" : "OPEN";
+                document.getElementById('limitSwCh5Val').style.color = data.limit_switch_ch5 ? "var(--green)" : "var(--red)";
+
+                // Prominent Large Status Banner Update
+                const lsb = document.getElementById('largeStatusBanner');
+                if (data.emergency_stop) {
+                    lsb.className = 'status-banner-large estop';
+                    lsb.innerText = '🚨 EMERGENCY STOP 発動中';
+                } else if (data.ignition_active) {
+                    lsb.className = 'status-banner-large ignite';
+                    lsb.innerText = '🔥 IGNITING 自動点火シーケンス中';
+                } else if (data.can_confirm) {
+                    lsb.className = 'status-banner-large ready';
+                    lsb.innerText = '⛽ CONFIRM READY 充填完了・点火準備OK';
+                } else if (data.fill_active) {
+                    lsb.className = 'status-banner-large fill';
+                    lsb.innerText = '⛽ FILLING 遠隔自動充填中...';
+                } else if (data.armed_state) {
+                    lsb.className = 'status-banner-large armed';
+                    lsb.innerText = '🛡️ ARMED セーフティ解除済み';
+                } else {
+                    lsb.className = 'status-banner-large idle';
+                    lsb.innerText = 'SYSTEM STANDBY (待機中)';
+                }
 
                 // Status LEDs
                 setLed('ledCom', data.connected, 'green');
