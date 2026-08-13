@@ -86,6 +86,7 @@ class GSEState:
         self.can_confirm = False
         self.mcu_wireless_ok = False
         self.armed_state = False
+        self.auto_purge_enabled = True
 
     def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b):
         with self.lock:
@@ -117,6 +118,7 @@ class GSEState:
                 "can_confirm": self.can_confirm,
                 "mcu_wireless_ok": self.mcu_wireless_ok or self.demo_mode,
                 "armed_state": self.armed_state,
+                "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
@@ -220,7 +222,8 @@ def simulate_handle_command(cmd_type, param):
             gse_state.emergency_stop = True
             gse_state.fill_active = False
             gse_state.ignition_active = False
-            gse_state.cmd_state = (1 << 2) | (1 << 7) | (1 << 6)  # DUMP, PURGE, CLOSE ON
+            purge_bit = (1 << 7) if gse_state.auto_purge_enabled else 0
+            gse_state.cmd_state = (1 << 2) | (1 << 6) | purge_bit  # DUMP, CLOSE, (PURGE if Auto Purge ON)
             sim_target_pressure = 0.0
 
         elif cmd_type == CMD_PEACEFUL_STOP:
@@ -652,6 +655,33 @@ HTML_TEMPLATE = """
         .seq-estop{ border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
         .seq-idle { color: var(--text-dim); }
 
+        /* ===== Timers ===== */
+        .timer-row {
+            display: flex; gap: 8px; margin: 8px 0;
+        }
+        .timer-box {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 8px;
+            text-align: center;
+        }
+        .timer-label {
+            font-size: 0.6rem; font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .timer-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem; font-weight: 700;
+            color: var(--text-dim);
+            line-height: 1.3;
+        }
+        .timer-value.active { color: var(--blue); text-shadow: 0 0 10px rgba(56,189,248,0.3); }
+        .timer-value.warn   { color: var(--orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
+
         /* ===== Valve Grid ===== */
         .valve-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .valve-item {
@@ -725,6 +755,17 @@ HTML_TEMPLATE = """
                 </div>
             </div>
 
+            <!-- Auto Purge Toggle Switch -->
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">💨 自動パージ (AUTO PURGE)</div>
+                    <div class="toggle-sub">ON: 緊急停止・点火完了時にパージ弁を自動開放</div>
+                </div>
+                <div class="toggle-track on" id="autoPurgeToggle" onclick="toggleAutoPurge()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+
             <!-- E-STOP -->
             <div class="estop-zone">
                 <button class="estop-btn" id="estopBtn" onclick="pressEstop()">
@@ -738,6 +779,22 @@ HTML_TEMPLATE = """
 
             <!-- Sequence Status -->
             <div class="seq-status seq-idle" id="seqStatus">IDLE: シーケンス待機中</div>
+
+            <!-- Timers -->
+            <div class="timer-row">
+                <div class="timer-box">
+                    <div class="timer-label">T+ SEQ</div>
+                    <div class="timer-value" id="timerSeq">--:--</div>
+                </div>
+                <div class="timer-box">
+                    <div class="timer-label">T+ FILL</div>
+                    <div class="timer-value" id="timerFill">--:--</div>
+                </div>
+                <div class="timer-box">
+                    <div class="timer-label">T+ OPEN</div>
+                    <div class="timer-value" id="timerOpen">--:--</div>
+                </div>
+            </div>
 
             <!-- Sequence Start (Tact/Momentary) -->
             <button class="tact-btn tact-seq" id="btnSeqStart"
@@ -768,11 +825,21 @@ HTML_TEMPLATE = """
     <script>
         /* ===== State ===== */
         let armed = false;
+        let autoPurge = true;
         let estopLocked = false;
         let cmdSentThisPress = false;
         const VALVE_NAMES = ["SHIFT","FILL","DUMP","OXYGEN","IGNITER","OPEN","CLOSE","PURGE"];
         let valveStates = {};
         VALVE_NAMES.forEach(v => valveStates[v] = false);
+
+        /* ===== Timer state ===== */
+        let seqStartTime = null;   // シーケンス開始時刻
+        let fillStartTime = null;  // FILL ON 時刻
+        let fillElapsed = null;    // FILL停止後の確定秒数
+        let openStartTime = null;  // OPEN ON 時刻
+        let prevFillOn = false;
+        let prevOpenOn = false;
+        let prevSeqActive = false;
 
         /* ===== Init valve grid ===== */
         function buildValveGrid() {
@@ -837,6 +904,25 @@ HTML_TEMPLATE = """
                     else { vt.classList.add('disabled'); }
                 }
             });
+        }
+
+        /* ===== Auto Purge toggle ===== */
+        function toggleAutoPurge() {
+            autoPurge = !autoPurge;
+            fetch('/api/auto_purge_toggle', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({state: autoPurge})
+            }).then(r=>r.json()).then(r=>{
+                if (r.auto_purge !== undefined) autoPurge = r.auto_purge;
+                updateAutoPurgeUI();
+            }).catch(e=>console.error(e));
+        }
+        function updateAutoPurgeUI() {
+            const el = document.getElementById('autoPurgeToggle');
+            if (el) {
+                if (autoPurge) { el.classList.add('on'); } else { el.classList.remove('on'); }
+            }
         }
 
         /* ===== E-STOP (latching) ===== */
@@ -909,9 +995,13 @@ HTML_TEMPLATE = """
                 setLed('ledArm', data.armed_state, 'yellow');
                 setLed('ledLimit', data.limit_switch_ch5, 'green');
 
-                // Sync armed state from telemetry
+                // Sync armed state & auto purge from telemetry
                 armed = data.armed_state;
                 updateSafetyUI();
+                if (data.auto_purge !== undefined) {
+                    autoPurge = data.auto_purge;
+                    updateAutoPurgeUI();
+                }
 
                 // Sequence status
                 const ss = document.getElementById('seqStatus');
@@ -927,6 +1017,32 @@ HTML_TEMPLATE = """
                 } else {
                     ss.className = 'seq-status seq-idle'; ss.innerText = 'IDLE: シーケンス待機中';
                 }
+
+                // ===== Timer tracking =====
+                const now = Date.now();
+                const seqActive = data.fill_active || data.ignition_active;
+                const fillOn = data.valves_cmd['FILL'] || false;
+                const openOn = data.valves_cmd['OPEN'] || false;
+
+                // T+ SEQ: シーケンス開始からの経過秒
+                if (seqActive && !prevSeqActive) { seqStartTime = now; }
+                if (!seqActive && !data.emergency_stop) { seqStartTime = null; }
+                prevSeqActive = seqActive;
+
+                // T+ FILL: FILL ON からの経過 / FILL OFF で停止・確定
+                if (fillOn && !prevFillOn) { fillStartTime = now; fillElapsed = null; }
+                if (!fillOn && prevFillOn && fillStartTime) { fillElapsed = (now - fillStartTime) / 1000; fillStartTime = null; }
+                prevFillOn = fillOn;
+
+                // T+ OPEN: OPEN ON からカウントアップ
+                if (openOn && !prevOpenOn) { openStartTime = now; }
+                if (!openOn) { openStartTime = null; }
+                prevOpenOn = openOn;
+
+                // Timer display update
+                updateTimerDisplay('timerSeq',  seqStartTime,  null,         seqActive);
+                updateTimerDisplay('timerFill', fillStartTime, fillElapsed,  fillOn);
+                updateTimerDisplay('timerOpen', openStartTime, null,         openOn);
 
                 // Valve CMD/FB LEDs
                 VALVE_NAMES.forEach(name => {
@@ -953,6 +1069,27 @@ HTML_TEMPLATE = """
         function setLed(id, on, color) {
             const el = document.getElementById(id);
             el.className = 'led' + (on ? (' led-on-' + color) : '');
+        }
+
+        function updateTimerDisplay(id, startTime, frozenSec, isActive) {
+            const el = document.getElementById(id);
+            let sec = null;
+            if (frozenSec !== null && frozenSec !== undefined) {
+                sec = frozenSec;
+            } else if (startTime) {
+                sec = (Date.now() - startTime) / 1000;
+            }
+
+            if (sec !== null) {
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                const ms = Math.floor((sec % 1) * 10);
+                el.innerText = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') + '.' + ms;
+                el.className = 'timer-value' + (isActive ? ' active' : (frozenSec !== null ? ' warn' : ''));
+            } else {
+                el.innerText = '--:--';
+                el.className = 'timer-value';
+            }
         }
 
         setInterval(updateTelemetry, 200);
@@ -1001,6 +1138,16 @@ def api_valve_toggle():
 
     success = send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_VALVE_CONTROL, cmd_b)
     return jsonify({"status": "ok" if success else "failed", "valve": valve_name, "state": valve_state})
+
+@app.route('/api/auto_purge_toggle', methods=['POST'])
+def api_auto_purge_toggle():
+    """自動パージ機能のON/OFF切り替えエンドポイント"""
+    data = request.get_json() or {}
+    state = bool(data.get('state', True))
+    with gse_state.lock:
+        gse_state.auto_purge_enabled = state
+    print(f"[SERVER] Auto Purge set to: {'ENABLED' if state else 'DISABLED'}")
+    return jsonify({"status": "ok", "auto_purge": gse_state.auto_purge_enabled})
 
 # =========================================================================
 # エントリポイント
