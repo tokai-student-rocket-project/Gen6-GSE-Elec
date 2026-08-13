@@ -1066,11 +1066,11 @@ HTML_TEMPLATE = """
             <!-- E-STOP -->
             <div class="estop-zone">
                 <button class="estop-btn" id="estopBtn" onclick="pressEstop()">
-                    🚨<br>緊急停止
+                    <br>緊急停止
                 </button>
                 <br>
                 <button class="estop-reset-btn" id="estopResetBtn" onclick="resetEstop()">
-                    🔄 🔒 エマージェンシーストップ解除 (回転リセット)
+                    🔓 エマージェンシーストップ解除 (回転リセット)
                 </button>
             </div>
 
