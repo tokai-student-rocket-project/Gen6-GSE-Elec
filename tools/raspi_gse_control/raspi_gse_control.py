@@ -352,10 +352,15 @@ def simulate_handle_command(cmd_type, param):
             if not gse_state.armed_state:
                 print("\n[SIMULATOR REJECT] Cannot Fill: Safety not ARMED!")
                 return
+            dump_on = bool(gse_state.cmd_state & (1 << 2))
+            if not dump_on:
+                print("\n[SIMULATOR REJECT] Cannot Fill: DUMP valve must be ON before sequence start!")
+                return
             print("\n[SIMULATOR] ⛽ FILL SEQUENCE STARTED!")
             gse_state.fill_active = True
             gse_state.can_confirm = True
-            gse_state.cmd_state |= (1 << 1)  # FILL ON
+            gse_state.cmd_state &= ~(1 << 2)  # DUMP AUTO OFF (シークエンス開始前にDUMPを自動OFF/CLOSE)
+            gse_state.cmd_state |= (1 << 1)   # FILL ON
             sim_target_pressure = 4.50
 
         elif cmd_type == CMD_IGNITION_START:
@@ -482,8 +487,13 @@ def cli_worker():
                 send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_ARM_SAFETY, arm_val)
                 print(f"[CLI] Safety Arm set to {arm_val}.")
             elif main_cmd == "fill":
-                send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_FILL_START, 0)
-                print("[CLI] Fill Sequence Start Sent.")
+                with gse_state.lock:
+                    dump_on = bool(gse_state.cmd_state & (1 << 2))
+                if not dump_on:
+                    print("[CLI REJECT] Sequence start blocked: DUMP valve must be ON (開放) before starting sequence!")
+                else:
+                    send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_FILL_START, 0)
+                    print("[CLI] Fill Sequence Start Sent.")
             elif main_cmd == "ignite":
                 send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_IGNITION_START, 0)
                 print("[CLI] Ignition Sequence Start Sent.")
@@ -1045,7 +1055,7 @@ HTML_TEMPLATE = """
     <!-- ===== Toyota Andon Status Board (トヨタ式 アンドン表示板) ===== -->
     <div class="andon-board">
         <div class="andon-header">
-            <span>🏮 トヨタ式 アンドン・ステータスボード (TOYOTA ANDON BOARD)</span>
+            <span>🏮 アンドン・ステータスボード (ANDON BOARD)</span>
             <span class="pokayoke-badge" id="pokayokeBadge">🛡️ [ポカヨケ保護中] セーフティ解除待ち</span>
         </div>
         <div class="andon-grid">
@@ -1349,9 +1359,24 @@ HTML_TEMPLATE = """
             if (armed) { el.classList.add('on'); } else { el.classList.remove('on'); }
 
             const seqActive = isSequenceActive();
+            const dumpIsOn = valveStates['DUMP'] || false;
 
-            // Enable/disable sequence start & confirm based on safety, estop, and current sequence state
-            document.getElementById('btnSeqStart').disabled = !armed || estopLocked || seqActive;
+            // Enable/disable sequence start based on safety, estop, sequence state, AND DUMP valve ON status
+            const btnSeq = document.getElementById('btnSeqStart');
+            if (seqActive || estopLocked) {
+                btnSeq.disabled = true;
+                btnSeq.innerText = "⛽ シーケンス開始 (SEQUENCE START)";
+            } else if (!armed) {
+                btnSeq.disabled = true;
+                btnSeq.innerText = "🔒 シーケンス開始 (要 セーフティ解除)";
+            } else if (!dumpIsOn) {
+                btnSeq.disabled = true;
+                btnSeq.innerText = "⚠️ シーケンス開始 (要 DUMP ON 開放)";
+            } else {
+                btnSeq.disabled = false;
+                btnSeq.innerText = "⛽ シーケンス開始 (SEQUENCE START)";
+            }
+
             document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
             document.getElementById('btnPeace').disabled    = !armed || estopLocked;
 
@@ -1551,16 +1576,23 @@ HTML_TEMPLATE = """
                         if (pyValveTag) pyValveTag.innerText = '⛔ 充填中: 手動弁トグル禁止 (ポカヨケ保護)';
                     } else {
                         a1.classList.add('active');
+                        const dumpIsOn = (data.valves_cmd && data.valves_cmd['DUMP']) || false;
                         if (!data.armed_state) {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge';
                                 pyBadge.innerText = '🔒 [ポカヨケ保護中] セーフティ解除なしではシーケンス起動不可';
                             }
                             if (pyValveTag) pyValveTag.innerText = '🔒 セーフティ施錠中';
+                        } else if (!dumpIsOn) {
+                            if (pyBadge) {
+                                pyBadge.className = 'pokayoke-badge lock';
+                                pyBadge.innerText = '⚠️ [ポカヨケ保護中] DUMP弁(排出弁)をON(開放)に設定しないとシーケンスは起動できません';
+                            }
+                            if (pyValveTag) pyValveTag.innerText = '⚠️ シーケンス準備: DUMP弁をONに設定してください';
                         } else {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge safe';
-                                pyBadge.innerText = '🛡️ [ポカヨケ正常] セーフティ解除済み (操作可能)';
+                                pyBadge.innerText = '🛡️ [ポカヨケ正常] DUMP ON確認完了 ➔ シーケンス開始可能';
                             }
                             if (pyValveTag) pyValveTag.innerText = '🛡️ ポカヨケ: 通常手動トグル可能';
                         }
@@ -1728,6 +1760,16 @@ def api_command():
     param = data.get('param', 0)
     
     if cmd_type is not None:
+        if cmd_type == CMD_FILL_START:
+            with gse_state.lock:
+                dump_on = bool(gse_state.cmd_state & (1 << 2))
+            if not dump_on:
+                print("[SERVER REJECT] Sequence start blocked: DUMP valve is OFF!")
+                return jsonify({
+                    "status": "blocked_dump_off",
+                    "message": "シーケンス開始エラー: DUMP弁(排出弁)をONに設定してからシーケンスを開始してください。"
+                }), 403
+
         success = send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, cmd_type, param)
         return jsonify({"status": "ok" if success else "failed"})
     return jsonify({"status": "invalid_request"}), 400
