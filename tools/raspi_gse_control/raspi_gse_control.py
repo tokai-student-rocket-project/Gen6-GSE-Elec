@@ -533,7 +533,7 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gen6 GSE Remote Control Center</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
         :root {
             --bg: #070b14;
             --bg-card: #0f1729;
@@ -659,17 +659,23 @@ HTML_TEMPLATE = """
             border-bottom: 1px solid var(--border);
         }
 
-        /* ===== Pressure ===== */
-        .pressure-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 3.0rem; font-weight: 700;
-            text-align: center;
-            color: var(--blue);
-            text-shadow: 0 0 25px rgba(56,189,248,0.3);
-            line-height: 1.1;
-            padding: 4px 0;
+        /* ===== Pressure & Sensor Display (7-Segment Digital LED Style) ===== */
+        .pressure-val {
+            font-family: 'Orbitron', 'Share Tech Mono', 'JetBrains Mono', monospace;
+            font-size: 3.0rem; font-weight: 900;
+            color: #38bdf8;
+            text-shadow: 0 0 12px rgba(56,189,248,0.7), 0 0 25px rgba(56,189,248,0.3);
+            line-height: 1; margin: 4px 0;
+            letter-spacing: 2px;
         }
-        .pressure-unit { font-size: 1.0rem; color: var(--text-dim); font-weight: 400; }
+        .pressure-unit { font-size: 1.0rem; color: var(--text-dim); margin-left: 4px; font-weight: 600; }
+        .vesim-ma {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem; font-weight: 700; color: #a78bfa;
+            text-shadow: 0 0 6px rgba(167,139,250,0.5);
+            background: #0f1123; border: 1px solid rgba(167,139,250,0.3);
+            border-radius: 4px; padding: 1px 6px; display: inline-block;
+        }
 
         /* ===== Status LEDs ===== */
         .led-row {
@@ -819,6 +825,35 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border);
         }
 
+        /* ===== Timers (Digital 7-Seg LED Style) ===== */
+        .timer-row {
+            display: flex; gap: 6px; margin: 6px 0;
+        }
+        .timer-box {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5px 6px;
+            text-align: center;
+        }
+        .timer-label {
+            font-size: 0.58rem; font-weight: 600;
+            color: var(--text-dim);
+        }
+        .timer-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem; font-weight: 700;
+            color: #22c55e;
+            text-shadow: 0 0 6px rgba(34,197,94,0.6);
+            background: #031508;
+            border: 1px solid rgba(34,197,94,0.3);
+            border-radius: 4px;
+            padding: 2px 0;
+            margin-top: 3px;
+            letter-spacing: 1px;
+        }
+
         /* Sequence status indicator */
         .seq-status {
             text-align: center;
@@ -834,33 +869,6 @@ HTML_TEMPLATE = """
         .seq-ign  { border-color: var(--orange); color: var(--orange); }
         .seq-estop{ border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
         .seq-idle { color: var(--text-dim); }
-
-        /* ===== Timers ===== */
-        .timer-row {
-            display: flex; gap: 6px; margin: 6px 0;
-        }
-        .timer-box {
-            flex: 1;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 5px 6px;
-            text-align: center;
-        }
-        .timer-label {
-            font-size: 0.58rem; font-weight: 600;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .timer-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.2rem; font-weight: 700;
-            color: var(--text-dim);
-            line-height: 1.2;
-        }
-        .timer-value.active { color: var(--blue); text-shadow: 0 0 10px rgba(56,189,248,0.3); }
-        .timer-value.warn   { color: var(--orange); text-shadow: 0 0 10px rgba(249,115,22,0.3); }
 
         /* ===== Prominent Large Status Banner ===== */
         .status-banner-large {
