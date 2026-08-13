@@ -34,25 +34,18 @@ except ImportError:
 
 import csv
 from datetime import datetime, timezone, timedelta
-import signal
 
 # 日本標準時 (JST: UTC+9) 定義
 JST = timezone(timedelta(hours=9))
 
 try:
-    from flask import Flask, render_template_string, jsonify, request, send_file
+    from flask import Flask, render_template_string, jsonify, request, send_file, logging
     import logging
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
 except ImportError:
     print("[ERROR] 'flask' package is missing. Install with: pip install flask")
     sys.exit(1)
-
-def handle_sigint(sig, frame):
-    print("\n\n[GSE SERVER] Shutting down GSE Server gracefully...")
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, handle_sigint)
 
 # =========================================================================
 # 通信定数・パケット ID 定義 (Launch3.0 / Satellite3.0 仕様準拠)
@@ -252,10 +245,8 @@ def auto_detect_serial_port():
 def send_msgpacketizer_packet(ser, packet_id, *args):
     """MsgPacketizer 形式 (MsgPack 配列 [packet_id, args...]) でパケットを作成して送信"""
     if gse_state.demo_mode:
-        if packet_id == PACKET_RASPI_COMMAND:
-            cmd = args[0] if len(args) > 0 else 0
-            param = args[1] if len(args) > 1 else 0
-            simulate_handle_command(cmd, param)
+        # デモモード時はシミュレータにコマンドを直接転送
+        simulate_handle_command(args[0] if len(args) > 0 else 0, args[1] if len(args) > 1 else 0)
         return True
 
     if ser is None or not ser.is_open:
@@ -397,51 +388,37 @@ def simulator_worker():
     print("[SIMULATOR] Demo Simulator Engine Running...")
     gse_state.connected = True
     gse_state.mcu_wireless_ok = True
-    gse_state.last_heartbeat_rx = time.time()
-    tick_counter = 0
 
     while True:
-        try:
-            tick_counter += 1
-            with gse_state.lock:
-                # 圧力のアプローチ計算
-                dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
-                noise = random.uniform(-0.005, 0.005)
-                gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
+        with gse_state.lock:
+            # 圧力のアプローチ計算
+            dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
+            noise = random.uniform(-0.005, 0.005)
+            gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
 
-                # 充填シーケンス中、圧力が 3.8 MPa を超えたら充填完了 (can_confirm = True) へ移行
-                if gse_state.fill_active and gse_state.pressure_MPa >= 3.8:
-                    if not gse_state.can_confirm:
-                        print("\n[SIMULATOR] ⛽ N2O FILLING COMPLETE -> CAN CONFIRM READY FOR IGNITION!")
-                        gse_state.can_confirm = True
+            # 充填シーケンス中、圧力が 3.8 MPa を超えたら充填完了 (can_confirm = True) へ移行
+            if gse_state.fill_active and gse_state.pressure_MPa >= 3.8:
+                if not gse_state.can_confirm:
+                    print("\n[SIMULATOR] ⛽ N2O FILLING COMPLETE -> CAN CONFIRM READY FOR IGNITION!")
+                    gse_state.can_confirm = True
 
-                # 電圧ジッター
-                gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
-                gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
+            # 電圧ジッター
+            gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
+            gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
 
-                # フィードバック状態を追従させる
-                if gse_state.armed_state:
-                    gse_state.fb_state = gse_state.cmd_state
-                else:
-                    gse_state.fb_state = 0
+            # フィードバック状態を追従させる
+            if gse_state.armed_state:
+                gse_state.fb_state = gse_state.cmd_state
+            else:
+                gse_state.fb_state = 0
 
-                seq_flag = 0
-                if gse_state.emergency_stop: seq_flag |= (1 << 0)
-                if gse_state.fill_active: seq_flag |= (1 << 1)
-                if gse_state.ignition_active: seq_flag |= (1 << 2)
-                if gse_state.can_confirm: seq_flag |= (1 << 3)
-                seq_flag |= (1 << 4) # Wireless OK
-                gse_state.sequence_flag = seq_flag
-                gse_state.last_heartbeat_rx = time.time()
-                gse_state.connected = True
-
-                # 5秒(50 ticks)毎にコンソールへハートビート進捗ログを出力
-                if tick_counter % 50 == 0:
-                    arm_str = "ARMED" if gse_state.armed_state else "DISARMED"
-                    recs = gse_logger.record_count if 'gse_logger' in globals() else 0
-                    print(f"[DEMO ENGINE] Alive | Press: {gse_state.pressure_MPa:.3f} MPa | Safety: {arm_str} | CSV Logs: {recs} recs")
-        except Exception as e:
-            print(f"[SIMULATOR LOOP ERROR] {e}")
+            seq_flag = 0
+            if gse_state.emergency_stop: seq_flag |= (1 << 0)
+            if gse_state.fill_active: seq_flag |= (1 << 1)
+            if gse_state.ignition_active: seq_flag |= (1 << 2)
+            if gse_state.can_confirm: seq_flag |= (1 << 3)
+            seq_flag |= (1 << 4) # Wireless OK
+            gse_state.sequence_flag = seq_flag
 
         time.sleep(0.1)
 
@@ -834,37 +811,6 @@ HTML_TEMPLATE = """
         }
         .toggle-track.on .toggle-knob { left: 25px; }
 
-        /* ===== Safety Status Window (アームド表示窓) ===== */
-        .safety-window {
-            display: flex; align-items: center; gap: 10px;
-            padding: 7px 10px; border-radius: 8px;
-            margin: 4px 0 8px 0;
-            border: 2px solid #475569;
-            background: rgba(30, 41, 59, 0.4);
-            transition: all 0.3s;
-        }
-        .safety-window.disarmed {
-            border-color: #475569; background: rgba(51, 65, 85, 0.3); color: var(--text-dim);
-        }
-        .safety-window.armed {
-            border-color: var(--yellow);
-            background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(180, 83, 9, 0.25) 100%);
-            color: #fef08a;
-            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3), inset 0 0 10px rgba(234, 179, 8, 0.1);
-        }
-        .safety-window-icon {
-            font-size: 1.4rem; line-height: 1; flex-shrink: 0;
-        }
-        .safety-window-status {
-            font-size: 0.82rem; font-weight: 900; letter-spacing: 1px;
-        }
-        .safety-window-desc {
-            font-size: 0.62rem; color: var(--text-dim); margin-top: 1px;
-        }
-        .safety-window.armed .safety-window-desc {
-            color: #fef9c3;
-        }
-
         /* ===== E-STOP ===== */
         .estop-zone {
             margin: 8px 0;
@@ -1235,19 +1181,10 @@ HTML_TEMPLATE = """
             <div class="toggle-row">
                 <div>
                     <div class="toggle-label">🛡️ セーフティ (SAFETY)</div>
-                    <div class="toggle-sub">トグルスイッチ: 解除で ARMED (作動準備) へ</div>
+                    <div class="toggle-sub">トグルスイッチ: 解除しないと操作不可</div>
                 </div>
                 <div class="toggle-track" id="safetyToggle" onclick="toggleSafety()">
                     <div class="toggle-knob"></div>
-                </div>
-            </div>
-
-            <!-- Dedicated Safety Status Window (アームド状態表示窓) -->
-            <div class="safety-window disarmed" id="safetyWindow">
-                <div class="safety-window-icon" id="safetyWindowIcon">🔒</div>
-                <div class="safety-window-text">
-                    <div class="safety-window-status" id="safetyWindowStatus">DISARMED (安全施錠中)</div>
-                    <div class="safety-window-desc" id="safetyWindowDesc">セーフティトグルをONにすると ARMED (作動可能) に切り替わります</div>
                 </div>
             </div>
 
@@ -1433,28 +1370,6 @@ HTML_TEMPLATE = """
             const seqActive = isSequenceActive();
             const dumpIsOn = valveStates['DUMP'] || false;
 
-            // Update Safety Status Window (アームド状態表示窓)
-            const sWin = document.getElementById('safetyWindow');
-            const sIcon = document.getElementById('safetyWindowIcon');
-            const sStatus = document.getElementById('safetyWindowStatus');
-            const sDesc = document.getElementById('safetyWindowDesc');
-
-            if (armed) {
-                if (sWin) {
-                    sWin.className = 'safety-window armed';
-                    sIcon.innerText = '🛡️';
-                    sStatus.innerText = 'ARMED (アームド / 作動準備完了)';
-                    sDesc.innerText = '⚠️ セーフティ解除中: DUMP ON確認後、シーケンス開始が可能になります';
-                }
-            } else {
-                if (sWin) {
-                    sWin.className = 'safety-window disarmed';
-                    sIcon.innerText = '🔒';
-                    sStatus.innerText = 'DISARMED (安全施錠中)';
-                    sDesc.innerText = 'セーフティトグルをONにすると ARMED (作動可能) に切り替わります';
-                }
-            }
-
             // Enable/disable sequence start based on safety, estop, sequence state, AND DUMP valve ON status
             const btnSeq = document.getElementById('btnSeqStart');
             if (seqActive || estopLocked) {
@@ -1471,26 +1386,15 @@ HTML_TEMPLATE = """
                 btnSeq.innerText = "⛽ シーケンス開始 (SEQUENCE START)";
             }
 
-            // Update Confirm & Ignite button:
-            // MUST REMAIN DISABLED even if Armed, UNTIL sequence has been started (seqActive / fillActiveState / canConfirmState)!
+            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
+            document.getElementById('btnPeace').disabled    = !armed || estopLocked;
+
+            // Highlight confirm button when ready
             const btnConf = document.getElementById('btnConfirm');
-            if (!armed || estopLocked) {
-                btnConf.disabled = true;
-                btnConf.classList.remove('ready');
-                btnConf.innerText = "🔒 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
-            } else if (!seqActive && !canConfirmState) {
-                // Sequence NOT started yet: Disable even if Armed!
-                btnConf.disabled = true;
-                btnConf.classList.remove('ready');
-                btnConf.innerText = "🔒 充填確認 / 🔥 点火 (要 シーケンス開始)";
-            } else if (canConfirmState) {
-                // Filling complete & ready for ignition!
-                btnConf.disabled = false;
+            if (canConfirmState) {
                 btnConf.classList.add('ready');
-                btnConf.innerText = "⛽ 充填確認 OK ➔ 🔥 点火開始 (CONFIRM & IGNITE)";
+                btnConf.innerText = "⛽ 充填確認 OK → 🔥 点火開始 (CONFIRM & IGNITE)";
             } else {
-                // Sequence running (filling in progress)
-                btnConf.disabled = false;
                 btnConf.classList.remove('ready');
                 btnConf.innerText = "⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
             }
@@ -1580,8 +1484,8 @@ HTML_TEMPLATE = """
 
         /* ===== Confirm + Ignite (1-button with dialog) ===== */
         function confirmAndIgnite() {
-            if (!armed || estopLocked || (!isSequenceActive() && !canConfirmState)) return;
-            if (!confirm('【最終点火確認 (IGNITION CONFIRM)】\\n\\n⚠️  3人同時押し確認スイッチの代替操作です。\\n本当に点火シーケンスを開始しますか？')) return;
+            if (!armed || estopLocked) return;
+            if (!confirm('【最終点火確認 (IGNITION CONFIRM)】\n\n⚠️ 3人同時押し確認スイッチの代替操作です。\n本当に点火シーケンスを開始しますか？')) return;
             sendCmd(4, 0);
         }
 
@@ -1908,13 +1812,8 @@ def api_valve_toggle():
     if valve_name not in VALVE_NAMES:
         return jsonify({"status": "invalid_valve", "valid": VALVE_NAMES}), 400
 
-    # 安全保護: セーフティ未解除時は手動弁トグルを拒否
+    # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
     with gse_state.lock:
-        if not gse_state.armed_state:
-            print("[SERVER REJECT] Valve toggle blocked: Safety is DISARMED!")
-            return jsonify({"status": "blocked", "message": "Safety is DISARMED"}), 403
-
-        # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
         if gse_state.fill_active or gse_state.ignition_active:
             print("[SERVER REJECT] Valve toggle blocked during active automatic sequence!")
             return jsonify({"status": "blocked", "message": "Sequence is currently active"}), 403
@@ -1982,20 +1881,6 @@ def api_logs_latest():
     """現在書き込み中の最新 CSV ログファイルをワンクリックダウンロード"""
     return api_logs_download(gse_logger.current_filename)
 
-def get_local_ips():
-    ips = ["127.0.0.1", "localhost"]
-    try:
-        import socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        if local_ip not in ips:
-            ips.append(local_ip)
-    except Exception:
-        pass
-    return ips
-
 # =========================================================================
 # エントリポイント
 # =========================================================================
@@ -2010,6 +1895,9 @@ def main():
 
     if args.demo:
         gse_state.demo_mode = True
+        print("\n" + "="*65)
+        print(" 🎮 DEMO MODE ENABLED: Running without physical hardware!")
+        print("="*65 + "\n")
         t_sim = threading.Thread(target=simulator_worker, daemon=True)
         t_sim.start()
     else:
@@ -2023,35 +1911,12 @@ def main():
     t_log = threading.Thread(target=logger_worker, daemon=True)
     t_log.start()
 
-    local_ips = get_local_ips()
-    print("\n" + "="*65)
-    print(" 🚀 GSE REMOTE CONTROL SERVER IS LIVE & READY!")
-    print("="*65)
-    print(" 🌐 Access Dashboard in your web browser at:")
-    for ip in local_ips:
-        print(f"    👉 http://{ip}:{args.web_port}")
-    if args.demo:
-        print(" 🎮 Mode: DEMO / SIMULATOR (No hardware required)")
-    else:
-        print(f" 🔌 Mode: PHYSICAL HARDWARE ({args.port} @ {args.baud} bps)")
-    print(" 💡 Press Ctrl+C to stop the server at any time.")
-    print("="*65 + "\n")
+    # CLI プロンプトの起動
+    t_cli = threading.Thread(target=cli_worker, daemon=True)
+    t_cli.start()
 
-    # CLI プロンプトの起動 (ターミナル対話時、または--cli指定時)
-    if args.cli or (args.demo and sys.stdin.isatty()):
-        t_cli = threading.Thread(target=cli_worker, daemon=True)
-        t_cli.start()
-
-    try:
-        app.run(host='0.0.0.0', port=args.web_port, debug=False)
-    except OSError as e:
-        print(f"\n[CRITICAL PORT ERROR] Web Server Port {args.web_port} is already in use!")
-        print(f"Details: {e}")
-        print("💡 Solution 1: Kill existing GSE server processes:")
-        print("   pkill -f raspi_gse_control.py")
-        print(f"💡 Solution 2: Specify a different port:")
-        print(f"   python3 tools/raspi_gse_control/raspi_gse_control.py --demo --web-port 5001\n")
-        sys.exit(1)
+    print(f"\n[RASPI GSE SERVER] Starting Web Remote Control Dashboard at http://0.0.0.0:{args.web_port}")
+    app.run(host='0.0.0.0', port=args.web_port, debug=False)
 
 if __name__ == '__main__':
     main()
