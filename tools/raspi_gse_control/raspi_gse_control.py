@@ -659,16 +659,34 @@ HTML_TEMPLATE = """
             border-bottom: 1px solid var(--border);
         }
 
-        /* ===== Pressure & Sensor Display (7-Segment Digital LED Style) ===== */
-        .pressure-val {
-            font-family: 'Orbitron', 'Share Tech Mono', 'JetBrains Mono', monospace;
-            font-size: 3.0rem; font-weight: 900;
-            color: #38bdf8;
-            text-shadow: 0 0 12px rgba(56,189,248,0.7), 0 0 25px rgba(56,189,248,0.3);
-            line-height: 1; margin: 4px 0;
-            letter-spacing: 2px;
+        /* ===== Pressure Display (Digital 7-Segment LED Panel) ===== */
+        .pressure-box {
+            background: #030e1a;
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            margin: 6px 0;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 0 10px rgba(56, 189, 248, 0.15);
         }
-        .pressure-unit { font-size: 1.0rem; color: var(--text-dim); margin-left: 4px; font-weight: 600; }
+        .pressure-title {
+            font-size: 0.68rem; font-weight: 700;
+            color: var(--blue); letter-spacing: 1px;
+            text-transform: uppercase; margin-bottom: 2px;
+        }
+        .pressure-value {
+            font-family: 'Share Tech Mono', 'Orbitron', monospace;
+            font-size: 3.2rem; font-weight: 900;
+            color: #38bdf8;
+            text-shadow: 0 0 14px rgba(56,189,248,0.8), 0 0 28px rgba(56,189,248,0.4);
+            line-height: 1.0; margin: 4px 0;
+            letter-spacing: 3px;
+        }
+        .pressure-unit {
+            font-size: 1.1rem; color: #7dd3fc;
+            margin-left: 6px; font-weight: 700;
+            text-shadow: 0 0 8px rgba(56,189,248,0.6);
+        }
         .vesim-ma {
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.75rem; font-weight: 700; color: #a78bfa;
@@ -825,33 +843,34 @@ HTML_TEMPLATE = """
             border: 1px solid var(--border);
         }
 
-        /* ===== Timers (Digital 7-Seg LED Style) ===== */
+        /* ===== Timers (High-Contrast Digital 7-Seg LED Panel) ===== */
         .timer-row {
-            display: flex; gap: 6px; margin: 6px 0;
+            display: flex; gap: 8px; margin: 8px 0;
         }
         .timer-box {
             flex: 1;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 5px 6px;
+            background: #021208;
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 8px;
+            padding: 6px 8px;
             text-align: center;
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 0 8px rgba(34, 197, 94, 0.15);
         }
         .timer-label {
-            font-size: 0.58rem; font-weight: 600;
-            color: var(--text-dim);
+            font-size: 0.65rem; font-weight: 800;
+            color: #4ade80; letter-spacing: 1px;
         }
         .timer-value {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem; font-weight: 700;
+            font-size: 1.45rem; font-weight: 900;
             color: #22c55e;
-            text-shadow: 0 0 6px rgba(34,197,94,0.6);
-            background: #031508;
+            text-shadow: 0 0 10px rgba(34,197,94,0.8), 0 0 20px rgba(34,197,94,0.4);
+            background: #010b04;
             border: 1px solid rgba(34,197,94,0.3);
             border-radius: 4px;
-            padding: 2px 0;
-            margin-top: 3px;
-            letter-spacing: 1px;
+            padding: 3px 0;
+            margin-top: 4px;
+            letter-spacing: 2px;
         }
 
         /* Sequence status indicator */
@@ -984,10 +1003,13 @@ HTML_TEMPLATE = """
                 SYSTEM STANDBY
             </div>
 
-            <!-- Pressure Display -->
-            <div class="pressure-value">
-                <span id="pressureVal">0.000</span>
-                <span class="pressure-unit">MPa</span>
+            <!-- Pressure Display (Digital 7-Segment LED Panel) -->
+            <div class="pressure-box">
+                <div class="pressure-title">亜酸化窒素 圧力 (N2O PRESSURE)</div>
+                <div class="pressure-value">
+                    <span id="pressureVal">0.000</span>
+                    <span class="pressure-unit">MPa</span>
+                </div>
             </div>
 
             <div class="led-row">
@@ -1085,19 +1107,19 @@ HTML_TEMPLATE = """
             <!-- Sequence Status -->
             <div class="seq-status seq-idle" id="seqStatus">IDLE: シーケンス待機中</div>
 
-            <!-- Timers -->
+            <!-- Timers (High-Contrast Digital 7-Seg LED Displays) -->
             <div class="timer-row">
                 <div class="timer-box">
-                    <div class="timer-label">T+ SEQ</div>
-                    <div class="timer-value" id="timerSeq">--:--</div>
+                    <div class="timer-label">⏱️ T+ SEQ (全体経過)</div>
+                    <div class="timer-value" id="timerSeq">00:00</div>
                 </div>
                 <div class="timer-box">
-                    <div class="timer-label">T+ FILL</div>
-                    <div class="timer-value" id="timerFill">--:--</div>
+                    <div class="timer-label">⛽ T+ FILL (充填経過)</div>
+                    <div class="timer-value" id="timerFill">00:00</div>
                 </div>
                 <div class="timer-box">
-                    <div class="timer-label">T+ OPEN</div>
-                    <div class="timer-value" id="timerOpen">--:--</div>
+                    <div class="timer-label">🔓 T+ OPEN (開放経過)</div>
+                    <div class="timer-value" id="timerOpen">00:00</div>
                 </div>
             </div>
 
