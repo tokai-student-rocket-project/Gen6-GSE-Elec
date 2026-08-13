@@ -843,11 +843,12 @@ void raspi_wireless::sendWirelessTelemetryTask()
       (raspi_wireless::isWirelessConnected << 4);
 
   // パケット送信: RASPI_TELEMETRY
-  // cmd_state (1 byte), fb_state (1 byte), sequence_flag (1 byte), pressure_MPa (float), limitSwitchState (1 byte)
+  // cmd_state (1 byte), fb_state (1 byte), sequence_flag (1 byte), pressure_MPa (float), limitSwitchState (1 byte), launch_voltage (float)
   MsgPacketizer::send(
       Serial,
       static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
-      cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, communication::limitSwitchState);
+      cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, communication::limitSwitchState,
+      power::input.getVoltage_V());
 }
 
 void control::handleManualTask()

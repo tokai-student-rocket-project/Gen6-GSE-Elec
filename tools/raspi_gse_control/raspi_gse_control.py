@@ -94,13 +94,17 @@ class GSEState:
         self.rs485_ok = True
         self.rocket_node_ok = True
 
-    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b):
+    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, sat_v=None):
         with self.lock:
             self.cmd_state = cmd_b
             self.fb_state = fb_b
             self.sequence_flag = seq_b
             self.pressure_MPa = press_f
             self.limit_switch_state = limit_b
+            if launch_v is not None and launch_v > 0.0:
+                self.launch_voltage_V = launch_v
+            if sat_v is not None and sat_v > 0.0:
+                self.sat_voltage_V = sat_v
             self.last_heartbeat_rx = time.time()
             self.connected = True
             
@@ -195,7 +199,9 @@ def serial_worker(port_name, baudrate=115200):
                         packet_id = msg[0]
                         if packet_id == PACKET_RASPI_TELEMETRY and len(msg) >= 6:
                             cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
-                            gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b)
+                            launch_v = msg[6] if len(msg) >= 7 else None
+                            sat_v = msg[7] if len(msg) >= 8 else None
+                            gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
                         elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
                             gse_state.last_heartbeat_rx = time.time()
                             gse_state.connected = True
