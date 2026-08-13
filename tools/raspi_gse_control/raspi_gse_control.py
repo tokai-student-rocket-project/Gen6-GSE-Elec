@@ -604,11 +604,6 @@ HTML_TEMPLATE = """
             box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
             cursor: not-allowed;
         }
-        .estop-btn.locked::after {
-            content: '🔒 ロック中';
-            position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
-            font-size: 0.68rem; color: var(--red); white-space: nowrap;
-        }
         .estop-reset-btn {
             display: none;
             width: 100%;
@@ -926,7 +921,7 @@ HTML_TEMPLATE = """
                 </button>
                 <br>
                 <button class="estop-reset-btn" id="estopResetBtn" onclick="resetEstop()">
-                    🔄 E-STOP 解除 (回転リセット)
+                    🔄 🔒 エマージェンシーストップ解除 (回転リセット)
                 </button>
             </div>
 
@@ -1113,7 +1108,7 @@ HTML_TEMPLATE = """
             updateSafetyUI();
         }
         function resetEstop() {
-            if (!confirm('【E-STOP 解除確認】\\n緊急停止状態を解除しますか？\\nスイッチを回転させて回路を復帰させる操作に相当します。')) return;
+            if (!confirm('【エマージェンシーストップ解除確認】\\n緊急停止状態を解除しますか？\\nスイッチを回転させて回路を復帰させる操作に相当します。')) return;
             estopLocked = false;
             sendCmd(2, 0); // Peaceful stop to clear flags
 
