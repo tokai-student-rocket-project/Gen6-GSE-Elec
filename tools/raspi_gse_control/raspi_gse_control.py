@@ -1299,6 +1299,8 @@ HTML_TEMPLATE = """
         let fillActiveState = false;
         let ignitionActiveState = false;
         let canConfirmState = false;
+        let connectedState = false;
+        let demoModeState = false;
         const VALVE_NAMES = ["SHIFT","FILL","DUMP","OXYGEN","IGNITER","OPEN","CLOSE","PURGE"];
         let valveStates = {};
         VALVE_NAMES.forEach(v => valveStates[v] = false);
@@ -1359,6 +1361,10 @@ HTML_TEMPLATE = """
 
         /* ===== Safety toggle ===== */
         function toggleSafety() {
+            if (!connectedState && !demoModeState) {
+                alert('⚠️ 【通信未接続エラー】\\n\\nマイコンとの無線通信が未接続（DISCONNECTED）です。\\n実機未接続でテストを行う場合は --demo オプションを指定して起動してください。\\n\\n実行コマンド例:\\npython3 tools/raspi_gse_control/raspi_gse_control.py --demo');
+                return;
+            }
             armed = !armed;
             sendCmd(5, armed ? 1 : 0);
             updateSafetyUI();
@@ -1388,18 +1394,6 @@ HTML_TEMPLATE = """
 
             document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
             document.getElementById('btnPeace').disabled    = !armed || estopLocked;
-
-            // Highlight confirm button when ready
-            const btnConf = document.getElementById('btnConfirm');
-            if (canConfirmState) {
-                btnConf.classList.add('ready');
-                btnConf.innerText = "⛽ 充填確認 OK → 🔥 点火開始 (CONFIRM & IGNITE)";
-            } else {
-                btnConf.classList.remove('ready');
-                btnConf.innerText = "⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
-            }
-
-            document.getElementById('btnPeace').disabled = !armed || estopLocked;
 
             // Highlight confirm button when ready
             const btnConf = document.getElementById('btnConfirm');
@@ -1492,10 +1486,21 @@ HTML_TEMPLATE = """
         /* ===== Telemetry polling ===== */
         function updateTelemetry() {
             fetch('/api/telemetry').then(r=>r.json()).then(data => {
-                // Connection badge
+                connectedState = data.connected || false;
+                demoModeState = data.demo_mode || false;
+
+                // Connection & Mode badge
                 const badge = document.getElementById('connBadge');
                 const modeTag = document.getElementById('modeTag');
-                if (data.demo_mode) { modeTag.innerText = 'DEMO'; modeTag.style.background = '#8b5cf6'; }
+                if (modeTag) {
+                    if (data.demo_mode) {
+                        modeTag.innerText = 'DEMO';
+                        modeTag.style.background = '#8b5cf6';
+                    } else {
+                        modeTag.innerText = 'REAL';
+                        modeTag.style.background = '#ef4444';
+                    }
+                }
                 if (data.connected) {
                     badge.className = 'conn-badge conn-ok';
                     badge.innerText = data.demo_mode ? '● DEMO ACTIVE' : '● LINK OK';
@@ -1916,7 +1921,18 @@ def main():
     t_cli.start()
 
     print(f"\n[RASPI GSE SERVER] Starting Web Remote Control Dashboard at http://0.0.0.0:{args.web_port}")
-    app.run(host='0.0.0.0', port=args.web_port, debug=False)
+    try:
+        app.run(host='0.0.0.0', port=args.web_port, debug=False)
+    except OSError as e:
+        print(f"\n[PORT CONFLICT] Port {args.web_port} is occupied by an existing process.")
+        print("Cleaning up stale background GSE server process...")
+        os.system("pkill -9 -f raspi_gse_control.py 2>/dev/null")
+        time.sleep(0.8)
+        try:
+            app.run(host='0.0.0.0', port=args.web_port, debug=False)
+        except OSError:
+            print(f"[ERROR] Could not release port {args.web_port}. Please specify --web-port 5001")
+            sys.exit(1)
 
 if __name__ == '__main__':
     main()
