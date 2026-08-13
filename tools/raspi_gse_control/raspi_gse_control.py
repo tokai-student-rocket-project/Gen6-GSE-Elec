@@ -32,8 +32,11 @@ except ImportError:
     print("[ERROR] 'msgpack' package is missing. Install with: pip install msgpack")
     sys.exit(1)
 
+import csv
+from datetime import datetime
+
 try:
-    from flask import Flask, render_template_string, jsonify, request, logging
+    from flask import Flask, render_template_string, jsonify, request, send_file, logging
     import logging
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
@@ -137,8 +140,90 @@ class GSEState:
                 "rocket_node_ok": self.rocket_node_ok,
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
+                "record_count": gse_logger.record_count if 'gse_logger' in globals() else 0,
+                "current_log": gse_logger.current_filename if 'gse_logger' in globals() else "",
                 "last_update": round(time.time() - self.last_heartbeat_rx, 1) if not self.demo_mode else 0.0
             }
+
+# =========================================================================
+# 自動データロガー (GSELogger - CSV 自動記録エンジン)
+# =========================================================================
+LOGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+
+class GSELogger:
+    def __init__(self, logs_dir=LOGS_DIR):
+        self.logs_dir = logs_dir
+        os.makedirs(self.logs_dir, exist_ok=True)
+        self.current_filename = f"gse_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        self.current_filepath = os.path.join(self.logs_dir, self.current_filename)
+        self.record_count = 0
+        self.lock = threading.Lock()
+        self._init_csv()
+
+    def _init_csv(self):
+        headers = [
+            "timestamp_s", "timestamp_iso", "connected", "demo_mode",
+            "pressure_MPa", "vesim_mA", "emergency_stop", "fill_active",
+            "ignition_active", "can_confirm", "armed_state", "auto_purge",
+            "limit_ch5", "launch_voltage_V", "sat_voltage_V"
+        ]
+        for vname in VALVE_NAMES:
+            headers.append(f"cmd_{vname}")
+        for vname in VALVE_NAMES:
+            headers.append(f"fb_{vname}")
+
+        with self.lock:
+            with open(self.current_filepath, "w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+        print(f"[LOGGER] Telemetry CSV logging initialized: {self.current_filepath}")
+
+    def log_state(self, state_dict):
+        now = time.time()
+        iso_str = datetime.fromtimestamp(now).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        
+        row = [
+            round(now, 3), iso_str, 
+            1 if state_dict.get('connected') else 0,
+            1 if state_dict.get('demo_mode') else 0,
+            state_dict.get('pressure_MPa', 0.0),
+            state_dict.get('vesim_current_mA', 4.0),
+            1 if state_dict.get('emergency_stop') else 0,
+            1 if state_dict.get('fill_active') else 0,
+            1 if state_dict.get('ignition_active') else 0,
+            1 if state_dict.get('can_confirm') else 0,
+            1 if state_dict.get('armed_state') else 0,
+            1 if state_dict.get('auto_purge') else 0,
+            1 if state_dict.get('limit_switch_ch5') else 0,
+            state_dict.get('launch_voltage_V', 12.4),
+            state_dict.get('sat_voltage_V', 12.1)
+        ]
+        
+        valves_cmd = state_dict.get('valves_cmd', {})
+        valves_fb  = state_dict.get('valves_fb', {})
+        for vname in VALVE_NAMES:
+            row.append(1 if valves_cmd.get(vname) else 0)
+        for vname in VALVE_NAMES:
+            row.append(1 if valves_fb.get(vname) else 0)
+
+        with self.lock:
+            with open(self.current_filepath, "a", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(row)
+            self.record_count += 1
+
+gse_logger = GSELogger()
+
+def logger_worker():
+    """10Hz でテレメトリデータを CSV ファイルへ自動保存"""
+    print("[LOGGER] Auto Data Logging Thread Running (10Hz)...")
+    while True:
+        try:
+            d = gse_state.to_dict()
+            gse_logger.log_state(d)
+        except Exception as e:
+            print(f"[LOGGER ERROR] {e}")
+        time.sleep(0.1)
 
 gse_state = GSEState()
 ser_instance = None
@@ -466,6 +551,60 @@ HTML_TEMPLATE = """
             padding: 10px;
             min-height: 100vh;
         }
+
+        /* ===== REC Badge & Log Button ===== */
+        .rec-badge {
+            padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 0.7rem;
+            background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.4);
+            display: flex; align-items: center; gap: 5px;
+            animation: pulse-rec 2s infinite;
+        }
+        @keyframes pulse-rec {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        .btn-log-download {
+            background: #1e293b; color: var(--blue); border: 1px solid var(--blue);
+            border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-log-download:hover { background: rgba(56,189,248,0.15); }
+
+        /* ===== Log Modal ===== */
+        .modal-overlay {
+            display: none; position: fixed; top:0; left:0; width:100vw; height:100vh;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 9999; justify-content: center; align-items: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-content {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; width: 90%; max-width: 680px; max-height: 80vh;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            padding: 12px 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.95rem; font-weight: 700; color: var(--blue);
+        }
+        .modal-body {
+            padding: 14px; overflow-y: auto; flex: 1;
+        }
+        .log-table {
+            width: 100%; border-collapse: collapse; font-size: 0.75rem;
+        }
+        .log-table th, .log-table td {
+            padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border);
+        }
+        .log-table th { color: var(--text-dim); text-transform: uppercase; }
+        .btn-dl-sm {
+            padding: 4px 10px; background: #2563eb; color: #fff; border: none;
+            border-radius: 4px; font-weight: 600; font-size: 0.72rem; cursor: pointer;
+            text-decoration: none; display: inline-block;
+        }
+        .btn-dl-sm:hover { background: #3b82f6; }
 
         /* ===== Header ===== */
         .header {
@@ -814,7 +953,11 @@ HTML_TEMPLATE = """
             🚀 Gen6 GSE Remote Control
             <span id="modeTag" class="mode-tag">REAL</span>
         </div>
-        <div id="connBadge" class="conn-badge conn-ng">● CONNECTING...</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="rec-badge" id="recBadge">● REC (0)</div>
+            <button class="btn-log-download" onclick="openLogModal()">📊 ログ (CSV) 一覧 / DL</button>
+            <div id="connBadge" class="conn-badge conn-ng">● CONNECTING...</div>
+        </div>
     </div>
 
     <div class="main-grid">
@@ -967,6 +1110,38 @@ HTML_TEMPLATE = """
         <div class="card" style="grid-column: 1 / -1;">
             <h3>🔧 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
             <div class="valve-grid" id="valveGrid"></div>
+        </div>
+    </div>
+
+    <!-- Log Modal Overlay -->
+    <div class="modal-overlay" id="logModal" onclick="if(event.target===this)closeLogModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>📁 GSE Telemetry CSV Logs (自動保存ログ一覧)</span>
+                <span style="cursor:pointer; font-size:1.2rem; color:var(--text-dim);" onclick="closeLogModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.75rem; color:var(--text-dim);">保存場所: <code>tools/raspi_gse_control/logs/</code></span>
+                    <a href="/api/logs/latest" target="_blank" class="btn-dl-sm" style="padding:6px 12px; font-size:0.78rem; background:#22c55e;">
+                        📥 最新ログ (現在記録中) をDL
+                    </a>
+                </div>
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>ファイル名</th>
+                            <th>作成日時</th>
+                            <th>サイズ</th>
+                            <th>ステータス</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                        <tr><td colspan="5">ログ一覧を読み込み中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -1157,6 +1332,11 @@ HTML_TEMPLATE = """
                     badge.innerText = '● DISCONNECTED';
                 }
 
+                // REC badge count update
+                if (data.record_count !== undefined) {
+                    document.getElementById('recBadge').innerText = '● REC (' + data.record_count + ')';
+                }
+
                 // Pressure & Sensor mA
                 document.getElementById('pressureVal').innerText = data.pressure_MPa.toFixed(3);
                 if (data.vesim_current_mA !== undefined) {
@@ -1315,6 +1495,39 @@ HTML_TEMPLATE = """
             }
         }
 
+        /* ===== Log Modal JS ===== */
+        function openLogModal() {
+            document.getElementById('logModal').classList.add('open');
+            fetchLogList();
+        }
+        function closeLogModal() {
+            document.getElementById('logModal').classList.remove('open');
+        }
+        function fetchLogList() {
+            fetch('/api/logs/list').then(r=>r.json()).then(data => {
+                const tbody = document.getElementById('logTableBody');
+                tbody.innerHTML = '';
+                if (!data.logs || data.logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">ログファイルが見つかりません</td></tr>';
+                    return;
+                }
+                data.logs.forEach(item => {
+                    const tr = document.createElement('tr');
+                    const statusTag = item.current
+                        ? `<span style="color:var(--green); font-weight:bold;">● 記録中 (${item.records || 0}件)</span>`
+                        : `<span style="color:var(--text-dim);">保存済み</span>`;
+                    tr.innerHTML = `
+                        <td><code>${item.filename}</code></td>
+                        <td>${item.mtime}</td>
+                        <td>${item.size_kb} KB</td>
+                        <td>${statusTag}</td>
+                        <td><a href="/api/logs/download/${item.filename}" target="_blank" class="btn-dl-sm">📥 DL</a></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }).catch(e=>console.error(e));
+        }
+
         setInterval(updateTelemetry, 200);
     </script>
 </body>
@@ -1379,6 +1592,47 @@ def api_auto_purge_toggle():
     return jsonify({"status": "ok", "auto_purge": gse_state.auto_purge_enabled})
 
 # =========================================================================
+# Log Download API エンドポイント
+# =========================================================================
+@app.route('/api/logs/list')
+def api_logs_list():
+    """保存されている CSV ログファイルの一覧を返却"""
+    files = []
+    try:
+        if os.path.exists(LOGS_DIR):
+            for fname in sorted(os.listdir(LOGS_DIR), reverse=True):
+                if fname.endswith(".csv"):
+                    fpath = os.path.join(LOGS_DIR, fname)
+                    size_kb = round(os.path.getsize(fpath) / 1024.0, 1)
+                    mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime('%Y-%m-%d %H:%M:%S')
+                    is_current = (fname == gse_logger.current_filename)
+                    files.append({
+                        "filename": fname,
+                        "size_kb": size_kb,
+                        "mtime": mtime,
+                        "current": is_current,
+                        "records": gse_logger.record_count if is_current else None
+                    })
+    except Exception as e:
+        print(f"[API LOGS ERROR] {e}")
+    return jsonify({"logs": files, "current_file": gse_logger.current_filename, "record_count": gse_logger.record_count})
+
+@app.route('/api/logs/download/<path:filename>')
+def api_logs_download(filename):
+    """指定された CSV ログファイルをブラウザへ直接ダウンロード"""
+    safe_path = os.path.normpath(os.path.join(LOGS_DIR, filename))
+    if not safe_path.startswith(os.path.abspath(LOGS_DIR)):
+        return jsonify({"status": "forbidden"}), 403
+    if not os.path.exists(safe_path):
+        return jsonify({"status": "not_found"}), 404
+    return send_file(safe_path, as_attachment=True, download_name=filename, mimetype="text/csv")
+
+@app.route('/api/logs/latest')
+def api_logs_latest():
+    """現在書き込み中の最新 CSV ログファイルをワンクリックダウンロード"""
+    return api_logs_download(gse_logger.current_filename)
+
+# =========================================================================
 # エントリポイント
 # =========================================================================
 def main():
@@ -1403,6 +1657,10 @@ def main():
 
     t_hb = threading.Thread(target=heartbeat_worker, daemon=True)
     t_hb.start()
+
+    # 自動データロガースレッドの起動 (10Hz CSV 記録)
+    t_log = threading.Thread(target=logger_worker, daemon=True)
+    t_log.start()
 
     # CLI プロンプトの起動
     t_cli = threading.Thread(target=cli_worker, daemon=True)
