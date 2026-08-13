@@ -415,184 +415,547 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gen6 GSE Remote Control Center</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-blue: #38bdf8;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --accent-orange: #f97316;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg: #070b14;
+            --bg-card: #0f1729;
+            --bg-card-alt: #162033;
+            --border: #1e2d4a;
+            --blue: #38bdf8;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #f97316;
+            --yellow: #eab308;
+            --purple: #a78bfa;
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --text-bright: #f8fafc;
         }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 15px;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 12px;
+            min-height: 100vh;
         }
+
+        /* ===== Header ===== */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
         }
-        .title { font-size: 1.4rem; font-weight: bold; color: var(--accent-blue); }
-        .mode-tag { background: #6366f1; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; }
-        .status-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
+        .header-title {
+            font-size: 1.1rem; font-weight: 700; color: var(--blue);
+            display: flex; align-items: center; gap: 10px;
         }
-        .status-online { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
-        .status-offline { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #334155; }
-        
-        .pressure-display {
-            font-size: 3.2rem;
-            font-weight: bold;
+        .mode-tag {
+            background: #6366f1; padding: 3px 8px; border-radius: 4px;
+            font-size: 0.7rem; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+        }
+        .conn-badge {
+            padding: 5px 14px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        .conn-ok { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.4); }
+        .conn-ng { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.4); }
+
+        /* ===== Grid ===== */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 12px;
+        }
+        @media (max-width: 820px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .card h3 {
+            font-size: 0.85rem; font-weight: 600; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ===== Pressure ===== */
+        .pressure-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3.6rem; font-weight: 700;
             text-align: center;
-            color: var(--accent-blue);
-            margin: 10px 0;
+            color: var(--blue);
+            text-shadow: 0 0 30px rgba(56,189,248,0.3);
+            line-height: 1.1;
+            padding: 8px 0;
         }
-        .unit { font-size: 1.2rem; color: var(--text-muted); }
-        
-        .btn {
+        .pressure-unit { font-size: 1.1rem; color: var(--text-dim); font-weight: 400; }
+
+        /* ===== Status LEDs ===== */
+        .led-row {
+            display: flex; gap: 18px; justify-content: center;
+            flex-wrap: wrap;
+            margin: 12px 0 8px;
+        }
+        .led-item {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; font-weight: 500; color: var(--text-dim);
+        }
+        .led {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #334155;
+            transition: all 0.3s;
+        }
+        .led-on-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .led-on-red   { background: var(--red);   box-shadow: 0 0 8px var(--red); }
+        .led-on-yellow{ background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+
+        /* ===== Toggle Switch (Safety & Valves) ===== */
+        .toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 0;
+        }
+        .toggle-label { font-size: 0.9rem; font-weight: 600; }
+        .toggle-sub { font-size: 0.7rem; color: var(--text-dim); }
+        .toggle-track {
+            width: 52px; height: 28px;
+            background: #334155;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+        .toggle-track.on { background: var(--green); box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+        .toggle-track.disabled { opacity: 0.35; pointer-events: none; }
+        .toggle-knob {
+            width: 22px; height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px; left: 3px;
+            transition: left 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .toggle-track.on .toggle-knob { left: 27px; }
+
+        /* ===== E-STOP ===== */
+        .estop-zone {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .estop-btn {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            border: 6px solid #991b1b;
+            background: radial-gradient(circle at 40% 35%, #f87171, #dc2626 50%, #991b1b);
+            color: #fff;
+            font-size: 0.85rem; font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            box-shadow: 0 6px 20px rgba(239,68,68,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+            transition: all 0.15s;
+            position: relative;
+        }
+        .estop-btn:active:not(.locked) {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(239,68,68,0.3), inset 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .estop-btn.locked {
+            background: radial-gradient(circle at 40% 35%, #7f1d1d, #450a0a 50%, #1c0505);
+            border-color: #450a0a;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
+            cursor: not-allowed;
+        }
+        .estop-btn.locked::after {
+            content: '🔒 ロック中';
+            position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+            font-size: 0.7rem; color: var(--red); white-space: nowrap;
+        }
+        .estop-reset-btn {
+            display: none;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #1e293b;
+            color: var(--orange);
+            border: 1px solid var(--orange);
+            border-radius: 6px;
+            font-size: 0.8rem; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .estop-reset-btn:hover { background: rgba(249,115,22,0.15); }
+        .estop-reset-btn.visible { display: inline-block; }
+
+        /* ===== Momentary (Tact) Button ===== */
+        .tact-btn {
             width: 100%;
-            padding: 14px;
-            margin: 6px 0;
+            padding: 12px 16px;
+            margin: 5px 0;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 0.9rem; font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.1s;
+            position: relative;
+            user-select: none;
         }
-        .btn-estop { background: var(--accent-red); color: white; font-size: 1.2rem; }
-        .btn-arm { background: var(--accent-orange); color: white; }
-        .btn-fill { background: #3b82f6; color: white; }
-        .btn-ignite { background: #d97706; color: white; }
-        .btn-peace { background: #475569; color: white; }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .tact-btn:active:not(:disabled) {
+            transform: scale(0.97);
+            filter: brightness(0.85);
+        }
+        .tact-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .tact-seq {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+        .tact-confirm {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #fff;
+        }
+        .tact-peace {
+            background: #334155;
+            color: var(--text);
+        }
+        .tact-zero {
+            background: #1e293b;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
 
-        .valve-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .valve-box {
-            padding: 10px;
+        /* Sequence status indicator */
+        .seq-status {
+            text-align: center;
+            padding: 6px 10px;
             border-radius: 6px;
-            background: #0f172a;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 8px 0;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+        .seq-fill { border-color: #3b82f6; color: #60a5fa; }
+        .seq-ign  { border-color: var(--orange); color: var(--orange); }
+        .seq-estop{ border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
+        .seq-idle { color: var(--text-dim); }
+
+        /* ===== Valve Grid ===== */
+        .valve-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .valve-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border: 1px solid #334155;
+            justify-content: space-between;
+            gap: 6px;
         }
-        .indicator {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #475569;
+        .valve-name {
+            font-size: 0.8rem; font-weight: 700;
+            min-width: 55px;
         }
-        .indicator-on { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+        .valve-leds {
+            display: flex; gap: 4px; align-items: center;
+        }
+        .valve-led-label {
+            font-size: 0.55rem; color: var(--text-dim); font-weight: 500;
+        }
+        .valve-led {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #334155;
+            transition: all 0.3s;
+        }
+        .valve-led.cmd-on { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+        .valve-led.fb-on  { background: var(--green); box-shadow: 0 0 6px var(--green); }
     </style>
 </head>
 <body>
+    <!-- ===== Header ===== -->
     <div class="header">
-        <div class="title">🚀 Gen6 GSE Wireless Remote Control <span id="modeTag" class="mode-tag">REAL</span></div>
-        <div id="statusBadge" class="status-badge status-offline">● CONNECTING...</div>
+        <div class="header-title">
+            🚀 Gen6 GSE Remote Control
+            <span id="modeTag" class="mode-tag">REAL</span>
+        </div>
+        <div id="connBadge" class="conn-badge conn-ng">● CONNECTING...</div>
     </div>
 
-    <div class="grid">
+    <div class="main-grid">
+        <!-- ===== Left Top: Status & Pressure ===== -->
         <div class="card">
-            <h3>N2O 配管圧力 (Pressure)</h3>
-            <div class="pressure-display"><span id="pressureVal">0.000</span> <span class="unit">MPa</span></div>
-            <p>リミットスイッチ (ch5): <strong id="limitSwitch">OFF</strong></p>
-            <p>MCU 無線インターロック: <strong id="mcuInterlock">--</strong></p>
-            <button class="btn btn-peace" onclick="sendCmd(7, 0)">ゼロ点校正要求 (Zero Calib)</button>
+            <h3>📊 N2O Pressure & Status</h3>
+            <div class="pressure-value">
+                <span id="pressureVal">0.000</span>
+                <span class="pressure-unit">MPa</span>
+            </div>
+            <div class="led-row">
+                <div class="led-item"><div class="led" id="ledCom"></div>COM</div>
+                <div class="led-item"><div class="led" id="ledErr"></div>ERR</div>
+                <div class="led-item"><div class="led" id="ledArm"></div>ARM</div>
+                <div class="led-item"><div class="led" id="ledLimit"></div>LIMIT</div>
+            </div>
+            <button class="tact-btn tact-zero" onmousedown="sendCmdOnce(7, 0)">ゼロ点校正要求 (Zero Calib)</button>
         </div>
 
+        <!-- ===== Right Top: Safety & E-STOP & Sequence ===== -->
         <div class="card">
-            <h3>遠隔制御シーケンス (Control)</h3>
-            <button class="btn btn-estop" onclick="sendCmd(1, 0)">🚨 緊急停止 (EMERGENCY STOP)</button>
-            <button class="btn btn-arm" onclick="toggleArm()">🛡️ セーフティ解除 (ARM / DISARM)</button>
-            <button class="btn btn-fill" onclick="sendCmd(3, 0)">⛽ 充填シーケンス開始 (FILL)</button>
-            <button class="btn btn-ignite" onclick="confirmIgnition()">🔥 点火シーケンス開始 (IGNITION)</button>
-            <button class="btn btn-peace" onclick="sendCmd(2, 0)">⏹️ 通常停止 (PEACEFUL STOP)</button>
+            <h3>🎛️ Safety & Sequence Control</h3>
+
+            <!-- Safety Toggle Switch -->
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">🛡️ セーフティ (SAFETY)</div>
+                    <div class="toggle-sub">トグルスイッチ: 解除しないと操作不可</div>
+                </div>
+                <div class="toggle-track" id="safetyToggle" onclick="toggleSafety()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+
+            <!-- E-STOP -->
+            <div class="estop-zone">
+                <button class="estop-btn" id="estopBtn" onclick="pressEstop()">
+                    🚨<br>緊急停止
+                </button>
+                <br>
+                <button class="estop-reset-btn" id="estopResetBtn" onclick="resetEstop()">
+                    🔄 E-STOP 解除 (回転リセット)
+                </button>
+            </div>
+
+            <!-- Sequence Status -->
+            <div class="seq-status seq-idle" id="seqStatus">IDLE: シーケンス待機中</div>
+
+            <!-- Sequence Start (Tact/Momentary) -->
+            <button class="tact-btn tact-seq" id="btnSeqStart"
+                    onmousedown="sendCmdOnce(3, 0)" disabled>
+                ⛽ シーケンス開始 (SEQUENCE START)
+            </button>
+
+            <!-- Confirm Ignition (1-button + dialog) -->
+            <button class="tact-btn tact-confirm" id="btnConfirm"
+                    onclick="confirmAndIgnite()" disabled>
+                🔥 点火確認 (IGNITION CONFIRM)
+            </button>
+
+            <!-- Peaceful Stop -->
+            <button class="tact-btn tact-peace" id="btnPeace"
+                    onmousedown="sendCmdOnce(2, 0)" disabled>
+                ⏹️ 通常停止 (PEACEFUL STOP)
+            </button>
         </div>
 
-        <div class="card">
-            <h3>電磁弁状態 (Solenoid Feedback)</h3>
+        <!-- ===== Left Bottom: Valve Toggles ===== -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h3>🔧 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
             <div class="valve-grid" id="valveGrid"></div>
         </div>
     </div>
 
     <script>
-        let isArmed = false;
+        /* ===== State ===== */
+        let armed = false;
+        let estopLocked = false;
+        let cmdSentThisPress = false;
+        const VALVE_NAMES = ["SHIFT","FILL","DUMP","OXYGEN","IGNITER","OPEN","CLOSE","PURGE"];
+        let valveStates = {};
+        VALVE_NAMES.forEach(v => valveStates[v] = false);
 
-        function updateData() {
-            fetch('/api/telemetry')
-                .then(r => r.json())
-                .then(data => {
-                    const badge = document.getElementById('statusBadge');
-                    const modeTag = document.getElementById('modeTag');
-                    
-                    if (data.demo_mode) {
-                        modeTag.innerText = "DEMO SIMULATOR";
-                        modeTag.style.background = "#8b5cf6";
-                    }
-
-                    if (data.connected) {
-                        badge.className = "status-badge status-online";
-                        badge.innerText = data.demo_mode ? "● DEMO MODE ACTIVE" : "● WIRELESS LINK OK";
-                    } else {
-                        badge.className = "status-badge status-offline";
-                        badge.innerText = "● DISCONNECTED";
-                    }
-
-                    document.getElementById('pressureVal').innerText = data.pressure_MPa.toFixed(3);
-                    document.getElementById('limitSwitch').innerText = data.limit_switch_ch5 ? "CLOSED (SAFE)" : "OPEN";
-                    document.getElementById('limitSwitch').style.color = data.limit_switch_ch5 ? "#22c55e" : "#ef4444";
-                    document.getElementById('mcuInterlock').innerText = data.mcu_wireless_ok ? "ACTIVE (OK)" : "DISCONNECTED";
-
-                    const grid = document.getElementById('valveGrid');
-                    grid.innerHTML = '';
-                    for (const [name, on] of Object.entries(data.valves_fb)) {
-                        const box = document.createElement('div');
-                        box.className = 'valve-box';
-                        box.innerHTML = `<span>${name}</span>
-                            <div class="indicator ${on ? 'indicator-on' : ''}"></div>`;
-                        grid.appendChild(box);
-                    }
-                })
-                .catch(err => console.error(err));
+        /* ===== Init valve grid ===== */
+        function buildValveGrid() {
+            const grid = document.getElementById('valveGrid');
+            grid.innerHTML = '';
+            VALVE_NAMES.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'valve-item';
+                item.innerHTML = `
+                    <span class="valve-name">${name}</span>
+                    <div class="valve-leds">
+                        <span class="valve-led-label">CMD</span>
+                        <div class="valve-led" id="cmd_${name}"></div>
+                        <span class="valve-led-label">FB</span>
+                        <div class="valve-led" id="fb_${name}"></div>
+                    </div>
+                    <div class="toggle-track ${armed ? '' : 'disabled'}" id="vt_${name}" onclick="toggleValve('${name}')">
+                        <div class="toggle-knob"></div>
+                    </div>`;
+                grid.appendChild(item);
+            });
         }
+        buildValveGrid();
 
+        /* ===== API helpers ===== */
         function sendCmd(cmdType, param) {
             fetch('/api/command', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cmd_type: cmdType, param: param })
-            }).then(r => r.json()).then(res => console.log(res));
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({cmd_type: cmdType, param: param})
+            }).then(r=>r.json()).then(r=>console.log(r)).catch(e=>console.error(e));
         }
 
-        function toggleArm() {
-            isArmed = !isArmed;
-            sendCmd(5, isArmed ? 1 : 0);
-            alert(isArmed ? "セーフティを ARM (解除) しました．" : "セーフティを DISARM (施錠) しました．");
+        /* Momentary: fire only once per press */
+        function sendCmdOnce(cmdType, param) {
+            if (cmdSentThisPress) return;
+            cmdSentThisPress = true;
+            sendCmd(cmdType, param);
+            setTimeout(() => { cmdSentThisPress = false; }, 300);
         }
 
-        function confirmIgnition() {
-            if (confirm("【最終点火確認】本当に点火シーケンスを開始しますか？")) {
-                sendCmd(4, 0);
-            }
+        /* ===== Safety toggle ===== */
+        function toggleSafety() {
+            armed = !armed;
+            sendCmd(5, armed ? 1 : 0);
+            updateSafetyUI();
+        }
+        function updateSafetyUI() {
+            const el = document.getElementById('safetyToggle');
+            if (armed) { el.classList.add('on'); } else { el.classList.remove('on'); }
+
+            // Enable/disable all control buttons based on safety
+            document.getElementById('btnSeqStart').disabled = !armed || estopLocked;
+            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
+            document.getElementById('btnPeace').disabled     = !armed || estopLocked;
+
+            // Update valve toggles
+            VALVE_NAMES.forEach(name => {
+                const vt = document.getElementById('vt_' + name);
+                if (vt) {
+                    if (armed && !estopLocked) { vt.classList.remove('disabled'); }
+                    else { vt.classList.add('disabled'); }
+                }
+            });
         }
 
-        setInterval(updateData, 200);
+        /* ===== E-STOP (latching) ===== */
+        function pressEstop() {
+            if (estopLocked) return;
+            estopLocked = true;
+            sendCmd(1, 0);
+
+            const btn = document.getElementById('estopBtn');
+            btn.classList.add('locked');
+            document.getElementById('estopResetBtn').classList.add('visible');
+            updateSafetyUI();
+        }
+        function resetEstop() {
+            if (!confirm('【E-STOP 解除確認】\\n緊急停止状態を解除しますか？\\nスイッチを回転させて回路を復帰させる操作に相当します。')) return;
+            estopLocked = false;
+            sendCmd(2, 0); // Peaceful stop to clear flags
+
+            const btn = document.getElementById('estopBtn');
+            btn.classList.remove('locked');
+            document.getElementById('estopResetBtn').classList.remove('visible');
+            updateSafetyUI();
+        }
+
+        /* ===== Valve toggles ===== */
+        function toggleValve(name) {
+            if (!armed || estopLocked) return;
+            valveStates[name] = !valveStates[name];
+
+            // Update toggle UI
+            const vt = document.getElementById('vt_' + name);
+            if (valveStates[name]) { vt.classList.add('on'); } else { vt.classList.remove('on'); }
+
+            // Send valve toggle
+            fetch('/api/valve_toggle', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({valve: name, state: valveStates[name] ? 1 : 0})
+            }).then(r=>r.json()).then(r=>console.log(r)).catch(e=>console.error(e));
+        }
+
+        /* ===== Confirm + Ignite (1-button with dialog) ===== */
+        function confirmAndIgnite() {
+            if (!armed || estopLocked) return;
+            if (!confirm('【最終点火確認 (IGNITION CONFIRM)】\\n\\n⚠️  3人同時押し確認スイッチの代替操作です。\\n本当に点火シーケンスを開始しますか？')) return;
+            sendCmd(4, 0);
+        }
+
+        /* ===== Telemetry polling ===== */
+        function updateTelemetry() {
+            fetch('/api/telemetry').then(r=>r.json()).then(data => {
+                // Connection badge
+                const badge = document.getElementById('connBadge');
+                const modeTag = document.getElementById('modeTag');
+                if (data.demo_mode) { modeTag.innerText = 'DEMO'; modeTag.style.background = '#8b5cf6'; }
+                if (data.connected) {
+                    badge.className = 'conn-badge conn-ok';
+                    badge.innerText = data.demo_mode ? '● DEMO ACTIVE' : '● LINK OK';
+                } else {
+                    badge.className = 'conn-badge conn-ng';
+                    badge.innerText = '● DISCONNECTED';
+                }
+
+                // Pressure
+                document.getElementById('pressureVal').innerText = data.pressure_MPa.toFixed(3);
+
+                // Status LEDs
+                setLed('ledCom', data.connected, 'green');
+                setLed('ledErr', data.emergency_stop, 'red');
+                setLed('ledArm', data.armed_state, 'yellow');
+                setLed('ledLimit', data.limit_switch_ch5, 'green');
+
+                // Sync armed state from telemetry
+                armed = data.armed_state;
+                updateSafetyUI();
+
+                // Sequence status
+                const ss = document.getElementById('seqStatus');
+                if (data.emergency_stop) {
+                    ss.className = 'seq-status seq-estop'; ss.innerText = '🚨 EMERGENCY STOP 発動中';
+                } else if (data.ignition_active) {
+                    ss.className = 'seq-status seq-ign'; ss.innerText = '🔥 点火シーケンス実行中...';
+                } else if (data.fill_active) {
+                    ss.className = 'seq-status seq-fill';
+                    ss.innerText = data.can_confirm
+                        ? '⛽ 充填完了 → 点火確認待ち (CONFIRM 可能)'
+                        : '⛽ 充填シーケンス実行中...';
+                } else {
+                    ss.className = 'seq-status seq-idle'; ss.innerText = 'IDLE: シーケンス待機中';
+                }
+
+                // Valve CMD/FB LEDs
+                VALVE_NAMES.forEach(name => {
+                    const cmdEl = document.getElementById('cmd_' + name);
+                    const fbEl  = document.getElementById('fb_' + name);
+                    if (cmdEl) {
+                        cmdEl.className = 'valve-led' + (data.valves_cmd[name] ? ' cmd-on' : '');
+                    }
+                    if (fbEl) {
+                        fbEl.className = 'valve-led' + (data.valves_fb[name] ? ' fb-on' : '');
+                    }
+
+                    // Sync valve toggle UI from telemetry cmd state
+                    valveStates[name] = data.valves_cmd[name];
+                    const vt = document.getElementById('vt_' + name);
+                    if (vt) {
+                        if (valveStates[name]) { vt.classList.add('on'); } else { vt.classList.remove('on'); }
+                    }
+                });
+
+            }).catch(e => console.error(e));
+        }
+
+        function setLed(id, on, color) {
+            const el = document.getElementById(id);
+            el.className = 'led' + (on ? (' led-on-' + color) : '');
+        }
+
+        setInterval(updateTelemetry, 200);
     </script>
 </body>
 </html>
@@ -616,6 +979,28 @@ def api_command():
         success = send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, cmd_type, param)
         return jsonify({"status": "ok" if success else "failed"})
     return jsonify({"status": "invalid_request"}), 400
+
+@app.route('/api/valve_toggle', methods=['POST'])
+def api_valve_toggle():
+    """個別電磁弁のトグル操作エンドポイント（物理トグルスイッチの再現）"""
+    data = request.get_json() or {}
+    valve_name = data.get('valve', '').upper()
+    valve_state = int(data.get('state', 0))
+
+    if valve_name not in VALVE_NAMES:
+        return jsonify({"status": "invalid_valve", "valid": VALVE_NAMES}), 400
+
+    idx = VALVE_NAMES.index(valve_name)
+
+    with gse_state.lock:
+        if valve_state:
+            gse_state.cmd_state |= (1 << idx)
+        else:
+            gse_state.cmd_state &= ~(1 << idx)
+        cmd_b = gse_state.cmd_state
+
+    success = send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, CMD_VALVE_CONTROL, cmd_b)
+    return jsonify({"status": "ok" if success else "failed", "valve": valve_name, "state": valve_state})
 
 # =========================================================================
 # エントリポイント
