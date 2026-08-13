@@ -808,6 +808,37 @@ HTML_TEMPLATE = """
         }
         .toggle-track.on .toggle-knob { left: 25px; }
 
+        /* ===== Safety Status Window (アームド表示窓) ===== */
+        .safety-window {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 10px; border-radius: 8px;
+            margin: 4px 0 8px 0;
+            border: 2px solid #475569;
+            background: rgba(30, 41, 59, 0.4);
+            transition: all 0.3s;
+        }
+        .safety-window.disarmed {
+            border-color: #475569; background: rgba(51, 65, 85, 0.3); color: var(--text-dim);
+        }
+        .safety-window.armed {
+            border-color: var(--yellow);
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(180, 83, 9, 0.25) 100%);
+            color: #fef08a;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3), inset 0 0 10px rgba(234, 179, 8, 0.1);
+        }
+        .safety-window-icon {
+            font-size: 1.4rem; line-height: 1; flex-shrink: 0;
+        }
+        .safety-window-status {
+            font-size: 0.82rem; font-weight: 900; letter-spacing: 1px;
+        }
+        .safety-window-desc {
+            font-size: 0.62rem; color: var(--text-dim); margin-top: 1px;
+        }
+        .safety-window.armed .safety-window-desc {
+            color: #fef9c3;
+        }
+
         /* ===== E-STOP ===== */
         .estop-zone {
             margin: 8px 0;
@@ -1178,10 +1209,19 @@ HTML_TEMPLATE = """
             <div class="toggle-row">
                 <div>
                     <div class="toggle-label">🛡️ セーフティ (SAFETY)</div>
-                    <div class="toggle-sub">トグルスイッチ: 解除しないと操作不可</div>
+                    <div class="toggle-sub">トグルスイッチ: 解除で ARMED (作動準備) へ</div>
                 </div>
                 <div class="toggle-track" id="safetyToggle" onclick="toggleSafety()">
                     <div class="toggle-knob"></div>
+                </div>
+            </div>
+
+            <!-- Dedicated Safety Status Window (アームド状態表示窓) -->
+            <div class="safety-window disarmed" id="safetyWindow">
+                <div class="safety-window-icon" id="safetyWindowIcon">🔒</div>
+                <div class="safety-window-text">
+                    <div class="safety-window-status" id="safetyWindowStatus">DISARMED (安全施錠中)</div>
+                    <div class="safety-window-desc" id="safetyWindowDesc">セーフティトグルをONにすると ARMED (作動可能) に切り替わります</div>
                 </div>
             </div>
 
@@ -1367,6 +1407,28 @@ HTML_TEMPLATE = """
             const seqActive = isSequenceActive();
             const dumpIsOn = valveStates['DUMP'] || false;
 
+            // Update Safety Status Window (アームド状態表示窓)
+            const sWin = document.getElementById('safetyWindow');
+            const sIcon = document.getElementById('safetyWindowIcon');
+            const sStatus = document.getElementById('safetyWindowStatus');
+            const sDesc = document.getElementById('safetyWindowDesc');
+
+            if (armed) {
+                if (sWin) {
+                    sWin.className = 'safety-window armed';
+                    sIcon.innerText = '🛡️';
+                    sStatus.innerText = 'ARMED (アームド / 作動準備完了)';
+                    sDesc.innerText = '⚠️ セーフティ解除中: DUMP ON確認後、シーケンス開始が可能になります';
+                }
+            } else {
+                if (sWin) {
+                    sWin.className = 'safety-window disarmed';
+                    sIcon.innerText = '🔒';
+                    sStatus.innerText = 'DISARMED (安全施錠中)';
+                    sDesc.innerText = 'セーフティトグルをONにすると ARMED (作動可能) に切り替わります';
+                }
+            }
+
             // Enable/disable sequence start based on safety, estop, sequence state, AND DUMP valve ON status
             const btnSeq = document.getElementById('btnSeqStart');
             if (seqActive || estopLocked) {
@@ -1383,8 +1445,31 @@ HTML_TEMPLATE = """
                 btnSeq.innerText = "⛽ シーケンス開始 (SEQUENCE START)";
             }
 
-            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
-            document.getElementById('btnPeace').disabled    = !armed || estopLocked;
+            // Update Confirm & Ignite button:
+            // MUST REMAIN DISABLED even if Armed, UNTIL sequence has been started (seqActive / fillActiveState / canConfirmState)!
+            const btnConf = document.getElementById('btnConfirm');
+            if (!armed || estopLocked) {
+                btnConf.disabled = true;
+                btnConf.classList.remove('ready');
+                btnConf.innerText = "🔒 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
+            } else if (!seqActive && !canConfirmState) {
+                // Sequence NOT started yet: Disable even if Armed!
+                btnConf.disabled = true;
+                btnConf.classList.remove('ready');
+                btnConf.innerText = "🔒 充填確認 / 🔥 点火 (要 シーケンス開始)";
+            } else if (canConfirmState) {
+                // Filling complete & ready for ignition!
+                btnConf.disabled = false;
+                btnConf.classList.add('ready');
+                btnConf.innerText = "⛽ 充填確認 OK ➔ 🔥 点火開始 (CONFIRM & IGNITE)";
+            } else {
+                // Sequence running (filling in progress)
+                btnConf.disabled = false;
+                btnConf.classList.remove('ready');
+                btnConf.innerText = "⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
+            }
+
+            document.getElementById('btnPeace').disabled = !armed || estopLocked;
 
             // Highlight confirm button when ready
             const btnConf = document.getElementById('btnConfirm');
@@ -1469,7 +1554,7 @@ HTML_TEMPLATE = """
 
         /* ===== Confirm + Ignite (1-button with dialog) ===== */
         function confirmAndIgnite() {
-            if (!armed || estopLocked) return;
+            if (!armed || estopLocked || (!isSequenceActive() && !canConfirmState)) return;
             if (!confirm('【最終点火確認 (IGNITION CONFIRM)】\\n\\n⚠️  3人同時押し確認スイッチの代替操作です。\\n本当に点火シーケンスを開始しますか？')) return;
             sendCmd(4, 0);
         }
