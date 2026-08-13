@@ -1,0 +1,14 @@
+[Unit]
+Description=Gen6 GSE System - Raspberry Pi 4 Remote Control & Telemetry Bridge
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/raspi_gse_control
+ExecStart=/usr/bin/python3 /home/pi/raspi_gse_control/raspi_gse_control.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
