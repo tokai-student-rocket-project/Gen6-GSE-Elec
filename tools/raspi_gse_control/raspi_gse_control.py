@@ -33,7 +33,10 @@ except ImportError:
     sys.exit(1)
 
 import csv
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+# 日本標準時 (JST: UTC+9) 定義
+JST = timezone(timedelta(hours=9))
 
 try:
     from flask import Flask, render_template_string, jsonify, request, send_file, logging
@@ -154,7 +157,7 @@ class GSELogger:
     def __init__(self, logs_dir=LOGS_DIR):
         self.logs_dir = logs_dir
         os.makedirs(self.logs_dir, exist_ok=True)
-        self.current_filename = f"gse_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        self.current_filename = f"gse_log_{datetime.now(JST).strftime('%Y%m%d_%H%M%S')}.csv"
         self.current_filepath = os.path.join(self.logs_dir, self.current_filename)
         self.record_count = 0
         self.lock = threading.Lock()
@@ -162,7 +165,7 @@ class GSELogger:
 
     def _init_csv(self):
         headers = [
-            "timestamp_s", "timestamp_iso", "connected", "demo_mode",
+            "timestamp_s", "timestamp_iso_jst", "connected", "demo_mode",
             "pressure_MPa", "vesim_mA", "emergency_stop", "fill_active",
             "ignition_active", "can_confirm", "armed_state", "auto_purge",
             "limit_ch5", "launch_voltage_V", "sat_voltage_V"
@@ -180,7 +183,8 @@ class GSELogger:
 
     def log_state(self, state_dict):
         now = time.time()
-        iso_str = datetime.fromtimestamp(now).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        now_jst = datetime.now(JST)
+        iso_str = now_jst.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
         row = [
             round(now, 3), iso_str, 
@@ -1604,7 +1608,7 @@ def api_logs_list():
                 if fname.endswith(".csv"):
                     fpath = os.path.join(LOGS_DIR, fname)
                     size_kb = round(os.path.getsize(fpath) / 1024.0, 1)
-                    mtime = datetime.fromtimestamp(os.path.getmtime(fpath)).strftime('%Y-%m-%d %H:%M:%S')
+                    mtime = datetime.fromtimestamp(os.path.getmtime(fpath), tz=JST).strftime('%Y-%m-%d %H:%M:%S')
                     is_current = (fname == gse_logger.current_filename)
                     files.append({
                         "filename": fname,
