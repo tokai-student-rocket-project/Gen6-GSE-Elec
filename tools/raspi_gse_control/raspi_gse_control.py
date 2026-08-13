@@ -165,7 +165,7 @@ class GSELogger:
 
     def _init_csv(self):
         headers = [
-            "timestamp_s", "timestamp_iso_jst", "connected", "demo_mode",
+            "timestamp_s", "date_jst", "time_jst", "datetime_jst", "connected", "demo_mode",
             "pressure_MPa", "vesim_mA", "emergency_stop", "fill_active",
             "ignition_active", "can_confirm", "armed_state", "auto_purge",
             "limit_ch5", "launch_voltage_V", "sat_voltage_V"
@@ -184,10 +184,12 @@ class GSELogger:
     def log_state(self, state_dict):
         now = time.time()
         now_jst = datetime.now(JST)
-        iso_str = now_jst.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        date_str = now_jst.strftime('%Y-%m-%d')
+        time_str = now_jst.strftime('%H:%M:%S.%f')[:-3]
+        datetime_str = now_jst.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
         row = [
-            round(now, 3), iso_str, 
+            round(now, 3), date_str, time_str, datetime_str,
             1 if state_dict.get('connected') else 0,
             1 if state_dict.get('demo_mode') else 0,
             state_dict.get('pressure_MPa', 0.0),
