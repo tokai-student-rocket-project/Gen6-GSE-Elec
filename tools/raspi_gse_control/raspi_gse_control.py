@@ -611,18 +611,25 @@ HTML_TEMPLATE = """
         }
         .estop-reset-btn {
             display: none;
-            margin-top: 10px;
-            padding: 8px 20px;
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px 14px;
             background: #1e293b;
             color: var(--orange);
             border: 1px solid var(--orange);
-            border-radius: 6px;
-            font-size: 0.8rem; font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.85rem; font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(249,115,22,0.2);
         }
-        .estop-reset-btn:hover { background: rgba(249,115,22,0.15); }
-        .estop-reset-btn.visible { display: inline-block; }
+        .estop-reset-btn:hover {
+            background: rgba(249,115,22,0.15);
+            box-shadow: 0 0 15px rgba(249,115,22,0.4);
+        }
+        .estop-reset-btn.visible { display: block; }
 
         /* ===== Momentary (Tact) Button ===== */
         .tact-btn {
