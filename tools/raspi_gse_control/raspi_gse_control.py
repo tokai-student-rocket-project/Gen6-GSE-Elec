@@ -245,8 +245,10 @@ def auto_detect_serial_port():
 def send_msgpacketizer_packet(ser, packet_id, *args):
     """MsgPacketizer 形式 (MsgPack 配列 [packet_id, args...]) でパケットを作成して送信"""
     if gse_state.demo_mode:
-        # デモモード時はシミュレータにコマンドを直接転送
-        simulate_handle_command(args[0] if len(args) > 0 else 0, args[1] if len(args) > 1 else 0)
+        if packet_id == PACKET_RASPI_COMMAND:
+            cmd = args[0] if len(args) > 0 else 0
+            param = args[1] if len(args) > 1 else 0
+            simulate_handle_command(cmd, param)
         return True
 
     if ser is None or not ser.is_open:
@@ -388,39 +390,43 @@ def simulator_worker():
     print("[SIMULATOR] Demo Simulator Engine Running...")
     gse_state.connected = True
     gse_state.mcu_wireless_ok = True
+    gse_state.last_heartbeat_rx = time.time()
 
     while True:
-        with gse_state.lock:
-            # 圧力のアプローチ計算
-            dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
-            noise = random.uniform(-0.005, 0.005)
-            gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
+        try:
+            with gse_state.lock:
+                # 圧力のアプローチ計算
+                dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
+                noise = random.uniform(-0.005, 0.005)
+                gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
 
-            # 充填シーケンス中、圧力が 3.8 MPa を超えたら充填完了 (can_confirm = True) へ移行
-            if gse_state.fill_active and gse_state.pressure_MPa >= 3.8:
-                if not gse_state.can_confirm:
-                    print("\n[SIMULATOR] ⛽ N2O FILLING COMPLETE -> CAN CONFIRM READY FOR IGNITION!")
-                    gse_state.can_confirm = True
+                # 充填シーケンス中、圧力が 3.8 MPa を超えたら充填完了 (can_confirm = True) へ移行
+                if gse_state.fill_active and gse_state.pressure_MPa >= 3.8:
+                    if not gse_state.can_confirm:
+                        print("\n[SIMULATOR] ⛽ N2O FILLING COMPLETE -> CAN CONFIRM READY FOR IGNITION!")
+                        gse_state.can_confirm = True
 
-            # 電圧ジッター
-            gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
-            gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
+                # 電圧ジッター
+                gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
+                gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
 
-            # フィードバック状態を追従させる
-            if gse_state.armed_state:
-                gse_state.fb_state = gse_state.cmd_state
-            else:
-                gse_state.fb_state = 0
+                # フィードバック状態を追従させる
+                if gse_state.armed_state:
+                    gse_state.fb_state = gse_state.cmd_state
+                else:
+                    gse_state.fb_state = 0
 
-            seq_flag = 0
-            if gse_state.emergency_stop: seq_flag |= (1 << 0)
-            if gse_state.fill_active: seq_flag |= (1 << 1)
-            if gse_state.ignition_active: seq_flag |= (1 << 2)
-            if gse_state.can_confirm: seq_flag |= (1 << 3)
-            seq_flag |= (1 << 4) # Wireless OK
-            gse_state.sequence_flag = seq_flag
-            gse_state.last_heartbeat_rx = time.time()
-            gse_state.connected = True
+                seq_flag = 0
+                if gse_state.emergency_stop: seq_flag |= (1 << 0)
+                if gse_state.fill_active: seq_flag |= (1 << 1)
+                if gse_state.ignition_active: seq_flag |= (1 << 2)
+                if gse_state.can_confirm: seq_flag |= (1 << 3)
+                seq_flag |= (1 << 4) # Wireless OK
+                gse_state.sequence_flag = seq_flag
+                gse_state.last_heartbeat_rx = time.time()
+                gse_state.connected = True
+        except Exception as e:
+            print(f"[SIMULATOR LOOP ERROR] {e}")
 
         time.sleep(0.1)
 
@@ -1997,7 +2003,16 @@ def main():
         t_cli.start()
 
     print(f"\n[RASPI GSE SERVER] Starting Web Remote Control Dashboard at http://0.0.0.0:{args.web_port}")
-    app.run(host='0.0.0.0', port=args.web_port, debug=False)
+    try:
+        app.run(host='0.0.0.0', port=args.web_port, debug=False)
+    except OSError as e:
+        print(f"\n[CRITICAL PORT ERROR] Web Server Port {args.web_port} is already in use!")
+        print(f"Details: {e}")
+        print("💡 Solution 1: Kill existing GSE server processes:")
+        print("   pkill -f raspi_gse_control.py")
+        print(f"💡 Solution 2: Specify a different port:")
+        print(f"   python3 tools/raspi_gse_control/raspi_gse_control.py --demo --web-port 5001\n")
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
