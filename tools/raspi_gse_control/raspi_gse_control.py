@@ -629,6 +629,55 @@ HTML_TEMPLATE = """
             background: #6366f1; padding: 2px 7px; border-radius: 4px;
             font-size: 0.68rem; font-weight: 600; color: #fff; letter-spacing: 0.5px;
         }
+
+        /* ===== Toyota Andon Board (トヨタ式 アンドン表示板) ===== */
+        .andon-board {
+            background: linear-gradient(180deg, #0f172a 0%, #090d16 100%);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .andon-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.72rem; font-weight: 800; color: var(--blue);
+            border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .pokayoke-badge {
+            background: rgba(234,179,8,0.15); color: var(--yellow);
+            border: 1px solid var(--yellow); border-radius: 4px;
+            padding: 2px 8px; font-size: 0.68rem; font-weight: 700;
+            transition: all 0.3s;
+        }
+        .pokayoke-badge.safe { background: rgba(34,197,94,0.15); color: var(--green); border-color: var(--green); }
+        .pokayoke-badge.lock { background: rgba(239,68,68,0.15); color: var(--red); border-color: var(--red); }
+
+        .andon-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+        }
+        .andon-item {
+            background: #1e293b; border: 1px solid #334155; border-radius: 6px;
+            padding: 6px 8px; display: flex; align-items: center; gap: 8px;
+            opacity: 0.35; transition: all 0.3s;
+        }
+        .andon-item.active {
+            opacity: 1; border-color: #f8fafc;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        .andon-light {
+            width: 14px; height: 14px; border-radius: 50%; background: #475569;
+            flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .andon-item.active .andon-light.green  { background: #22c55e; box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e; }
+        .andon-item.active .andon-light.blue   { background: #3b82f6; box-shadow: 0 0 12px #3b82f6, 0 0 20px #3b82f6; }
+        .andon-item.active .andon-light.yellow { background: #eab308; box-shadow: 0 0 12px #eab308, 0 0 20px #eab308; }
+        .andon-item.active .andon-light.red    { background: #ef4444; box-shadow: 0 0 12px #ef4444, 0 0 24px #ef4444; animation: pulse-red 0.8s infinite; }
+
+        .andon-step { font-size: 0.72rem; font-weight: 800; color: #f8fafc; line-height: 1.1; }
+        .andon-sub { font-size: 0.55rem; color: var(--text-dim); font-weight: 600; }
         .conn-badge {
             padding: 4px 12px; border-radius: 16px; font-weight: 600; font-size: 0.75rem;
             transition: all 0.3s;
@@ -993,6 +1042,44 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
+    <!-- ===== Toyota Andon Status Board (トヨタ式 アンドン表示板) ===== -->
+    <div class="andon-board">
+        <div class="andon-header">
+            <span>🏮 トヨタ式 アンドン・ステータスボード (TOYOTA ANDON BOARD)</span>
+            <span class="pokayoke-badge" id="pokayokeBadge">🛡️ [ポカヨケ保護中] セーフティ解除待ち</span>
+        </div>
+        <div class="andon-grid">
+            <div class="andon-item active" id="andon1">
+                <div class="andon-light green"></div>
+                <div class="andon-text">
+                    <div class="andon-step">1. 待機・正常</div>
+                    <div class="andon-sub">STANDBY / SAFE</div>
+                </div>
+            </div>
+            <div class="andon-item" id="andon2">
+                <div class="andon-light blue"></div>
+                <div class="andon-text">
+                    <div class="andon-step">2. 充填工程</div>
+                    <div class="andon-sub">FILLING ACTIVE</div>
+                </div>
+            </div>
+            <div class="andon-item" id="andon3">
+                <div class="andon-light yellow"></div>
+                <div class="andon-text">
+                    <div class="andon-step">3. 確認・点火準備</div>
+                    <div class="andon-sub">CONFIRM & IGNITE</div>
+                </div>
+            </div>
+            <div class="andon-item" id="andon4">
+                <div class="andon-light red"></div>
+                <div class="andon-text">
+                    <div class="andon-step">4. アンドン非常停止</div>
+                    <div class="andon-sub">ANDON EMERGENCY</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="main-grid">
         <!-- ===== Left Top: Status & Pressure & MCU Health ===== -->
         <div class="card">
@@ -1144,7 +1231,10 @@ HTML_TEMPLATE = """
 
         <!-- ===== Left Bottom: Valve Toggles ===== -->
         <div class="card" style="grid-column: 1 / -1;">
-            <h3>🔧 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:4px; margin-bottom:8px;">
+                <h3 style="border-bottom:none; margin-bottom:0; padding-bottom:0;">🔧 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
+                <span class="pokayoke-badge" id="pokayokeValveTag" style="font-size:0.65rem;">🔒 セーフティ施錠中</span>
+            </div>
             <div class="valve-grid" id="valveGrid"></div>
         </div>
     </div>
@@ -1422,6 +1512,59 @@ HTML_TEMPLATE = """
                 } else {
                     lsb.className = 'status-banner-large idle';
                     lsb.innerText = 'SYSTEM STANDBY (待機中)';
+                }
+
+                // Toyota Andon & Poka-Yoke Status Update
+                const a1 = document.getElementById('andon1');
+                const a2 = document.getElementById('andon2');
+                const a3 = document.getElementById('andon3');
+                const a4 = document.getElementById('andon4');
+                const pyBadge = document.getElementById('pokayokeBadge');
+                const pyValveTag = document.getElementById('pokayokeValveTag');
+
+                if (a1 && a2 && a3 && a4) {
+                    a1.classList.remove('active');
+                    a2.classList.remove('active');
+                    a3.classList.remove('active');
+                    a4.classList.remove('active');
+
+                    if (data.emergency_stop) {
+                        a4.classList.add('active');
+                        if (pyBadge) {
+                            pyBadge.className = 'pokayoke-badge lock';
+                            pyBadge.innerText = '🔴 [アンドン引き当て停止] E-STOP 発動中 (全動作強制ロック)';
+                        }
+                        if (pyValveTag) pyValveTag.innerText = '⛔ アンドン停止中: 全弁自動安全姿勢';
+                    } else if (data.can_confirm || data.ignition_active) {
+                        a3.classList.add('active');
+                        if (pyBadge) {
+                            pyBadge.className = 'pokayoke-badge safe';
+                            pyBadge.innerText = '🟠 [点火準備完了] Confirmボタンで点火開始可能';
+                        }
+                        if (pyValveTag) pyValveTag.innerText = '⛔ シーケンス進行中: 手動トグルロック中';
+                    } else if (data.fill_active) {
+                        a2.classList.add('active');
+                        if (pyBadge) {
+                            pyBadge.className = 'pokayoke-badge safe';
+                            pyBadge.innerText = '🔵 [充填工程実行中] ポカヨケ: 手動弁操作は自動保護ロック中';
+                        }
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 充填中: 手動弁トグル禁止 (ポカヨケ保護)';
+                    } else {
+                        a1.classList.add('active');
+                        if (!data.armed_state) {
+                            if (pyBadge) {
+                                pyBadge.className = 'pokayoke-badge';
+                                pyBadge.innerText = '🔒 [ポカヨケ保護中] セーフティ解除なしではシーケンス起動不可';
+                            }
+                            if (pyValveTag) pyValveTag.innerText = '🔒 セーフティ施錠中';
+                        } else {
+                            if (pyBadge) {
+                                pyBadge.className = 'pokayoke-badge safe';
+                                pyBadge.innerText = '🛡️ [ポカヨケ正常] セーフティ解除済み (操作可能)';
+                            }
+                            if (pyValveTag) pyValveTag.innerText = '🛡️ ポカヨケ: 通常手動トグル可能';
+                        }
+                    }
                 }
 
                 // Status LEDs
