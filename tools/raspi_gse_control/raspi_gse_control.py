@@ -222,6 +222,7 @@ def simulate_handle_command(cmd_type, param):
             gse_state.emergency_stop = True
             gse_state.fill_active = False
             gse_state.ignition_active = False
+            gse_state.can_confirm = False
             purge_bit = (1 << 7) if gse_state.auto_purge_enabled else 0
             gse_state.cmd_state = (1 << 2) | (1 << 6) | purge_bit  # DUMP, CLOSE, (PURGE if Auto Purge ON)
             sim_target_pressure = 0.0
@@ -231,6 +232,7 @@ def simulate_handle_command(cmd_type, param):
             gse_state.emergency_stop = False
             gse_state.fill_active = False
             gse_state.ignition_active = False
+            gse_state.can_confirm = False
             gse_state.cmd_state = 0
             sim_target_pressure = 0.0
 
@@ -244,6 +246,7 @@ def simulate_handle_command(cmd_type, param):
                 return
             print("\n[SIMULATOR] ⛽ FILL SEQUENCE STARTED!")
             gse_state.fill_active = True
+            gse_state.can_confirm = True
             gse_state.cmd_state |= (1 << 1)  # FILL ON
             sim_target_pressure = 4.50
 
@@ -629,6 +632,15 @@ HTML_TEMPLATE = """
             background: linear-gradient(135deg, #d97706, #b45309);
             color: #fff;
         }
+        .tact-confirm.ready {
+            background: linear-gradient(135deg, #ea580c, #dc2626) !important;
+            animation: pulse-confirm 1.5s infinite;
+        }
+        @keyframes pulse-confirm {
+            0% { box-shadow: 0 0 6px rgba(234,88,12,0.4); }
+            50% { box-shadow: 0 0 20px rgba(234,88,12,0.9); }
+            100% { box-shadow: 0 0 6px rgba(234,88,12,0.4); }
+        }
         .tact-peace {
             background: #334155;
             color: var(--text);
@@ -802,10 +814,10 @@ HTML_TEMPLATE = """
                 ⛽ シーケンス開始 (SEQUENCE START)
             </button>
 
-            <!-- Confirm Ignition (1-button + dialog) -->
+            <!-- Confirm Ignition / Fill Confirm Button -->
             <button class="tact-btn tact-confirm" id="btnConfirm"
                     onclick="confirmAndIgnite()" disabled>
-                🔥 点火確認 (IGNITION CONFIRM)
+                ⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)
             </button>
 
             <!-- Peaceful Stop -->
@@ -902,8 +914,18 @@ HTML_TEMPLATE = """
 
             // Enable/disable sequence start & confirm based on safety, estop, and current sequence state
             document.getElementById('btnSeqStart').disabled = !armed || estopLocked || seqActive;
-            document.getElementById('btnConfirm').disabled  = !armed || estopLocked || !canConfirmState;
+            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
             document.getElementById('btnPeace').disabled    = !armed || estopLocked;
+
+            // Highlight confirm button when ready
+            const btnConf = document.getElementById('btnConfirm');
+            if (canConfirmState) {
+                btnConf.classList.add('ready');
+                btnConf.innerText = "⛽ 充填確認 OK → 🔥 点火開始 (CONFIRM & IGNITE)";
+            } else {
+                btnConf.classList.remove('ready');
+                btnConf.innerText = "⛽ 充填確認 / 🔥 点火 (CONFIRM & IGNITE)";
+            }
 
             // Update valve toggles: DISABLE during automatic sequences to prevent overwriting MCU sequence
             VALVE_NAMES.forEach(name => {
