@@ -356,9 +356,9 @@ def simulate_handle_command(cmd_type, param):
             if not dump_on:
                 print("\n[SIMULATOR REJECT] Cannot Fill: DUMP valve must be ON before sequence start!")
                 return
-            print("\n[SIMULATOR] ⛽ FILL SEQUENCE STARTED!")
+            print("\n[SIMULATOR] ⛽ FILL SEQUENCE STARTED (Filling N2O)...")
             gse_state.fill_active = True
-            gse_state.can_confirm = True
+            gse_state.can_confirm = False  # 充填開始時はcan_confirmはFalse。圧力が上がって充填完了後にTrueへ移行
             gse_state.cmd_state &= ~(1 << 2)  # DUMP AUTO OFF (シークエンス開始前にDUMPを自動OFF/CLOSE)
             gse_state.cmd_state |= (1 << 1)   # FILL ON
             sim_target_pressure = 4.50
@@ -395,6 +395,12 @@ def simulator_worker():
             dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
             noise = random.uniform(-0.005, 0.005)
             gse_state.pressure_MPa = max(0.0, gse_state.pressure_MPa + dp + noise)
+
+            # 充填シーケンス中、圧力が 3.8 MPa を超えたら充填完了 (can_confirm = True) へ移行
+            if gse_state.fill_active and gse_state.pressure_MPa >= 3.8:
+                if not gse_state.can_confirm:
+                    print("\n[SIMULATOR] ⛽ N2O FILLING COMPLETE -> CAN CONFIRM READY FOR IGNITION!")
+                    gse_state.can_confirm = True
 
             # 電圧ジッター
             gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
@@ -1560,18 +1566,25 @@ HTML_TEMPLATE = """
                             pyBadge.innerText = '🔴 [アンドン引き当て停止] E-STOP 発動中 (全動作強制ロック)';
                         }
                         if (pyValveTag) pyValveTag.innerText = '⛔ アンドン停止中: 全弁自動安全姿勢';
-                    } else if (data.can_confirm || data.ignition_active) {
+                    } else if (data.ignition_active) {
                         a3.classList.add('active');
                         if (pyBadge) {
                             pyBadge.className = 'pokayoke-badge safe';
-                            pyBadge.innerText = '🟠 [点火準備完了] Confirmボタンで点火開始可能';
+                            pyBadge.innerText = '🔥 [点火シーケンス実行中] 燃焼制御中...';
                         }
-                        if (pyValveTag) pyValveTag.innerText = '⛔ シーケンス進行中: 手動トグルロック中';
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 点火中: 手動弁操作ロック中';
+                    } else if (data.can_confirm) {
+                        a3.classList.add('active');
+                        if (pyBadge) {
+                            pyBadge.className = 'pokayoke-badge safe';
+                            pyBadge.innerText = '🟠 [充填完了・点火準備完了] 充填完了 ➔ Confirmボタンで点火開始可能';
+                        }
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 点火準備OK: 手動弁操作ロック中';
                     } else if (data.fill_active) {
                         a2.classList.add('active');
                         if (pyBadge) {
                             pyBadge.className = 'pokayoke-badge safe';
-                            pyBadge.innerText = '🔵 [充填工程実行中] ポカヨケ: 手動弁操作は自動保護ロック中';
+                            pyBadge.innerText = '🔵 [2. 充填工程実行中] N2O自動充填中... (ポカヨケ: 手動弁保護中)';
                         }
                         if (pyValveTag) pyValveTag.innerText = '⛔ 充填中: 手動弁トグル禁止 (ポカヨケ保護)';
                     } else {
