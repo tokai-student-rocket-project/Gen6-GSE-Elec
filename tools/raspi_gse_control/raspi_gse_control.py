@@ -856,6 +856,7 @@ HTML_TEMPLATE = """
         let fillStartTime = null;  // FILL ON 時刻
         let fillElapsed = null;    // FILL停止後の確定秒数
         let openStartTime = null;  // OPEN ON 時刻
+        let openElapsed = null;    // OPEN停止（通常停止/エマスト含む）後の確定秒数
         let prevFillOn = false;
         let prevOpenOn = false;
         let prevSeqActive = false;
@@ -1072,15 +1073,15 @@ HTML_TEMPLATE = """
                 if (!fillOn && prevFillOn && fillStartTime) { fillElapsed = (now - fillStartTime) / 1000; fillStartTime = null; }
                 prevFillOn = fillOn;
 
-                // T+ OPEN: OPEN ON からカウントアップ
-                if (openOn && !prevOpenOn) { openStartTime = now; }
-                if (!openOn) { openStartTime = null; }
+                // T+ OPEN: OPEN ON からの経過 / OPEN OFF (通常停止/エマスト含む) で停止・確定表示
+                if (openOn && !prevOpenOn) { openStartTime = now; openElapsed = null; }
+                if (!openOn && prevOpenOn && openStartTime) { openElapsed = (now - openStartTime) / 1000; openStartTime = null; }
                 prevOpenOn = openOn;
 
                 // Timer display update
                 updateTimerDisplay('timerSeq',  seqStartTime,  null,         seqActive);
                 updateTimerDisplay('timerFill', fillStartTime, fillElapsed,  fillOn);
-                updateTimerDisplay('timerOpen', openStartTime, null,         openOn);
+                updateTimerDisplay('timerOpen', openStartTime, openElapsed,  openOn);
 
                 // Valve CMD/FB LEDs
                 VALVE_NAMES.forEach(name => {
