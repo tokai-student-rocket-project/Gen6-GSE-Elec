@@ -34,18 +34,25 @@ except ImportError:
 
 import csv
 from datetime import datetime, timezone, timedelta
+import signal
 
 # 日本標準時 (JST: UTC+9) 定義
 JST = timezone(timedelta(hours=9))
 
 try:
-    from flask import Flask, render_template_string, jsonify, request, send_file, logging
+    from flask import Flask, render_template_string, jsonify, request, send_file
     import logging
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
 except ImportError:
     print("[ERROR] 'flask' package is missing. Install with: pip install flask")
     sys.exit(1)
+
+def handle_sigint(sig, frame):
+    print("\n\n[GSE SERVER] Shutting down GSE Server gracefully...")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, handle_sigint)
 
 # =========================================================================
 # 通信定数・パケット ID 定義 (Launch3.0 / Satellite3.0 仕様準拠)
@@ -391,9 +398,11 @@ def simulator_worker():
     gse_state.connected = True
     gse_state.mcu_wireless_ok = True
     gse_state.last_heartbeat_rx = time.time()
+    tick_counter = 0
 
     while True:
         try:
+            tick_counter += 1
             with gse_state.lock:
                 # 圧力のアプローチ計算
                 dp = (sim_target_pressure - gse_state.pressure_MPa) * 0.1
@@ -425,6 +434,12 @@ def simulator_worker():
                 gse_state.sequence_flag = seq_flag
                 gse_state.last_heartbeat_rx = time.time()
                 gse_state.connected = True
+
+                # 5秒(50 ticks)毎にコンソールへハートビート進捗ログを出力
+                if tick_counter % 50 == 0:
+                    arm_str = "ARMED" if gse_state.armed_state else "DISARMED"
+                    recs = gse_logger.record_count if 'gse_logger' in globals() else 0
+                    print(f"[DEMO ENGINE] Alive | Press: {gse_state.pressure_MPa:.3f} MPa | Safety: {arm_str} | CSV Logs: {recs} recs")
         except Exception as e:
             print(f"[SIMULATOR LOOP ERROR] {e}")
 
@@ -1967,6 +1982,20 @@ def api_logs_latest():
     """現在書き込み中の最新 CSV ログファイルをワンクリックダウンロード"""
     return api_logs_download(gse_logger.current_filename)
 
+def get_local_ips():
+    ips = ["127.0.0.1", "localhost"]
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        if local_ip not in ips:
+            ips.append(local_ip)
+    except Exception:
+        pass
+    return ips
+
 # =========================================================================
 # エントリポイント
 # =========================================================================
@@ -1981,9 +2010,6 @@ def main():
 
     if args.demo:
         gse_state.demo_mode = True
-        print("\n" + "="*65)
-        print(" 🎮 DEMO MODE ENABLED: Running without physical hardware!")
-        print("="*65 + "\n")
         t_sim = threading.Thread(target=simulator_worker, daemon=True)
         t_sim.start()
     else:
@@ -1997,12 +2023,25 @@ def main():
     t_log = threading.Thread(target=logger_worker, daemon=True)
     t_log.start()
 
-    # CLI プロンプトの起動 (オプション指定時のみ)
-    if args.cli:
+    local_ips = get_local_ips()
+    print("\n" + "="*65)
+    print(" 🚀 GSE REMOTE CONTROL SERVER IS LIVE & READY!")
+    print("="*65)
+    print(" 🌐 Access Dashboard in your web browser at:")
+    for ip in local_ips:
+        print(f"    👉 http://{ip}:{args.web_port}")
+    if args.demo:
+        print(" 🎮 Mode: DEMO / SIMULATOR (No hardware required)")
+    else:
+        print(f" 🔌 Mode: PHYSICAL HARDWARE ({args.port} @ {args.baud} bps)")
+    print(" 💡 Press Ctrl+C to stop the server at any time.")
+    print("="*65 + "\n")
+
+    # CLI プロンプトの起動 (ターミナル対話時、または--cli指定時)
+    if args.cli or (args.demo and sys.stdin.isatty()):
         t_cli = threading.Thread(target=cli_worker, daemon=True)
         t_cli.start()
 
-    print(f"\n[RASPI GSE SERVER] Starting Web Remote Control Dashboard at http://0.0.0.0:{args.web_port}")
     try:
         app.run(host='0.0.0.0', port=args.web_port, debug=False)
     except OSError as e:
