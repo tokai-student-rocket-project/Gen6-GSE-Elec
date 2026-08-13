@@ -828,9 +828,16 @@ HTML_TEMPLATE = """
         let autoPurge = true;
         let estopLocked = false;
         let cmdSentThisPress = false;
+        let fillActiveState = false;
+        let ignitionActiveState = false;
+        let canConfirmState = false;
         const VALVE_NAMES = ["SHIFT","FILL","DUMP","OXYGEN","IGNITER","OPEN","CLOSE","PURGE"];
         let valveStates = {};
         VALVE_NAMES.forEach(v => valveStates[v] = false);
+
+        function isSequenceActive() {
+            return fillActiveState || ignitionActiveState;
+        }
 
         /* ===== Timer state ===== */
         let seqStartTime = null;   // シーケンス開始時刻
@@ -891,17 +898,22 @@ HTML_TEMPLATE = """
             const el = document.getElementById('safetyToggle');
             if (armed) { el.classList.add('on'); } else { el.classList.remove('on'); }
 
-            // Enable/disable all control buttons based on safety
-            document.getElementById('btnSeqStart').disabled = !armed || estopLocked;
-            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
-            document.getElementById('btnPeace').disabled     = !armed || estopLocked;
+            const seqActive = isSequenceActive();
 
-            // Update valve toggles
+            // Enable/disable sequence start & confirm based on safety, estop, and current sequence state
+            document.getElementById('btnSeqStart').disabled = !armed || estopLocked || seqActive;
+            document.getElementById('btnConfirm').disabled  = !armed || estopLocked || !canConfirmState;
+            document.getElementById('btnPeace').disabled    = !armed || estopLocked;
+
+            // Update valve toggles: DISABLE during automatic sequences to prevent overwriting MCU sequence
             VALVE_NAMES.forEach(name => {
                 const vt = document.getElementById('vt_' + name);
                 if (vt) {
-                    if (armed && !estopLocked) { vt.classList.remove('disabled'); }
-                    else { vt.classList.add('disabled'); }
+                    if (armed && !estopLocked && !seqActive) {
+                        vt.classList.remove('disabled');
+                    } else {
+                        vt.classList.add('disabled');
+                    }
                 }
             });
         }
@@ -949,7 +961,7 @@ HTML_TEMPLATE = """
 
         /* ===== Valve toggles ===== */
         function toggleValve(name) {
-            if (!armed || estopLocked) return;
+            if (!armed || estopLocked || isSequenceActive()) return;
             valveStates[name] = !valveStates[name];
 
             // Update toggle UI
@@ -995,8 +1007,12 @@ HTML_TEMPLATE = """
                 setLed('ledArm', data.armed_state, 'yellow');
                 setLed('ledLimit', data.limit_switch_ch5, 'green');
 
-                // Sync armed state & auto purge from telemetry
+                // Sync sequence & armed states from telemetry
                 armed = data.armed_state;
+                fillActiveState = data.fill_active || false;
+                ignitionActiveState = data.ignition_active || false;
+                canConfirmState = data.can_confirm || false;
+
                 updateSafetyUI();
                 if (data.auto_purge !== undefined) {
                     autoPurge = data.auto_purge;
@@ -1126,6 +1142,12 @@ def api_valve_toggle():
 
     if valve_name not in VALVE_NAMES:
         return jsonify({"status": "invalid_valve", "valid": VALVE_NAMES}), 400
+
+    # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
+    with gse_state.lock:
+        if gse_state.fill_active or gse_state.ignition_active:
+            print("[SERVER REJECT] Valve toggle blocked during active automatic sequence!")
+            return jsonify({"status": "blocked", "message": "Sequence is currently active"}), 403
 
     idx = VALVE_NAMES.index(valve_name)
 
