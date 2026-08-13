@@ -1066,7 +1066,7 @@ HTML_TEMPLATE = """
             <!-- E-STOP -->
             <div class="estop-zone">
                 <button class="estop-btn" id="estopBtn" onclick="pressEstop()">
-                    <br>緊急停止
+                    緊急停止
                 </button>
                 <br>
                 <button class="estop-reset-btn" id="estopResetBtn" onclick="resetEstop()">
