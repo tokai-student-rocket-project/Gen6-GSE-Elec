@@ -6,7 +6,9 @@
 	(paper "A4")
 	(title_block
 		(title "Gen6 GSE Launch Controller 2.0")
-		(date "2026-03-30")
+		(date "2026-08-05")
+		(rev "Build-2")
+		(company "Tokai Student Rocket Project")
 	)
 	(lib_symbols
 		(symbol "Connector:USB_C_Receptacle_USB2.0_16P"
@@ -5959,6 +5961,12 @@
 		(uuid "13134cce-0d61-483f-891b-06dfbfeecf24")
 	)
 	(junction
+		(at 218.44 67.31)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "134b9c65-b8b2-466d-924f-12293122af91")
+	)
+	(junction
 		(at 36.83 21.59)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5975,12 +5983,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2d0f862b-d68d-44d1-97d1-11505242bb1f")
-	)
-	(junction
-		(at 247.65 64.77)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "2dcb927a-e263-4b36-91c6-009c0c9835aa")
 	)
 	(junction
 		(at 36.83 52.07)
@@ -6001,12 +6003,6 @@
 		(uuid "376b9e3c-e654-44d0-b3df-1136f6cedcc7")
 	)
 	(junction
-		(at 210.82 77.47)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3a6ae9b2-f149-4c3e-a52e-f82335955b89")
-	)
-	(junction
 		(at 40.64 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6019,10 +6015,10 @@
 		(uuid "4bf88fe6-7659-4791-abdb-21f2325139f3")
 	)
 	(junction
-		(at 210.82 80.01)
+		(at 210.82 67.31)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "4c913000-2752-48bb-9d2f-d40f429a07f3")
+		(uuid "6dbf1a82-4d92-475b-8cd7-f16d838e8026")
 	)
 	(junction
 		(at 119.38 109.22)
@@ -6049,6 +6045,12 @@
 		(uuid "94694a66-3908-4f87-a352-bdcab4a7e712")
 	)
 	(junction
+		(at 210.82 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "976b71b2-283a-4611-892d-905f19630ecb")
+	)
+	(junction
 		(at 125.73 29.21)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6059,12 +6061,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b63555a9-2db4-4d4f-aa05-9aaf0cccf5a2")
-	)
-	(junction
-		(at 218.44 64.77)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c7f2b770-b0cc-4f97-ac47-b72ffaa4203f")
 	)
 	(junction
 		(at 222.25 101.6)
@@ -6091,6 +6087,12 @@
 		(uuid "d2fb1b89-b8ac-4e0d-9c34-f8525406426a")
 	)
 	(junction
+		(at 218.44 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d518f217-4598-4cbc-8782-69176228b83d")
+	)
+	(junction
 		(at 224.79 154.94)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6103,12 +6105,6 @@
 		(uuid "e6ff7449-06a4-45ad-8bcd-7b2e4e8cc32c")
 	)
 	(junction
-		(at 210.82 68.58)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e8593880-98fa-4c1c-932e-1591b7757d40")
-	)
-	(junction
 		(at 82.55 22.86)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -6119,18 +6115,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f2313e22-c480-49d3-8bc5-4f7d3d4af065")
-	)
-	(junction
-		(at 218.44 68.58)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f28f6c81-81cc-4d85-ba49-e8c89fd6f6ff")
-	)
-	(junction
-		(at 243.84 138.43)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f3664513-6b86-49b1-aa99-0d6eb6dfa799")
 	)
 	(junction
 		(at 15.24 53.34)
@@ -6386,7 +6370,7 @@
 	)
 	(wire
 		(pts
-			(xy 210.82 77.47) (xy 212.09 77.47)
+			(xy 210.82 76.2) (xy 212.09 76.2)
 		)
 		(stroke
 			(width 0)
@@ -6566,16 +6550,6 @@
 	)
 	(wire
 		(pts
-			(xy 218.44 77.47) (xy 218.44 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "200f634f-b4b7-45b5-9aaf-a178a7842ac4")
-	)
-	(wire
-		(pts
 			(xy 91.44 45.72) (xy 90.17 45.72)
 		)
 		(stroke
@@ -6676,7 +6650,7 @@
 	)
 	(wire
 		(pts
-			(xy 217.17 77.47) (xy 218.44 77.47)
+			(xy 217.17 76.2) (xy 218.44 76.2)
 		)
 		(stroke
 			(width 0)
@@ -6796,7 +6770,17 @@
 	)
 	(wire
 		(pts
-			(xy 218.44 64.77) (xy 218.44 68.58)
+			(xy 218.44 67.31) (xy 218.44 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3ab7307f-bfe0-4f48-ae2c-065ee13ab11d")
+	)
+	(wire
+		(pts
+			(xy 218.44 64.77) (xy 218.44 67.31)
 		)
 		(stroke
 			(width 0)
@@ -6806,7 +6790,7 @@
 	)
 	(wire
 		(pts
-			(xy 217.17 68.58) (xy 218.44 68.58)
+			(xy 217.17 67.31) (xy 218.44 67.31)
 		)
 		(stroke
 			(width 0)
@@ -6936,6 +6920,16 @@
 	)
 	(wire
 		(pts
+			(xy 210.82 76.2) (xy 210.82 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52173d4e-db77-42b7-ab71-fb180d41a09c")
+	)
+	(wire
+		(pts
 			(xy 92.71 15.24) (xy 93.98 15.24)
 		)
 		(stroke
@@ -6993,6 +6987,16 @@
 			(type default)
 		)
 		(uuid "5676d9db-1b92-4f5d-9d2a-a9ef1e89ccdd")
+	)
+	(wire
+		(pts
+			(xy 210.82 67.31) (xy 210.82 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56891208-1721-429f-bf74-32bd69ff3b45")
 	)
 	(wire
 		(pts
@@ -7116,6 +7120,16 @@
 	)
 	(wire
 		(pts
+			(xy 257.81 50.8) (xy 257.81 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "66cf022d-4c44-46ff-b4ed-d7883ab86a3f")
+	)
+	(wire
+		(pts
 			(xy 167.64 40.64) (xy 172.72 40.64)
 		)
 		(stroke
@@ -7173,6 +7187,16 @@
 			(type default)
 		)
 		(uuid "6f2f8f37-f4e5-47db-b69d-3e16a87b9fb9")
+	)
+	(wire
+		(pts
+			(xy 242.57 135.89) (xy 243.84 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6f5583b9-e1a0-4605-8988-c34fdd1ce447")
 	)
 	(wire
 		(pts
@@ -7253,16 +7277,6 @@
 			(type default)
 		)
 		(uuid "785668b2-437d-480f-b738-94a478afc31d")
-	)
-	(wire
-		(pts
-			(xy 257.81 80.01) (xy 257.81 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "78857544-c570-4c4c-8fbd-c783c24f2e90")
 	)
 	(wire
 		(pts
@@ -7426,16 +7440,6 @@
 	)
 	(wire
 		(pts
-			(xy 210.82 77.47) (xy 210.82 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "89121031-2d70-45d0-b97b-9700fb35e176")
-	)
-	(wire
-		(pts
 			(xy 91.44 50.8) (xy 90.17 50.8)
 		)
 		(stroke
@@ -7493,26 +7497,6 @@
 			(type default)
 		)
 		(uuid "8d45699a-268a-40d1-8472-e5b0c7d58815")
-	)
-	(wire
-		(pts
-			(xy 218.44 64.77) (xy 247.65 64.77)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8dec13ff-14a4-4b14-bfc6-1bf1bf8747da")
-	)
-	(wire
-		(pts
-			(xy 210.82 68.58) (xy 210.82 77.47)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9026ab90-3909-450b-a58e-0a79bcf0ec95")
 	)
 	(wire
 		(pts
@@ -7586,7 +7570,7 @@
 	)
 	(wire
 		(pts
-			(xy 212.09 68.58) (xy 210.82 68.58)
+			(xy 212.09 67.31) (xy 210.82 67.31)
 		)
 		(stroke
 			(width 0)
@@ -7623,16 +7607,6 @@
 			(type default)
 		)
 		(uuid "a048a794-f2a2-4012-9849-3f90030f36eb")
-	)
-	(wire
-		(pts
-			(xy 242.57 135.89) (xy 243.84 135.89)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a3486caa-da6d-439a-b5df-2e4c11963920")
 	)
 	(wire
 		(pts
@@ -7766,16 +7740,6 @@
 	)
 	(wire
 		(pts
-			(xy 243.84 138.43) (xy 245.11 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b683db57-25f5-41af-a31b-a22883fb3cca")
-	)
-	(wire
-		(pts
 			(xy 90.17 134.62) (xy 109.22 134.62)
 		)
 		(stroke
@@ -7896,23 +7860,13 @@
 	)
 	(wire
 		(pts
-			(xy 210.82 64.77) (xy 210.82 68.58)
+			(xy 210.82 64.77) (xy 210.82 67.31)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "c74bb8fc-8145-4e23-bb88-508676af27a5")
-	)
-	(wire
-		(pts
-			(xy 210.82 80.01) (xy 257.81 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c74d503f-a68a-44b2-833f-ad371f7b2397")
 	)
 	(wire
 		(pts
@@ -7956,7 +7910,7 @@
 	)
 	(wire
 		(pts
-			(xy 247.65 66.04) (xy 247.65 64.77)
+			(xy 247.65 34.29) (xy 247.65 66.04)
 		)
 		(stroke
 			(width 0)
@@ -8053,16 +8007,6 @@
 			(type default)
 		)
 		(uuid "d3dc4792-e24c-492d-b573-ce6f17910177")
-	)
-	(wire
-		(pts
-			(xy 247.65 64.77) (xy 247.65 34.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d45e2d13-b8a1-4689-9506-83638e5e72d2")
 	)
 	(wire
 		(pts
@@ -8236,16 +8180,6 @@
 	)
 	(wire
 		(pts
-			(xy 242.57 138.43) (xy 243.84 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "edbc7801-c949-43e2-9ae7-6e22ab6c8c4c")
-	)
-	(wire
-		(pts
 			(xy 257.81 22.86) (xy 257.81 36.83)
 		)
 		(stroke
@@ -8263,6 +8197,16 @@
 			(type default)
 		)
 		(uuid "ef3b8237-addc-451f-8a46-ab0c13b74e2c")
+	)
+	(wire
+		(pts
+			(xy 218.44 76.2) (xy 218.44 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ef4d30d6-007d-43b6-bbc6-c57ac4df1bc4")
 	)
 	(wire
 		(pts
@@ -8286,6 +8230,16 @@
 	)
 	(wire
 		(pts
+			(xy 242.57 138.43) (xy 243.84 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f19ae068-8e81-403e-9ca7-8288c3d4f711")
+	)
+	(wire
+		(pts
 			(xy 40.64 50.8) (xy 40.64 52.07)
 		)
 		(stroke
@@ -8293,16 +8247,6 @@
 			(type default)
 		)
 		(uuid "f1cea30c-1b70-446e-992e-e6f768ffef08")
-	)
-	(wire
-		(pts
-			(xy 243.84 135.89) (xy 243.84 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f286702a-ba36-40a3-86ee-90f37ed000b1")
 	)
 	(wire
 		(pts
@@ -8425,8 +8369,8 @@
 		(uuid "ff9f26f0-d7f3-4821-b27f-f5394ee9d2fc")
 	)
 	(image
-		(at 219.71 173.99)
-		(scale 0.0638841)
+		(at 212.09 172.72)
+		(scale 0.0518467)
 		(uuid "575ebbc2-96e5-4f9c-bd01-acb2ce20600f")
 		(data "iVBORw0KGgoAAAANSUhEUgAAEkMAAAMtCAYAAAAyRrHOAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz"
 			"AAAOvwAADr8BOAVTJAAAABl0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuODc7gF0AAP+NSURB"
@@ -10920,28 +10864,6 @@
 			)
 		)
 	)
-	(global_label "LED_USB_ACCESS"
-		(shape input)
-		(at 245.11 138.43 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "2a69b6bb-bd11-40ae-b96c-763c22c488e6")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 264.4047 138.43 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "CTL_RESET"
 		(shape output)
 		(at 265.43 120.65 0)
@@ -11175,6 +11097,28 @@
 		(uuid "49dc9539-8bb9-4ded-9a73-dd7239e41049")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 103.7801 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LED_USB_RXLED"
+		(shape input)
+		(at 243.84 138.43 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ad6a968-47a7-417b-823e-70da763e119c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 261.9441 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12086,6 +12030,28 @@
 			)
 		)
 	)
+	(global_label "LED_USB_TXLED"
+		(shape input)
+		(at 243.84 135.89 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d7d9ccb3-18ef-4ed3-9658-3298687da0c0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 261.6417 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "LED_SEQUENCE"
 		(shape output)
 		(at 48.26 162.56 180)
@@ -12537,7 +12503,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-13312/"
+		(property "Datasheet" "https://www.digikey.jp/short/bbj307jp"
 			(at 21.59 53.34 0)
 			(effects
 				(font
@@ -12572,6 +12538,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "490-4941-1-ND"
+			(at 21.59 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "33f1c9a6-0039-4db0-ba32-81f3f988be53")
 		)
@@ -12597,7 +12572,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1879e6a6-1769-4e9e-9b7f-5026275ee3cb")
-		(property "Reference" "#PWR013"
+		(property "Reference" "#PWR012"
 			(at 172.72 48.26 0)
 			(effects
 				(font
@@ -12646,7 +12621,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR013")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -12662,7 +12637,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1a419d01-58b2-4b29-926f-4317129eef64")
-		(property "Reference" "#PWR011"
+		(property "Reference" "#PWR010"
 			(at 137.16 31.75 0)
 			(effects
 				(font
@@ -12711,7 +12686,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR011")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -12727,7 +12702,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "201ae145-4a93-445b-9e2d-77f684a9c6df")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR08"
 			(at 130.81 81.28 0)
 			(effects
 				(font
@@ -12777,7 +12752,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR09")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -12819,7 +12794,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 72.39 19.05 0)
 			(effects
 				(font
@@ -12846,6 +12821,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 72.39 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
 			(at 72.39 19.05 0)
 			(effects
 				(font
@@ -12904,7 +12888,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 29.21 134.62 0)
 			(effects
 				(font
@@ -12931,6 +12915,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 29.21 134.62 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 29.21 134.62 90)
 			(effects
 				(font
@@ -12991,7 +12984,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gI-06014/"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g106014/"
 			(at 41.91 26.67 90)
 			(effects
 				(font
@@ -13036,6 +13029,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 41.91 26.67 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "106014"
 			(at 41.91 26.67 90)
 			(effects
 				(font
@@ -13094,7 +13096,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 190.5 110.49 0)
 			(effects
 				(font
@@ -13113,6 +13115,15 @@
 		)
 		(property "LCSC" ""
 			(at 190.5 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
+			(at 190.5 110.49 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13210,7 +13221,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2c607f2b-ec45-4894-a1ef-7d36877300aa")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR07"
 			(at 120.65 100.33 0)
 			(effects
 				(font
@@ -13259,7 +13270,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR08")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -13322,6 +13333,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 69.85 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "116567"
 			(at 69.85 106.68 0)
 			(effects
 				(font
@@ -13741,7 +13761,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0000199"
+		(property "Datasheet" "https://www.digikey.jp/short/wtdj002z"
 			(at 40.64 48.26 0)
 			(effects
 				(font
@@ -13776,6 +13796,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1004FCT-ND"
+			(at 40.64 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b281c1cd-dde2-4cb4-84a3-09883cda5879")
 		)
@@ -13802,7 +13831,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3553da69-0230-4407-b543-40d948fce91a")
-		(property "Reference" "R12"
+		(property "Reference" "R11"
 			(at 242.57 26.67 90)
 			(effects
 				(font
@@ -13827,7 +13856,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/ja/products/detail/yageo/RC0603FR-075K1L/727268"
+		(property "Datasheet" "https://www.digikey.jp/short/8837j4rd"
 			(at 242.57 31.75 0)
 			(effects
 				(font
@@ -13845,6 +13874,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD5101FCT-ND"
+			(at 242.57 31.75 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "ad4c50ba-f790-4815-b02b-0e72067e97c2")
 		)
@@ -13854,7 +13892,7 @@
 		(instances
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R12")
+					(reference "R11")
 					(unit 1)
 				)
 			)
@@ -13896,7 +13934,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 82.55 19.05 0)
 			(effects
 				(font
@@ -13931,6 +13969,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "490-8020-1-ND"
+			(at 82.55 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f1102cb7-dad6-4515-be5b-617cc441533d")
 		)
@@ -13948,7 +13995,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDPWR")
-		(at 210.82 80.01 0)
+		(at 210.82 78.74 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -13956,8 +14003,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3dde72f4-91f8-4641-bf8f-aefa26a3294b")
-		(property "Reference" "#PWR016"
-			(at 210.82 85.09 0)
+		(property "Reference" "#PWR015"
+			(at 210.82 83.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13966,7 +14013,7 @@
 			)
 		)
 		(property "Value" "GNDPWR"
-			(at 210.693 83.82 0)
+			(at 210.693 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13974,7 +14021,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 210.82 81.28 0)
+			(at 210.82 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13983,7 +14030,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 210.82 81.28 0)
+			(at 210.82 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13992,7 +14039,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDPWR\" , global ground"
-			(at 210.82 80.01 0)
+			(at 210.82 78.74 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14006,7 +14053,7 @@
 		(instances
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR016")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -14014,7 +14061,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small")
-		(at 214.63 77.47 270)
+		(at 214.63 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -14023,23 +14070,23 @@
 		(fields_autoplaced yes)
 		(uuid "4e370fd3-4af3-4ddd-992b-65a2ee17f7fd")
 		(property "Reference" "C9"
-			(at 214.6236 71.12 90)
+			(at 214.6236 69.85 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "4.7uF"
-			(at 214.6236 73.66 90)
+		(property "Value" "10nF"
+			(at 214.6236 72.39 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
-			(at 214.63 77.47 0)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 214.63 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14047,8 +14094,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
-			(at 214.63 77.47 0)
+		(property "Datasheet" "https://www.digikey.jp/short/5mmr34d0"
+			(at 214.63 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14057,7 +14104,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 214.63 77.47 0)
+			(at 214.63 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14065,7 +14112,16 @@
 			)
 		)
 		(property "LCSC" ""
-			(at 214.63 77.47 0)
+			(at 214.63 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-GCM21B5C2E103FX0ALCT-ND"
+			(at 214.63 76.2 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14123,7 +14179,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 45.72 55.88 0)
 			(effects
 				(font
@@ -14158,6 +14214,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "490-8020-1-ND"
+			(at 45.72 55.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8cd72b5e-ddaf-46de-9aae-95cbf4f42270")
 		)
@@ -14183,7 +14248,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "589d11f7-ef45-48d6-b42c-46391c4b3157")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR09"
 			(at 125.73 43.18 0)
 			(effects
 				(font
@@ -14232,7 +14297,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR010")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -14246,9 +14311,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "5a51f05d-d00a-41fc-aa33-2165631a1cef")
-		(property "Reference" "#PWR021"
+		(property "Reference" "#PWR022"
 			(at 257.81 134.62 0)
 			(effects
 				(font
@@ -14258,7 +14322,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 257.81 133.35 0)
+			(at 257.81 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14297,7 +14361,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR021")
+					(reference "#PWR022")
 					(unit 1)
 				)
 			)
@@ -14403,7 +14467,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021098"
+		(property "Datasheet" "https://www.digikey.jp/short/5djcbczp"
 			(at 31.75 26.67 0)
 			(effects
 				(font
@@ -14430,6 +14494,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 31.75 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1002FCT-ND"
 			(at 31.75 26.67 0)
 			(effects
 				(font
@@ -14492,7 +14565,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+		(property "Datasheet" "https://www.digikey.jp/short/rv3q24zz"
 			(at 259.08 50.165 0)
 			(effects
 				(font
@@ -14503,6 +14576,15 @@
 			)
 		)
 		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+			(at 257.81 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "497-5235-1-ND"
 			(at 257.81 41.91 0)
 			(effects
 				(font
@@ -14613,7 +14695,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6c4b6a77-99b1-49a8-99b7-e61121eeb860")
-		(property "Reference" "#PWR014"
+		(property "Reference" "#PWR013"
 			(at 173.99 78.74 0)
 			(effects
 				(font
@@ -14662,7 +14744,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR014")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -14703,7 +14785,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 111.76 134.62 0)
 			(effects
 				(font
@@ -14730,6 +14812,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 111.76 134.62 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 111.76 134.62 90)
 			(effects
 				(font
@@ -14788,7 +14879,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 111.76 132.08 0)
 			(effects
 				(font
@@ -14815,6 +14906,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 111.76 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 111.76 132.08 90)
 			(effects
 				(font
@@ -14873,7 +14973,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g101669/"
 			(at 162.56 35.56 0)
 			(effects
 				(font
@@ -14883,6 +14983,15 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 162.56 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "101669"
 			(at 162.56 35.56 0)
 			(effects
 				(font
@@ -14953,7 +15062,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 261.62 120.65 0)
 			(effects
 				(font
@@ -14972,6 +15081,15 @@
 		)
 		(property "LCSC" ""
 			(at 261.62 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
+			(at 261.62 120.65 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15003,7 +15121,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "806d6b5e-c110-45f1-8409-736d460061ae")
-		(property "Reference" "#PWR017"
+		(property "Reference" "#PWR016"
 			(at 204.47 95.25 0)
 			(effects
 				(font
@@ -15053,7 +15171,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR017")
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -15069,7 +15187,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8ce06046-b7b6-4d87-841e-ae4d50a29bf6")
-		(property "Reference" "R14"
+		(property "Reference" "R13"
 			(at 255.27 123.825 0)
 			(effects
 				(font
@@ -15096,7 +15214,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 257.81 124.46 0)
 			(effects
 				(font
@@ -15122,6 +15240,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 257.81 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "eeef7d31-6f22-46f9-a7ee-14a76e7f4667")
 		)
@@ -15131,7 +15258,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R14")
+					(reference "R13")
 					(unit 1)
 				)
 			)
@@ -15147,7 +15274,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8cf2fb6c-50d2-420b-b824-4fe2ef3bd4eb")
-		(property "Reference" "R8"
+		(property "Reference" "R7"
 			(at 116.84 102.235 0)
 			(effects
 				(font
@@ -15174,7 +15301,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021098"
+		(property "Datasheet" "https://www.digikey.jp/short/5djcbczp"
 			(at 119.38 102.87 0)
 			(effects
 				(font
@@ -15209,6 +15336,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 119.38 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "61993e5a-62b8-436d-86f1-c2d5cd4dbb91")
 		)
@@ -15218,7 +15354,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R8")
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -15234,7 +15370,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8d400276-30dc-41ce-b482-8257685a218f")
-		(property "Reference" "#PWR012"
+		(property "Reference" "#PWR011"
 			(at 172.72 27.94 0)
 			(effects
 				(font
@@ -15283,7 +15419,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR012")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -15358,6 +15494,15 @@
 				(hide yes)
 			)
 		)
+		(property "Akiduki_PN" "114977"
+			(at 130.81 29.21 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7aeabd04-192e-484e-9d09-294949760539")
 		)
@@ -15409,7 +15554,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 214.63 95.25 0)
 			(effects
 				(font
@@ -15428,6 +15573,15 @@
 		)
 		(property "LCSC" ""
 			(at 214.63 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
+			(at 214.63 95.25 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15497,6 +15651,15 @@
 			)
 		)
 		(property "Description" "USB to Serial Interface, SSOP-28"
+			(at 222.25 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "118243"
 			(at 222.25 128.27 0)
 			(effects
 				(font
@@ -15659,7 +15822,7 @@
 	(symbol
 		(lib_name "R_Small_2")
 		(lib_id "Device:R_Small")
-		(at 214.63 68.58 90)
+		(at 214.63 67.31 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15667,8 +15830,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "add8135d-1cd6-4b6c-879c-4aa4e8dc3074")
-		(property "Reference" "R11"
-			(at 214.63 63.5 90)
+		(property "Reference" "R10"
+			(at 214.63 62.23 90)
 			(effects
 				(font
 					(size 1.016 1.016)
@@ -15676,15 +15839,15 @@
 			)
 		)
 		(property "Value" "1MR"
-			(at 214.63 66.04 90)
+			(at 214.63 64.77 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 214.63 68.58 0)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 214.63 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15692,8 +15855,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0000199"
-			(at 214.63 68.58 0)
+		(property "Datasheet" "https://www.digikey.jp/short/n4mpdrp3"
+			(at 214.63 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15702,7 +15865,34 @@
 			)
 		)
 		(property "Description" "Resistor, small symbol"
-			(at 214.63 68.58 0)
+			(at 214.63 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H2BTTD1004FCT-ND"
+			(at 214.63 67.31 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser_PN" ""
+			(at 214.63 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" ""
+			(at 214.63 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15719,7 +15909,7 @@
 		(instances
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R11")
+					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -15787,6 +15977,15 @@
 				(hide yes)
 			)
 		)
+		(property "Akiduki_PN" "115300"
+			(at 242.57 22.86 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8226bba9-e8ae-4853-878c-d8ab7da1a0c8")
 		)
@@ -15839,7 +16038,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 125.73 33.02 0)
 			(effects
 				(font
@@ -15866,6 +16065,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 125.73 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
 			(at 125.73 33.02 0)
 			(effects
 				(font
@@ -15924,7 +16132,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 29.21 132.08 0)
 			(effects
 				(font
@@ -15951,6 +16159,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 29.21 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 29.21 132.08 90)
 			(effects
 				(font
@@ -16112,7 +16329,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c4ca5129-f625-4d21-9755-b7613f698f5e")
-		(property "Reference" "R10"
+		(property "Reference" "R9"
 			(at 124.46 102.235 0)
 			(effects
 				(font
@@ -16139,7 +16356,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021098"
+		(property "Datasheet" "https://www.digikey.jp/short/5djcbczp"
 			(at 121.92 102.87 0)
 			(effects
 				(font
@@ -16174,6 +16391,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 121.92 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "07dd43d1-63e4-43ac-8fa1-3c5cf75234ed")
 		)
@@ -16183,7 +16409,71 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R10")
+					(reference "R9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 218.44 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c77da6a1-763c-45ad-8edb-a4abaa290159")
+		(property "Reference" "#PWR017"
+			(at 218.44 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 218.44 82.804 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 218.44 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 218.44 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 218.44 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d5ffc079-62d7-491b-b518-bd1b9ff7b92f")
+		)
+		(instances
+			(project "LaunchController2.0"
+				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
+					(reference "#PWR017")
 					(unit 1)
 				)
 			)
@@ -16288,7 +16578,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114356/"
 			(at 222.25 41.91 0)
 			(effects
 				(font
@@ -16298,6 +16588,15 @@
 			)
 		)
 		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
+			(at 218.44 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114356"
 			(at 218.44 41.91 0)
 			(effects
 				(font
@@ -16441,7 +16740,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d5d14ac3-eec6-4899-b580-9c030b4beb50")
-		(property "Reference" "R9"
+		(property "Reference" "R8"
 			(at 120.65 76.2 90)
 			(effects
 				(font
@@ -16466,7 +16765,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.chip1stop.com/view/dispDetail/DispDetail?partId=ROHM-0021097"
+		(property "Datasheet" "https://www.digikey.jp/short/dqqzw028"
 			(at 120.65 81.28 0)
 			(effects
 				(font
@@ -16501,6 +16800,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 120.65 81.28 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c95f8c50-9cf3-43a6-93e9-970dfe94e90e")
 		)
@@ -16510,7 +16818,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R9")
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -16588,6 +16896,15 @@
 				(hide yes)
 			)
 		)
+		(property "Akiduki_PN" "108671"
+			(at 36.83 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "52166ae2-6bca-485c-bc9e-bfb97d1caece")
 		)
@@ -16656,6 +16973,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2946-2601-3104-ND"
+			(at 167.64 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b81943b6-9f2f-4174-bf5d-397b5cdf22d8")
 		)
@@ -16672,6 +16998,71 @@
 			(project ""
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
 					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 257.81 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e4fc514b-c92e-44be-8eb7-ecd94896fa91")
+		(property "Reference" "#PWR021"
+			(at 257.81 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 257.81 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 257.81 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 257.81 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 257.81 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "99c46b13-558a-4dbe-b926-72f6c10a207c")
+		)
+		(instances
+			(project "LaunchController2.0"
+				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
+					(reference "#PWR021")
 					(unit 1)
 				)
 			)
@@ -16713,7 +17104,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-16143/"
+		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
 			(at 92.71 19.05 0)
 			(effects
 				(font
@@ -16740,6 +17131,15 @@
 			)
 		)
 		(property "Supplier" ""
+			(at 92.71 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" "490-8020-1-ND"
 			(at 92.71 19.05 0)
 			(effects
 				(font
@@ -16862,7 +17262,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g130072/"
+		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
 			(at 114.3 81.28 90)
 			(effects
 				(font
@@ -16897,6 +17297,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+			(at 114.3 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "1a4f8534-26eb-42f7-95ec-d04ddacbe61d")
 		)
@@ -16923,7 +17332,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ec1e2bc0-2def-4faf-954e-34f3f51146ca")
-		(property "Reference" "R13"
+		(property "Reference" "R12"
 			(at 242.57 39.37 90)
 			(effects
 				(font
@@ -16948,7 +17357,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/ja/products/detail/yageo/RC0603FR-075K1L/727268"
+		(property "Datasheet" "https://www.digikey.jp/short/8837j4rd"
 			(at 242.57 34.29 0)
 			(effects
 				(font
@@ -16966,6 +17375,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "2019-RK73H1JTTD5101FCT-ND"
+			(at 242.57 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "ee56d815-7a85-464b-b9c6-ffbc61859d9d")
 		)
@@ -16975,7 +17393,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "R13")
+					(reference "R12")
 					(unit 1)
 				)
 			)
@@ -17016,7 +17434,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://akizukidenshi.com/catalog/g/gP-13312/"
+		(property "Datasheet" "https://www.digikey.jp/short/bbj307jp"
 			(at 21.59 43.18 0)
 			(effects
 				(font
@@ -17051,6 +17469,15 @@
 				(hide yes)
 			)
 		)
+		(property "Digikey_PN" "490-4941-1-ND"
+			(at 21.59 43.18 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c829330e-3643-49da-b9a8-decd48e8e44d")
 		)
@@ -17076,7 +17503,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "faa3cc65-33e6-4536-a57f-d3818cb94284")
-		(property "Reference" "#PWR015"
+		(property "Reference" "#PWR014"
 			(at 180.34 110.49 0)
 			(effects
 				(font
@@ -17126,7 +17553,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79"
-					(reference "#PWR015")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
