@@ -1898,6 +1898,10 @@ def api_command():
     param = data.get('param', 0)
     
     if cmd_type is not None:
+        if cmd_type == CMD_ARM_SAFETY:
+            with gse_state.lock:
+                gse_state.armed_state = bool(param != 0)
+
         if cmd_type == CMD_FILL_START:
             with gse_state.lock:
                 dump_on = bool(gse_state.cmd_state & (1 << 2))
