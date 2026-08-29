@@ -1419,29 +1419,29 @@ HTML_TEMPLATE = """
                         <li><code>satBusV</code>: サテライト側 12Vバス電圧 [V]</li>
                     </ol>
 
-                    <strong style="color:var(--blue);">[ 詳細: 10進数から状態を読み解く方法 ]</strong><br>
-                    <div style="margin-top:4px; padding:6px 8px; background:#e2e8f0; border-radius:4px; color:var(--text);">
-                        数値を2進数（ビット）に直すことで、どの機能がON(1)/OFF(0)なのかが分かります。<br>
+                    <strong style="color:var(--blue);">[ 詳細: 頻出する状態値（チートシート） ]</strong><br>
+                    <div style="margin-top:4px; padding:6px 10px; background:#e2e8f0; border-radius:4px; color:var(--text); font-size:0.8rem; line-height:1.6;">
+                        計算不要で一目で状態が分かるように、よく出る数値をリスト化しました！<br>
                         
-                        <b style="color:var(--purple); margin-top:8px; display:inline-block;">■ 第3要素: fbState (電磁弁フィードバック)</b><br>
-                        下位ビット(右側)から順に以下の電磁弁に対応しています：<br>
-                        <code>[Bit7:PURGE, Bit6:CLOSE, Bit5:OPEN, Bit4:IGNITER, Bit3:OXYGEN, Bit2:DUMP, Bit1:FILL, Bit0:SHIFT]</code><br>
-                        例: <b>142</b> (10進) = <b>10001110</b> (2進)<br>
-                        → 右から2番目(FILL), 3番目(DUMP), 4番目(OXYGEN), 8番目(PURGE) が <b>ON(1)</b> であることがわかります。<br>
-                        ※ <b>0</b> の場合、すべての弁がOFFか、機体と通信断絶(タイムアウト)しています。
+                        <b style="color:var(--purple); margin-top:10px; display:inline-block;">■ 第3要素: fbState (電磁弁の実際の状態)</b><br>
+                        <ul style="margin:2px 0 6px 20px; padding:0;">
+                            <li><b>0</b> : 全ての弁が閉鎖（待機）、または機体と通信断絶</li>
+                            <li><b>2</b> : <code>FILL (充填弁)</code> のみ開放</li>
+                            <li><b>4</b> : <code>DUMP (排出弁)</code> のみ開放</li>
+                            <li><b>6</b> : <code>FILL</code> と <code>DUMP</code> の両方が開放</li>
+                            <li><b>128</b> : <code>PURGE (パージ弁)</code> のみ開放</li>
+                            <li><b>142</b> : <code>PURGE</code>, <code>OXYGEN</code>, <code>DUMP</code>, <code>FILL</code> の4つが同時に開放</li>
+                        </ul>
 
-                        <b style="color:var(--purple); margin-top:8px; display:inline-block;">■ 第4要素: seqFlag (状態フラグ)</b><br>
-                        下位ビットから順に：<br>
-                        Bit0: エマージェンシーストップ動作中<br>
-                        Bit1: 充填シーケンス実行中<br>
-                        Bit2: 点火シーケンス実行中<br>
-                        Bit3: 状態確認可能フラグ(CanConfirm)<br>
-                        Bit4: 無線(RasPi)通信OK<br>
-                        Bit5: RS485有線通信OK<br>
-                        Bit6: サテライト側アームド状態 (ONで飛行モード)<br>
-                        例: <b>112</b> (10進) = <b>01110000</b> (2進)<br>
-                        → Bit4(16), Bit5(32), Bit6(64) が <b>ON(1)</b>。<br>
-                        つまり、<b>「通信(無線/有線)が正常で、サテライトがアームドになっている安全・正常状態」</b>であることがわかります。
+                        <b style="color:var(--purple); margin-top:10px; display:inline-block;">■ 第4要素: seqFlag (通信・システム状態)</b><br>
+                        <ul style="margin:2px 0 6px 20px; padding:0;">
+                            <li><b>16</b> : 無線(RasPi)のみ繋がっている（有線は断絶、アームドOFF）</li>
+                            <li><b>48</b> : 有線も無線も正常だが、アームドはOFF（待機状態）</li>
+                            <li><b>112</b> : <b>【完全正常】</b> 通信OK ＆ アームドON（シーケンス開始可能！）</li>
+                            <li><b>113</b> : 上記の正常状態 ＋ <b>エマージェンシーストップ発動中</b></li>
+                            <li><b>114</b> : 上記の正常状態 ＋ <b>充填シーケンス実行中</b></li>
+                            <li><b>116</b> : 上記の正常状態 ＋ <b>点火シーケンス実行中</b></li>
+                        </ul>
                     </div>
                 </div>
                 
