@@ -183,7 +183,25 @@ class GSELogger:
         self.current_filepath = os.path.join(self.logs_dir, self.current_filename)
         self.record_count = 0
         self.lock = threading.Lock()
+        self._clean_old_logs()
         self._init_csv()
+
+    def _clean_old_logs(self, max_files=10):
+        """保持するログの最大数を設定し、古いものを削除する (デフォルト: 最新10件のみ保持)"""
+        try:
+            files = [os.path.join(self.logs_dir, f) for f in os.listdir(self.logs_dir) if f.startswith("gse_log_") and f.endswith(".csv")]
+            if len(files) > max_files:
+                # 最終更新日時でソート (古い順)
+                files.sort(key=os.path.getmtime)
+                files_to_delete = files[:-max_files]
+                for f in files_to_delete:
+                    try:
+                        os.remove(f)
+                        print(f"[LOGGER] 容量節約のため古いログを削除しました: {os.path.basename(f)}")
+                    except OSError as e:
+                        print(f"[LOGGER] 古いログの削除に失敗しました: {e}")
+        except Exception as e:
+            print(f"[LOGGER] ログのクリーンアップ中にエラーが発生しました: {e}")
 
     def _init_csv(self):
         headers = [
