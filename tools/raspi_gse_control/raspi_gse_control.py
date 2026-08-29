@@ -100,6 +100,7 @@ class GSEState:
         self.sat_voltage_V = 0.0
         self.rs485_ok = True
         self.rocket_node_ok = True
+        self.raw_telemetry = ""
 
     def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None):
         with self.lock:
@@ -145,6 +146,7 @@ class GSEState:
                 "rocket_node_ok": self.rocket_node_ok,
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
+                "raw_telemetry": self.raw_telemetry,
                 "record_count": gse_logger.record_count if 'gse_logger' in globals() else 0,
                 "current_log": gse_logger.current_filename if 'gse_logger' in globals() else "",
                 "last_update": round(time.time() - self.last_heartbeat_rx, 1) if not self.demo_mode else 0.0
@@ -292,8 +294,7 @@ def serial_worker(port_name, baudrate=115200):
                         if isinstance(msg, list) and len(msg) > 0:
                             packet_id = msg[0]
                             if packet_id == PACKET_RASPI_TELEMETRY and len(msg) >= 6:
-                                with open("telemetry_debug.log", "w", encoding="utf-8") as f:
-                                    f.write(f"Raw msg: {msg}\n")
+                                gse_state.raw_telemetry = str(msg)
                                 cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
                                 launch_v = msg[6] if len(msg) >= 7 else None
                                 sat_v = msg[7] if len(msg) >= 8 else None
@@ -428,6 +429,7 @@ def simulator_worker():
             if gse_state.can_confirm: seq_flag |= (1 << 3)
             seq_flag |= (1 << 4) # Wireless OK
             gse_state.sequence_flag = seq_flag
+            gse_state.raw_telemetry = "[SIMULATED PACKET]"
 
         time.sleep(0.1)
 
@@ -1029,11 +1031,6 @@ HTML_TEMPLATE = """
             justify-content: space-between;
             gap: 6px;
         }
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-        }
         .valve-name {
             font-size: 0.8rem; font-weight: 700;
             min-width: 55px;
@@ -1156,6 +1153,10 @@ HTML_TEMPLATE = """
                     <div class="mcu-metric">
                         <span class="mcu-label">リミットch5:</span>
                         <span class="mcu-val" id="limitSwCh5Val">CLOSED</span>
+                    </div>
+                    <div class="mcu-metric" style="display:block; margin-top:6px;">
+                        <span class="mcu-label" style="display:block; margin-bottom:2px;">Raw Data:</span>
+                        <div class="mcu-val" id="rawTelemetry" style="font-size:0.65rem; color:#888; word-break:break-all; background:#050505; padding:4px; border-radius:3px;">---</div>
                     </div>
                 </div>
 
@@ -1547,8 +1548,13 @@ HTML_TEMPLATE = """
                     sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
                 }
 
-                document.getElementById('limitSwCh5Val').innerText = data.limit_switch_ch5 ? "CLOSED" : "OPEN";
-                document.getElementById('limitSwCh5Val').style.color = data.limit_switch_ch5 ? "var(--green)" : "var(--red)";
+                if (data.limit_switch_ch5 !== undefined) {
+                    document.getElementById('limitSwCh5Val').innerText = data.limit_switch_ch5 ? "CLOSED" : "OPEN";
+                    document.getElementById('limitSwCh5Val').style.color = data.limit_switch_ch5 ? "var(--green)" : "var(--red)";
+                }
+                if (data.raw_telemetry !== undefined) {
+                    document.getElementById('rawTelemetry').innerText = data.raw_telemetry;
+                }
 
                 // Prominent Large Status Banner Update
                 const lsb = document.getElementById('largeStatusBanner');
