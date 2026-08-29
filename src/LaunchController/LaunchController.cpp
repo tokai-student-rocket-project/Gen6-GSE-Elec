@@ -129,6 +129,12 @@ namespace communication
     SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
     SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
 
+    // --- Raspberry Pi 4 無線通信用パケット ---
+    RASPI_COMMAND = 0x20,            // (32) Raspberry Pi 4 からの遠隔制御コマンド
+    RASPI_HEARTBEAT_L_TO_R = 0x21,   // (33) Launch3.0 → Raspberry Pi 4 生存確認
+    RASPI_HEARTBEAT_R_TO_L = 0x22,   // (34) Raspberry Pi 4 → Launch3.0 生存確認
+    RASPI_TELEMETRY = 0x23,          // (35) テレメトリ一括送信
+    RASPI_WIRELESS_STATUS = 0x24,    // (36) 無線リンク状態報告
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -165,6 +171,31 @@ namespace simulation
 
 } // namespace simulation
 
+namespace raspi_wireless
+{
+  unsigned long lastHeartbeatTime = 0;
+  const unsigned long WIRELESS_TIMEOUT_MS = 3000;
+  bool isWirelessConnected = false;
+  bool remoteArmingState = false;
+  float latestPressure_MPa = 0.0f;
+
+  enum class RemoteCmd : uint8_t
+  {
+    EMERGENCY_STOP = 1,
+    PEACEFUL_STOP  = 2,
+    FILL_START     = 3,
+    IGNITION_START = 4,
+    ARM_SAFETY     = 5,
+    VALVE_CONTROL  = 6,
+    ZERO_CALIB     = 7,
+  };
+
+  void checkWirelessTask();
+  void sendWirelessTelemetryTask();
+  void onRaspiHeartbeatReceived();
+  void onRaspiCommandReceived(uint8_t cmdType, uint8_t param);
+} // namespace raspi_wireless
+
 void setup()
 {
   pinMode(PIN_PB7, OUTPUT);
@@ -193,14 +224,19 @@ void setup()
   power::input.begin();
   power::bus12.begin();
 
+  raspi_wireless::lastHeartbeatTime = millis();
+
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(10);
   Tasks.add(&communication::sendControlSync)->startFps(20);
   Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
-  Tasks.add(&communication::sendTelemetryForPython)
-      ->startFps(10); // 10HzでPCへ状態送信
+  // Tasks.add(&communication::sendTelemetryForPython)
+  //     ->startFps(10); // 10HzでPCへ状態送信
   // Tasks.add(&simulation::updateTask)->startFps(2);
+
+  Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);
+  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10);
   communication::sendSensorConfigSync();
   // 起動時に実測校正係数を同期
   communication::sendSensorCalibCoeff(n2o::CALIB_SLOPE_A,
@@ -218,6 +254,13 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
+
+  MsgPacketizer::subscribe(
+      Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_R_TO_L),
+      &raspi_wireless::onRaspiHeartbeatReceived);
+  MsgPacketizer::subscribe(
+      Serial, static_cast<uint8_t>(communication::Packet::RASPI_COMMAND),
+      &raspi_wireless::onRaspiCommandReceived);
 
   // シーケンス関係のタスクたち
   Tasks.add(control::FILL_START, &control::setFillStart);
@@ -402,6 +445,7 @@ void communication::onFeedbackSyncReceived(uint8_t state)
 void communication::onPressureSyncReceived(float pressure)
 {
   n2o::tm1637.displayNumber(pressure);
+  raspi_wireless::latestPressure_MPa = pressure;
 
   // communication::statusLamp.blink();
 }
@@ -496,7 +540,7 @@ void control::handleManualTask()
   // セーフティー
   // Armedでなければこの時点で終わり
   control::safetyArmed.setManual();
-  if (!control::safetyArmed.isManualRaised())
+  if (!control::safetyArmed.isManualRaised() && !raspi_wireless::remoteArmingState)
   {
     // シーケンスが進行中なら穏便ストップ
     if (sequence::emergencyStopSequenceIsActive ||
@@ -817,3 +861,158 @@ void control::setOpenStart() { control::open.setAutomaticOn(); }
 void control::setPurgeStart() { control::purge.setAutomaticOn(); }
 
 void control::setPurgeStop() { control::purge.setAutomaticOff(); }
+
+// =========================================================================
+// Raspberry Pi 4 無線遠隔制御実装
+// =========================================================================
+
+void raspi_wireless::onRaspiHeartbeatReceived()
+{
+  raspi_wireless::lastHeartbeatTime = millis();
+  if (!raspi_wireless::isWirelessConnected)
+  {
+    raspi_wireless::isWirelessConnected = true;
+    Serial.println("[RASPI WIRELESS] Link Established / Restored.");
+  }
+}
+
+void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
+{
+  raspi_wireless::lastHeartbeatTime = millis();
+
+  if (!raspi_wireless::isWirelessConnected)
+  {
+    Serial.println("[RASPI WIRELESS REJECT] Remote command rejected: Wireless link not connected!");
+    error::statusLamp.on();
+    return;
+  }
+
+  bool isArmed = control::safetyArmed.isManualRaised() || raspi_wireless::remoteArmingState;
+
+  RemoteCmd cmd = static_cast<RemoteCmd>(cmdType);
+  switch (cmd)
+  {
+  case RemoteCmd::EMERGENCY_STOP:
+    Serial.println("[RASPI CMD] Remote Emergency Stop triggered!");
+    sequence::emergencyStop();
+    break;
+
+  case RemoteCmd::PEACEFUL_STOP:
+    Serial.println("[RASPI CMD] Remote Peaceful Stop triggered!");
+    sequence::peacefulStop();
+    break;
+
+  case RemoteCmd::FILL_START:
+    if (!isArmed)
+    {
+      Serial.println("[RASPI CMD REJECT] Remote Fill blocked: Safety not ARMED!");
+      error::statusLamp.on();
+      return;
+    }
+    Serial.println("[RASPI CMD] Remote Fill Sequence Start requested!");
+    sequence::fill();
+    break;
+
+  case RemoteCmd::IGNITION_START:
+    if (!isArmed)
+    {
+      Serial.println("[RASPI CMD REJECT] Remote Ignition blocked: Safety not ARMED!");
+      error::statusLamp.on();
+      return;
+    }
+    Serial.println("[RASPI CMD] Remote Ignition Sequence Start requested!");
+    sequence::ignition();
+    break;
+
+  case RemoteCmd::ARM_SAFETY:
+    raspi_wireless::remoteArmingState = (param != 0);
+    Serial.print("[RASPI CMD] Remote Arming set to: ");
+    Serial.println(raspi_wireless::remoteArmingState ? "ARMED" : "DISARMED");
+    break;
+
+  case RemoteCmd::VALVE_CONTROL:
+    if (!isArmed)
+    {
+      Serial.println("[RASPI CMD REJECT] Remote Valve control blocked: Safety not ARMED!");
+      error::statusLamp.on();
+      return;
+    }
+    if (param & (1 << 1)) control::fill.setAutomaticOn(); else control::fill.setAutomaticOff();
+    if (param & (1 << 2)) control::dump.setAutomaticOn(); else control::dump.setAutomaticOff();
+    if (param & (1 << 3)) control::oxygen.setAutomaticOn(); else control::oxygen.setAutomaticOff();
+    if (param & (1 << 4)) control::igniter.setAutomaticOn(); else control::igniter.setAutomaticOff();
+    if (param & (1 << 5)) control::open.setAutomaticOn(); else control::open.setAutomaticOff();
+    if (param & (1 << 6)) control::close.setAutomaticOn(); else control::close.setAutomaticOff();
+    if (param & (1 << 7)) control::purge.setAutomaticOn(); else control::purge.setAutomaticOff();
+    Serial.print("[RASPI CMD] Remote Valve Control applied: 0x");
+    Serial.println(param, HEX);
+    break;
+
+  case RemoteCmd::ZERO_CALIB:
+    Serial.println("[RASPI CMD] Remote Zero Calibration requested!");
+    communication::sendSensorZeroCalibReq();
+    break;
+
+  default:
+    Serial.print("[RASPI CMD WARN] Unknown Remote Command: ");
+    Serial.println(cmdType);
+    break;
+  }
+}
+
+void raspi_wireless::checkWirelessTask()
+{
+  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
+
+  bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
+
+  if (timeoutOccurred)
+  {
+    if (raspi_wireless::isWirelessConnected)
+    {
+      raspi_wireless::isWirelessConnected = false;
+      Serial.println("[RASPI WIRELESS CRITICAL] Wireless link LOST! Interlock activated.");
+      error::statusLamp.on();
+
+      if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
+      {
+        Serial.println("[RASPI WIRELESS FAIL-SAFE] Automatic sequence active during wireless drop -> Triggering Emergency Stop!");
+        sequence::emergencyStop();
+      }
+    }
+  }
+
+  uint8_t wirelessState = (raspi_wireless::isWirelessConnected ? 1 : 0);
+  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
+}
+
+void raspi_wireless::sendWirelessTelemetryTask()
+{
+  uint8_t cmd_state =
+      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
+      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
+      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
+      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+
+  uint8_t fb_state =
+      (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
+      (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
+      (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
+      (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
+
+  uint8_t sequence_flag =
+      (sequence::emergencyStopSequenceIsActive << 0) |
+      (sequence::fillSequenceIsActive << 1) |
+      (sequence::ignitionSequenceIsActive << 2) |
+      (sequence::canConfirm << 3) |
+      (raspi_wireless::isWirelessConnected << 4);
+
+  uint8_t dummyLimitSwitchState = 0; // LaunchController.cpp はリミットスイッチ状態を同期していないため 0 固定
+
+  MsgPacketizer::send(
+      Serial,
+      static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
+      cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, dummyLimitSwitchState,
+      power::input.getVoltage_V(),
+      power::bus12.getVoltage_V());
+}

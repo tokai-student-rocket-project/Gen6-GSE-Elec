@@ -292,6 +292,8 @@ def serial_worker(port_name, baudrate=115200):
                         if isinstance(msg, list) and len(msg) > 0:
                             packet_id = msg[0]
                             if packet_id == PACKET_RASPI_TELEMETRY and len(msg) >= 6:
+                                with open("telemetry_debug.log", "w", encoding="utf-8") as f:
+                                    f.write(f"Raw msg: {msg}\n")
                                 cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
                                 launch_v = msg[6] if len(msg) >= 7 else None
                                 sat_v = msg[7] if len(msg) >= 8 else None
