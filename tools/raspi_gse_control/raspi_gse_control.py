@@ -1217,7 +1217,6 @@ HTML_TEMPLATE = """
                 <div class="led-item"><div class="led" id="ledCom"></div>COM</div>
                 <div class="led-item"><div class="led" id="ledErr"></div>ERR</div>
                 <div class="led-item"><div class="led" id="ledArm"></div>ARM</div>
-                <div class="led-item"><div class="led" id="ledLimit"></div>LIMIT</div>
             </div>
 
             <!-- MCU Voltage & Status Grid -->
@@ -1244,7 +1243,6 @@ HTML_TEMPLATE = """
                     </div>
                     <div class="mcu-metric">
                         <span class="mcu-label">リミットch5:</span>
-                        <span class="mcu-val" id="limitSwCh5Val">CLOSED</span>
                     </div>
                     <div class="mcu-metric" style="display:block; margin-top:6px;">
                         <span class="mcu-label" style="display:block; margin-bottom:2px;">Raw Data:</span>
@@ -1641,8 +1639,6 @@ HTML_TEMPLATE = """
                 }
 
                 if (data.limit_switch_ch5 !== undefined) {
-                    document.getElementById('limitSwCh5Val').innerText = data.limit_switch_ch5 ? "CLOSED" : "OPEN";
-                    document.getElementById('limitSwCh5Val').style.color = data.limit_switch_ch5 ? "var(--green)" : "var(--red)";
                 }
                 if (data.raw_telemetry !== undefined) {
                     document.getElementById('rawTelemetry').innerText = data.raw_telemetry;
@@ -1741,7 +1737,6 @@ HTML_TEMPLATE = """
                 setLed('ledCom', data.connected, 'green');
                 setLed('ledErr', data.emergency_stop, 'red');
                 setLed('ledArm', data.armed_state, 'yellow');
-                setLed('ledLimit', data.limit_switch_ch5, 'green');
 
                 // Sync sequence & armed states from telemetry
                 armed = data.armed_state;
