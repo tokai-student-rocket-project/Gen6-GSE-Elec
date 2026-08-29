@@ -108,8 +108,10 @@ class GSEState:
         self.launch_bus_voltage_V = 0.0
         self.sat_voltage_V = 0.0
         self.sat_bus_voltage_V = 0.0
+        self.sat_bus_voltage_V = 0.0
         self.rs485_ok = True
         self.rocket_node_ok = True
+        self.sat_armed = False
         self.raw_telemetry = ""
 
     def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None, sat_v=None, sat_bus_v=None):
@@ -136,6 +138,7 @@ class GSEState:
             self.can_confirm = bool(seq_b & (1 << 3))
             self.mcu_wireless_ok = bool(seq_b & (1 << 4))
             self.rocket_node_ok = bool(seq_b & (1 << 5))
+            self.sat_armed = bool(seq_b & (1 << 6))
 
     def to_dict(self):
         with self.lock:
@@ -151,6 +154,7 @@ class GSEState:
                 "can_confirm": self.can_confirm,
                 "mcu_wireless_ok": self.mcu_wireless_ok or self.demo_mode,
                 "rocket_node_ok": self.rocket_node_ok or self.demo_mode,
+                "sat_armed": self.sat_armed or self.demo_mode,
                 "armed_state": self.armed_state,
                 "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
@@ -1279,6 +1283,11 @@ HTML_TEMPLATE = """
                         <span class="mcu-val" id="satBusVolts">0.0 V</span>
                         <span class="mcu-tag warn" id="satBusVoltTag">N/A</span>
                     </div>
+                    <div class="mcu-metric" style="margin-top:6px; border-top:1px solid #333; padding-top:6px;">
+                        <span class="mcu-label">アームド状態:</span>
+                        <span class="mcu-val" id="satArmedVal" style="font-weight:bold;">---</span>
+                        <span class="mcu-tag warn" id="satArmedTag">N/A</span>
+                    </div>
                 </div>
             </div>
 
@@ -1671,6 +1680,18 @@ HTML_TEMPLATE = """
                     sbTag.className = 'mcu-tag warn'; sbTag.innerText = 'N/A';
                 }
 
+                if (data.sat_armed !== undefined) {
+                    const saVal = document.getElementById('satArmedVal');
+                    const saTag = document.getElementById('satArmedTag');
+                    if (data.sat_armed) {
+                        saVal.innerText = 'ON (飛行モード)'; saVal.style.color = 'var(--green)';
+                        saTag.className = 'mcu-tag ok'; saTag.innerText = '準備完了';
+                    } else {
+                        saVal.innerText = 'OFF (安全モード)'; saVal.style.color = 'var(--red)';
+                        saTag.className = 'mcu-tag warn'; saTag.innerText = 'ポカヨケ動作中';
+                    }
+                }
+
                 if (data.rocket_node_ok !== undefined) {
                     const rsVal = document.getElementById('rs485Val');
                     const rnVal = document.getElementById('rocketNodeVal');
@@ -1941,10 +1962,17 @@ def api_command():
             with gse_state.lock:
                 gse_state.armed_state = bool(param != 0)
 
-        if cmd_type == CMD_FILL_START:
+        if cmd_type == CMD_FILL_START or cmd_type == CMD_IGNITION_START:
             with gse_state.lock:
                 dump_on = bool(gse_state.cmd_state & (1 << 2))
-            if not dump_on:
+                sat_armed = gse_state.sat_armed or gse_state.demo_mode
+            if not sat_armed:
+                print("[SERVER REJECT] Sequence start blocked: Satellite is not armed!")
+                return jsonify({
+                    "status": "blocked_sat_not_armed",
+                    "message": "シーケンス開始エラー: サテライト側のアームドスイッチがONになっていません（Poka-yoke）。"
+                }), 403
+            if cmd_type == CMD_FILL_START and not dump_on:
                 print("[SERVER REJECT] Sequence start blocked: DUMP valve is OFF!")
                 return jsonify({
                     "status": "blocked_dump_off",
