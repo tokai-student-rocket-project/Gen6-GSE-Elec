@@ -1388,10 +1388,11 @@ HTML_TEMPLATE = """
                 <div id="rawHelpBox" style="display:none; margin-top:8px; padding:10px; background:var(--bg-card-alt); border:1px solid var(--blue); border-radius:6px; font-size:0.75rem; color:var(--text-dim); line-height:1.5;">
                     <strong style="color:var(--blue);">[ データの見方 (MsgPackフォーマット) ]</strong><br>
                     配列内に左から順に以下のデータが格納されています。<br>
-                    <ol style="margin-left:20px; margin-top:4px;">
-                        <li><code>cmdState</code>: 操作卓からの送信コマンド状態 (ビット列)</li>
-                        <li><code>fbState</code>: 機体側からの電磁弁状態フィードバック (ビット列)</li>
-                        <li><code>seqFlag</code>: 自動シーケンス進行状態 (ビット列)</li>
+                    <ol style="margin-left:20px; margin-top:4px; margin-bottom:8px;">
+                        <li><code>packetId</code>: パケットID (テレメトリは 35)</li>
+                        <li><code>cmdState</code>: 操作コマンド (10進数)</li>
+                        <li><code>fbState</code>: 機体側からの電磁弁状態フィードバック (10進数)</li>
+                        <li><code>seqFlag</code>: 自動シーケンス・通信状態フラグ (10進数)</li>
                         <li><code>pressure</code>: N2Oタンク圧力 [MPa]</li>
                         <li><code>dummyLimitSwitch</code>: リミットスイッチ状態 (現状0固定)</li>
                         <li><code>launchV</code>: 操作卓側 入力電圧 [V]</li>
@@ -1399,6 +1400,31 @@ HTML_TEMPLATE = """
                         <li><code>satV</code>: サテライト側 入力電圧 [V]</li>
                         <li><code>satBusV</code>: サテライト側 12Vバス電圧 [V]</li>
                     </ol>
+
+                    <strong style="color:var(--blue);">[ 詳細: 10進数から状態を読み解く方法 ]</strong><br>
+                    <div style="margin-top:4px; padding:6px 8px; background:#e2e8f0; border-radius:4px; color:var(--text);">
+                        数値を2進数（ビット）に直すことで、どの機能がON(1)/OFF(0)なのかが分かります。<br>
+                        
+                        <b style="color:var(--purple); margin-top:8px; display:inline-block;">■ 第3要素: fbState (電磁弁フィードバック)</b><br>
+                        下位ビット(右側)から順に以下の電磁弁に対応しています：<br>
+                        <code>[Bit7:PURGE, Bit6:CLOSE, Bit5:OPEN, Bit4:IGNITER, Bit3:OXYGEN, Bit2:DUMP, Bit1:FILL, Bit0:SHIFT]</code><br>
+                        例: <b>142</b> (10進) = <b>10001110</b> (2進)<br>
+                        → 右から2番目(FILL), 3番目(DUMP), 4番目(OXYGEN), 8番目(PURGE) が <b>ON(1)</b> であることがわかります。<br>
+                        ※ <b>0</b> の場合、すべての弁がOFFか、機体と通信断絶(タイムアウト)しています。
+
+                        <b style="color:var(--purple); margin-top:8px; display:inline-block;">■ 第4要素: seqFlag (状態フラグ)</b><br>
+                        下位ビットから順に：<br>
+                        Bit0: エマージェンシーストップ動作中<br>
+                        Bit1: 充填シーケンス実行中<br>
+                        Bit2: 点火シーケンス実行中<br>
+                        Bit3: 状態確認可能フラグ(CanConfirm)<br>
+                        Bit4: 無線(RasPi)通信OK<br>
+                        Bit5: RS485有線通信OK<br>
+                        Bit6: サテライト側アームド状態 (ONで飛行モード)<br>
+                        例: <b>112</b> (10進) = <b>01110000</b> (2進)<br>
+                        → Bit4(16), Bit5(32), Bit6(64) が <b>ON(1)</b>。<br>
+                        つまり、<b>「通信(無線/有線)が正常で、サテライトがアームドになっている安全・正常状態」</b>であることがわかります。
+                    </div>
                 </div>
                 
                 <!-- Data Box (Hidden by default) -->
