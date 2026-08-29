@@ -1874,7 +1874,7 @@ HTML_TEMPLATE = """
                         } else if (!dumpIsOn) {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge lock';
-                                pyBadge.innerText = '⚠️ DUMP弁(排出弁)をON(開放)に設定しないとシーケンスは起動できません';
+                                pyBadge.innerText = '⚠️ DUMP弁(排出弁)をON(閉鎖)に設定しないとシーケンスは起動できません';
                             }
                             if (pyValveTag) pyValveTag.innerText = '⚠️ シーケンス準備: DUMP弁をONに設定してください';
                         } else {
