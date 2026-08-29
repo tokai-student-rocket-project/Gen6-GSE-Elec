@@ -1245,9 +1245,9 @@ HTML_TEMPLATE = """
             <!-- MCU Voltage & Status Grid -->
             <div class="mcu-status-grid">
                 <div class="mcu-box">
-                    <div class="mcu-header">🚀 Launch3.0 (操作卓)</div>
+                    <div class="mcu-header"> Launch Controller</div>
                     <div class="mcu-metric">
-                        <span class="mcu-label">入力電圧:</span>
+                        <span class="mcu-label">入 力 電 圧:</span>
                         <span class="mcu-val" id="launchVolts">12.4 V</span>
                         <span class="mcu-tag ok" id="launchVoltTag">正常</span>
                     </div>
@@ -1272,7 +1272,7 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="mcu-box">
-                    <div class="mcu-header">🛰️ Satellite3.0</div>
+                    <div class="mcu-header">🚀 Satellite Controller</div>
                     <div class="mcu-metric">
                         <span class="mcu-label">入力電圧:</span>
                         <span class="mcu-val" id="satVolts">0.0 V</span>
@@ -1688,7 +1688,7 @@ HTML_TEMPLATE = """
                         saTag.className = 'mcu-tag ok'; saTag.innerText = '準備完了';
                     } else {
                         saVal.innerText = 'OFF (セーフティ)'; saVal.style.color = 'var(--red)';
-                        saTag.className = 'mcu-tag warn'; saTag.innerText = 'ポカヨケ動作中';
+                        saTag.className = 'mcu-tag warn'; saTag.innerText = '⚠️ アームド待機中';
                     }
                 }
 
