@@ -1215,6 +1215,7 @@ HTML_TEMPLATE = """
             <div id="pingText" class="ping-text">-- ms</div>
             
             <div class="rec-badge" id="recBadge">● REC (0)</div>
+            <button class="btn-log-download" onclick="toggleFullScreen()" id="btnFullscreen">📺 全画面</button>
             <button class="btn-log-download" onclick="openLogModal()">📊 ログ (CSV) 一覧 / DL</button>
             <div id="connBadge" class="conn-badge conn-ng">● CONNECTING...</div>
         </div>
@@ -2021,6 +2022,24 @@ HTML_TEMPLATE = """
             } else {
                 el.innerText = '--:--';
                 el.className = 'timer-value';
+            }
+        }
+        
+        /* ===== Fullscreen Toggle ===== */
+        function toggleFullScreen() {
+            const btn = document.getElementById('btnFullscreen');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    btn.innerText = '📺 元に戻す';
+                }).catch(err => {
+                    alert(`フルスクリーン化に失敗しました: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        btn.innerText = '📺 全画面';
+                    });
+                }
             }
         }
 
