@@ -1265,10 +1265,6 @@ HTML_TEMPLATE = """
                         <span class="mcu-val" id="rocketNodeVal">● 結合</span>
                     </div>
 
-                    <div class="mcu-metric" style="display:block; margin-top:6px;">
-                        <span class="mcu-label" style="display:block; margin-bottom:2px;">Raw Data:</span>
-                        <div class="mcu-val" id="rawTelemetry" style="font-size:0.65rem; color:var(--text-dim); word-break:break-all; background:#f1f5f9; padding:4px; border-radius:3px;">---</div>
-                    </div>
                 </div>
 
                 <div class="mcu-box">
@@ -1376,6 +1372,42 @@ HTML_TEMPLATE = """
                 <span class="pokayoke-badge" id="pokayokeValveTag" style="font-size:0.65rem;">🔒 セーフティ施錠中</span>
             </div>
             <div class="valve-grid" id="valveGrid"></div>
+
+            <!-- RAW Data Collapsible -->
+            <div style="margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:0.85rem; font-weight:700; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; gap:5px; user-select:none;" onclick="toggleRawData()">
+                        <span id="rawDataArrow" style="transition:transform 0.2s;">▶</span> RAW Telemetry Data
+                    </div>
+                    <div style="font-size:1.1rem; color:var(--blue); cursor:pointer;" onclick="toggleRawHelp()" title="RAWデータの見方">
+                        ℹ️
+                    </div>
+                </div>
+                
+                <!-- Help Box (Hidden by default) -->
+                <div id="rawHelpBox" style="display:none; margin-top:8px; padding:10px; background:var(--bg-card-alt); border:1px solid var(--blue); border-radius:6px; font-size:0.75rem; color:var(--text-dim); line-height:1.5;">
+                    <strong style="color:var(--blue);">[ データの見方 (MsgPackフォーマット) ]</strong><br>
+                    配列内に左から順に以下のデータが格納されています。<br>
+                    <ol style="margin-left:20px; margin-top:4px;">
+                        <li><code>cmdState</code>: 操作卓からの送信コマンド状態 (ビット列)</li>
+                        <li><code>fbState</code>: 機体側からの電磁弁状態フィードバック (ビット列)</li>
+                        <li><code>seqFlag</code>: 自動シーケンス進行状態 (ビット列)</li>
+                        <li><code>pressure</code>: N2Oタンク圧力 [MPa]</li>
+                        <li><code>dummyLimitSwitch</code>: リミットスイッチ状態 (現状0固定)</li>
+                        <li><code>launchV</code>: 操作卓側 入力電圧 [V]</li>
+                        <li><code>launchBusV</code>: 操作卓側 12Vバス電圧 [V]</li>
+                        <li><code>satV</code>: サテライト側 入力電圧 [V]</li>
+                        <li><code>satBusV</code>: サテライト側 12Vバス電圧 [V]</li>
+                    </ol>
+                </div>
+                
+                <!-- Data Box (Hidden by default) -->
+                <div id="rawDataContainer" style="display:none; margin-top:8px;">
+                    <div class="mcu-val" id="rawTelemetry" style="font-size:0.85rem; font-family:'JetBrains Mono', 'Share Tech Mono', monospace; color:var(--text-bright); word-break:break-all; background:#f1f5f9; padding:8px 10px; border:1px solid var(--border); border-radius:6px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.05); min-height:36px; display:flex; align-items:center;">
+                        ---
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1412,6 +1444,19 @@ HTML_TEMPLATE = """
     </div>
 
     <script>
+        /* ===== RAW Data UI ===== */
+        let rawDataOpen = false;
+        let rawHelpOpen = false;
+        function toggleRawData() {
+            rawDataOpen = !rawDataOpen;
+            document.getElementById('rawDataContainer').style.display = rawDataOpen ? 'block' : 'none';
+            document.getElementById('rawDataArrow').style.transform = rawDataOpen ? 'rotate(90deg)' : 'rotate(0deg)';
+        }
+        function toggleRawHelp() {
+            rawHelpOpen = !rawHelpOpen;
+            document.getElementById('rawHelpBox').style.display = rawHelpOpen ? 'block' : 'none';
+        }
+
         /* ===== State ===== */
         let armed = false;
         let autoPurge = true;
