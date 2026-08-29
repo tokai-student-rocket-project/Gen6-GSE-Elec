@@ -1241,9 +1241,7 @@ HTML_TEMPLATE = """
                         <span class="mcu-label">ロケットノード:</span>
                         <span class="mcu-val" id="rocketNodeVal">● 結合</span>
                     </div>
-                    <div class="mcu-metric">
-                        <span class="mcu-label">リミットch5:</span>
-                    </div>
+
                     <div class="mcu-metric" style="display:block; margin-top:6px;">
                         <span class="mcu-label" style="display:block; margin-bottom:2px;">Raw Data:</span>
                         <div class="mcu-val" id="rawTelemetry" style="font-size:0.65rem; color:#888; word-break:break-all; background:#050505; padding:4px; border-radius:3px;">---</div>
@@ -1638,8 +1636,7 @@ HTML_TEMPLATE = """
                     sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
                 }
 
-                if (data.limit_switch_ch5 !== undefined) {
-                }
+
                 if (data.raw_telemetry !== undefined) {
                     document.getElementById('rawTelemetry').innerText = data.raw_telemetry;
                 }
