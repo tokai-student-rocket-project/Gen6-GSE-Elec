@@ -877,6 +877,19 @@ HTML_TEMPLATE = """
             text-align: center;
             margin: 6px 0;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .pressure-box.warning {
+            background: #fef2f2;
+            border-color: #ef4444;
+            animation: flash-pressure 0.8s infinite;
+        }
+        .pressure-box.warning .pressure-value { color: #dc2626; }
+        .pressure-box.warning .pressure-title { color: #dc2626; }
+        @keyframes flash-pressure {
+            0% { box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.9); }
+            100% { box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.4); }
         }
         .pressure-title {
             font-size: 0.68rem; font-weight: 700;
@@ -1270,11 +1283,18 @@ HTML_TEMPLATE = """
             </div>
 
             <!-- Pressure Display (Digital 7-Segment LED Panel) -->
-            <div class="pressure-box">
+            <div class="pressure-box" id="pressureBox">
                 <div class="pressure-title">亜酸化窒素 圧力 (N2O PRESSURE)</div>
                 <div class="pressure-value">
                     <span id="pressureVal">0.000</span>
                     <span class="pressure-unit">MPa</span>
+                </div>
+                <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px; text-align: center; font-weight:600;">
+                    許容範囲:
+                    <input type="number" id="pressMin" value="0.0" step="0.1" style="width:45px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; padding:1px; color:#0f172a; font-weight:bold;">
+                    〜
+                    <input type="number" id="pressMax" value="8.0" step="0.1" style="width:45px; border:1px solid #cbd5e1; border-radius:4px; text-align:center; padding:1px; color:#0f172a; font-weight:bold;">
+                    MPa
                 </div>
             </div>
 
@@ -1741,7 +1761,18 @@ HTML_TEMPLATE = """
                 }
 
                 // Pressure & Sensor mA
-                document.getElementById('pressureVal').innerText = data.pressure_MPa.toFixed(3);
+                const pressVal = data.pressure_MPa;
+                document.getElementById('pressureVal').innerText = pressVal.toFixed(3);
+                
+                // Pressure Warning Check
+                const pMin = parseFloat(document.getElementById('pressMin').value) || 0.0;
+                const pMax = parseFloat(document.getElementById('pressMax').value) || 8.0;
+                const pBox = document.getElementById('pressureBox');
+                if (pressVal < pMin || pressVal > pMax) {
+                    pBox.classList.add('warning');
+                } else {
+                    pBox.classList.remove('warning');
+                }
                 if (data.vesim_current_mA !== undefined) {
                     document.getElementById('vesimCurrentVal').innerText = data.vesim_current_mA.toFixed(2) + ' mA';
                 }
