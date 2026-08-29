@@ -927,6 +927,7 @@ void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
 
   case RemoteCmd::ARM_SAFETY:
     raspi_wireless::remoteArmingState = (param != 0);
+    control::safetyArmed.setAutomatic(raspi_wireless::remoteArmingState);
     Serial.print("[RASPI CMD] Remote Arming set to: ");
     Serial.println(raspi_wireless::remoteArmingState ? "ARMED" : "DISARMED");
     break;
@@ -963,7 +964,7 @@ void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
 
 void raspi_wireless::checkWirelessTask()
 {
-  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
+  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R), static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
 
   bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
 
@@ -984,7 +985,7 @@ void raspi_wireless::checkWirelessTask()
   }
 
   uint8_t wirelessState = (raspi_wireless::isWirelessConnected ? 1 : 0);
-  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
+  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
 }
 
 void raspi_wireless::sendWirelessTelemetryTask()
@@ -1010,8 +1011,9 @@ void raspi_wireless::sendWirelessTelemetryTask()
 
   uint8_t dummyLimitSwitchState = 0; // LaunchController.cpp はリミットスイッチ状態を同期していないため 0 固定
 
-  MsgPacketizer::send(
+  MsgPacketizer::send_arr(
       Serial,
+      static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
       static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
       cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, dummyLimitSwitchState,
       power::input.getVoltage_V(),
