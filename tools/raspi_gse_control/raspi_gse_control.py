@@ -2099,10 +2099,6 @@ VIEWER_HTML = """
             const fillActData = data.map(row => row.fill_active ? 1 : 0);
             const ignActData = data.map(row => row.ignition_active ? 1 : 0);
 
-            // バルブ FB
-            const fbFillData = data.map(row => row.fb_FILL ? 1 : 0);
-            const fbIgnData = data.map(row => row.fb_IGNITER ? 1 : 0);
-            
             const traces = [
                 {
                     x: timeData, y: pressureData,
@@ -2131,16 +2127,38 @@ VIEWER_HTML = """
                     type: 'scatter', mode: 'lines',
                     line: {color: '#ca8a04', width: 1.5, dash: 'dot'},
                     yaxis: 'y3'
-                },
-                {
-                    x: timeData, y: fbFillData,
-                    name: 'FILL FB',
+                }
+            ];
+
+            // Valve States (CMD and FB)
+            const VALVE_NAMES = ["SHIFT","FILL","DUMP","OXYGEN","IGNITER","OPEN","CLOSE","PURGE"];
+            const vColors = ['#64748b', '#3b82f6', '#8b5cf6', '#0ea5e9', '#f43f5e', '#f59e0b', '#10b981', '#a855f7'];
+            
+            VALVE_NAMES.forEach((vname, idx) => {
+                // Add FB (Feedback) Trace
+                traces.push({
+                    x: timeData, 
+                    y: data.map(row => row[`fb_${vname}`] ? 1 : 0),
+                    name: `${vname} FB`,
                     type: 'scatter', mode: 'lines',
-                    line: {color: '#3b82f6', width: 1.5, dash: 'dash'},
+                    line: {color: vColors[idx], width: 1.5, dash: 'solid'},
                     yaxis: 'y3',
                     visible: 'legendonly' // デフォルトは非表示
-                },
-                {
+                });
+                // Add CMD (Command) Trace
+                traces.push({
+                    x: timeData, 
+                    y: data.map(row => row[`cmd_${vname}`] ? 1 : 0),
+                    name: `${vname} CMD`,
+                    type: 'scatter', mode: 'lines',
+                    line: {color: vColors[idx], width: 1.5, dash: 'dot'},
+                    yaxis: 'y3',
+                    visible: 'legendonly' // デフォルトは非表示
+                });
+            });
+
+            // Add E-STOP at the end so it draws on top
+            traces.push(
                     x: timeData, y: estopData,
                     name: 'E-STOP',
                     type: 'scatter', mode: 'lines',
