@@ -132,6 +132,7 @@ class GSEState:
             self.ignition_active = bool(seq_b & (1 << 2))
             self.can_confirm = bool(seq_b & (1 << 3))
             self.mcu_wireless_ok = bool(seq_b & (1 << 4))
+            self.rocket_node_ok = bool(seq_b & (1 << 5))
 
     def to_dict(self):
         with self.lock:
@@ -146,6 +147,7 @@ class GSEState:
                 "ignition_active": self.ignition_active,
                 "can_confirm": self.can_confirm,
                 "mcu_wireless_ok": self.mcu_wireless_ok or self.demo_mode,
+                "rs485_ok": self.rocket_node_ok or self.demo_mode,
                 "armed_state": self.armed_state,
                 "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
@@ -1655,6 +1657,18 @@ HTML_TEMPLATE = """
                     document.getElementById('satVolts').innerText = '--- V';
                     const sTag = document.getElementById('satVoltTag');
                     sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
+                }
+
+                if (data.rs485_ok !== undefined) {
+                    const rsVal = document.getElementById('rs485Val');
+                    const rnVal = document.getElementById('rocketNodeVal');
+                    if (data.rs485_ok) {
+                        rsVal.innerText = '● 接続'; rsVal.style.color = 'var(--green)';
+                        rnVal.innerText = '● 結合'; rnVal.style.color = 'var(--green)';
+                    } else {
+                        rsVal.innerText = '○ 切断'; rsVal.style.color = 'var(--red)';
+                        rnVal.innerText = '○ 分離'; rnVal.style.color = 'var(--red)';
+                    }
                 }
 
 
