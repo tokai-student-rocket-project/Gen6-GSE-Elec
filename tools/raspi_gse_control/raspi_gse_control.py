@@ -1197,7 +1197,7 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- ===== Toyota Andon Status Board (トヨタ式 アンドン表示板) ===== -->
+    <!-- ===== Toyota Andon Status Board (アンドン表示板) ===== -->
     <div class="andon-board">
         <div class="andon-header">
             <span>🚥 ステータスボード</span>
@@ -1305,7 +1305,7 @@ HTML_TEMPLATE = """
                 </div>
             </div>
 
-            <button class="tact-btn tact-zero" onmousedown="sendCmdOnce(7, 0)">ゼロ点校正要求 (Zero Calib)</button>
+            <button class="tact-btn tact-zero" onmousedown="sendCmdOnce(7, 0)">圧力センサーゼロ点校正実行</button>
         </div>
 
         <!-- ===== Right Top: Safety & E-STOP & Sequence ===== -->
@@ -1838,9 +1838,9 @@ HTML_TEMPLATE = """
                         a4.classList.add('active');
                         if (pyBadge) {
                             pyBadge.className = 'pokayoke-badge lock';
-                            pyBadge.innerText = '🔴 [アンドン引き当て停止] E-STOP 発動中 (全動作強制ロック)';
+                            pyBadge.innerText = '🔴 エマージェンシーストップ 発動中';
                         }
-                        if (pyValveTag) pyValveTag.innerText = '⛔ アンドン停止中: 全弁自動安全姿勢';
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 停止中: 全ての弁を自動で安全方向へ';
                     } else if (data.ignition_active) {
                         a3.classList.add('active');
                         if (pyBadge) {
@@ -1859,30 +1859,30 @@ HTML_TEMPLATE = """
                         a2.classList.add('active');
                         if (pyBadge) {
                             pyBadge.className = 'pokayoke-badge safe';
-                            pyBadge.innerText = '🔵 [2. 充填工程実行中] N2O自動充填中... (ポカヨケ: 手動弁保護中)';
+                            pyBadge.innerText = '🔵 [2. 充填工程実行中] N2O自動充填中... (手動弁保護中)';
                         }
-                        if (pyValveTag) pyValveTag.innerText = '⛔ 充填中: 手動弁トグル禁止 (ポカヨケ保護)';
+                        if (pyValveTag) pyValveTag.innerText = '⛔ 充填中: 手動弁トグル禁止';
                     } else {
                         a1.classList.add('active');
                         const dumpIsOn = (data.valves_cmd && data.valves_cmd['DUMP']) || false;
                         if (!data.armed_state) {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge';
-                                pyBadge.innerText = '🔒 [ポカヨケ保護中] セーフティ解除なしではシーケンス起動不可';
+                                pyBadge.innerText = '🔒 セーフティ解除なしではシーケンス起動不可';
                             }
                             if (pyValveTag) pyValveTag.innerText = '🔒 セーフティ施錠中';
                         } else if (!dumpIsOn) {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge lock';
-                                pyBadge.innerText = '⚠️ [ポカヨケ保護中] DUMP弁(排出弁)をON(開放)に設定しないとシーケンスは起動できません';
+                                pyBadge.innerText = '⚠️ DUMP弁(排出弁)をON(開放)に設定しないとシーケンスは起動できません';
                             }
                             if (pyValveTag) pyValveTag.innerText = '⚠️ シーケンス準備: DUMP弁をONに設定してください';
                         } else {
                             if (pyBadge) {
                                 pyBadge.className = 'pokayoke-badge safe';
-                                pyBadge.innerText = '🛡️ [ポカヨケ正常] DUMP ON確認完了 ➔ シーケンス開始可能';
+                                pyBadge.innerText = '🛡️ DUMP ON確認完了 ➔ シーケンス開始可能';
                             }
-                            if (pyValveTag) pyValveTag.innerText = '🛡️ ポカヨケ: 通常手動トグル可能';
+                            if (pyValveTag) pyValveTag.innerText = '🛡️ 通常手動トグル可能';
                         }
                     }
                 }
@@ -2054,7 +2054,7 @@ VIEWER_HTML = """
 </head>
 <body>
     <div class="header">
-        <h2 style="margin:0; color:#0f172a;">📊 GSE Telemetry Log Analyzer</h2>
+        <h2 style="margin:0; color:#0f172a;">📊 GSE Log Analyzer</h2>
         <div style="display:flex; align-items:center; gap:15px;">
             <span style="font-size:0.9rem; color:#475569;">Target Log: <strong>{{ filename }}</strong></span>
             <button class="btn" onclick="window.close()">閉じる</button>
