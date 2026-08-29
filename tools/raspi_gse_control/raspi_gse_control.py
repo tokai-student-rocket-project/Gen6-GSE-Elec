@@ -246,20 +246,76 @@ def auto_detect_serial_port():
     ports = glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*') + glob.glob('COM*')
     return ports[0] if ports else None
 
+def crc8_smbus(data):
+    crc = 0
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            if crc & 0x80:
+                crc = (crc << 1) ^ 0x07
+            else:
+                crc <<= 1
+            crc &= 0xFF
+    return crc
+
+def cobs_decode(buffer):
+    out = bytearray()
+    i = 0
+    while i < len(buffer):
+        code = buffer[i]
+        if code == 0:
+            break
+        i += 1
+        for _ in range(1, code):
+            if i < len(buffer):
+                out.append(buffer[i])
+                i += 1
+        if code < 0xFF and i < len(buffer) and buffer[i] != 0:
+            out.append(0)
+    return bytes(out)
+
+def cobs_encode(source):
+    dest = bytearray()
+    dest.append(0)
+    code = 1
+    code_index = 0
+    for b in source:
+        if b == 0:
+            dest[code_index] = code
+            code = 1
+            code_index = len(dest)
+            dest.append(0)
+        else:
+            dest.append(b)
+            code += 1
+            if code == 0xFF:
+                dest[code_index] = code
+                code = 1
+                code_index = len(dest)
+                dest.append(0)
+    dest[code_index] = code
+    dest.append(0)
+    return bytes(dest)
+
 def send_msgpacketizer_packet(ser, packet_id, *args):
-    """MsgPacketizer 形式 (MsgPack 配列 [packet_id, args...]) でパケットを作成して送信"""
+    """MsgPacketizer 形式 (COBS + CRC8 + MsgPack) でパケットを作成して送信"""
     if gse_state.demo_mode:
-        # デモモード時はシミュレータにコマンドを直接転送
         simulate_handle_command(args[0] if len(args) > 0 else 0, args[1] if len(args) > 1 else 0)
         return True
 
     if ser is None or not ser.is_open:
         return False
     try:
-        data_list = [packet_id] + list(args)
-        packed_data = msgpack.packb(data_list)
+        packed_args = b''
+        for arg in args:
+            packed_args += msgpack.packb(arg)
+        
+        payload = bytes([packet_id]) + packed_args
+        crc = crc8_smbus(payload)
+        frame = cobs_encode(payload + bytes([crc]))
+        
         with ser_lock:
-            ser.write(packed_data)
+            ser.write(frame)
             ser.flush()
         return True
     except Exception as e:
@@ -269,6 +325,7 @@ def send_msgpacketizer_packet(ser, packet_id, *args):
 def serial_worker(port_name, baudrate=115200):
     global ser_instance
     unpacker = msgpack.Unpacker(raw=False)
+    buffer = bytearray()
     
     print(f"[SERIAL] Starting Serial Worker on {port_name} ({baudrate} bps)...")
     
@@ -288,26 +345,58 @@ def serial_worker(port_name, baudrate=115200):
             
             raw_bytes = ser_instance.read(1024)
             if raw_bytes:
-                try:
-                    unpacker.feed(raw_bytes)
-                    for msg in unpacker:
-                        if isinstance(msg, list) and len(msg) > 0:
-                            packet_id = msg[0]
-                            if packet_id == PACKET_RASPI_TELEMETRY:
-                                gse_state.raw_telemetry = str(msg)
-                                if len(msg) >= 6:
-                                    cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
-                                    launch_v = msg[6] if len(msg) >= 7 else None
-                                    sat_v = msg[7] if len(msg) >= 8 else None
-                                    gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
+                buffer.extend(raw_bytes)
+                while b'\x00' in buffer:
+                    frame, buffer = buffer.split(b'\x00', 1)
+                    if len(frame) == 0:
+                        continue
+                    
+                    try:
+                        decoded = cobs_decode(frame)
+                        if len(decoded) < 2:
+                            continue
+                            
+                        payload = decoded[:-1]
+                        crc = decoded[-1]
+                        
+                        if crc8_smbus(payload) == crc:
+                            packet_id = payload[0]
+                            unpacker.feed(payload[1:])
+                            
+                            elements = []
+                            for el in unpacker:
+                                elements.append(el)
+                                
+                            msg = []
+                            if len(elements) == 1 and isinstance(elements[0], list):
+                                inner = elements[0]
+                                if len(inner) > 0 and inner[0] == packet_id:
+                                    msg = inner
                                 else:
-                                    gse_state.raw_telemetry += " (Truncated!)"
-                            elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
-                                gse_state.last_heartbeat_rx = time.time()
-                                gse_state.connected = True
-                except Exception as parse_e:
-                    # Ignore parsing errors caused by stray ASCII debug logs and reset unpacker
-                    unpacker = msgpack.Unpacker(raw=False)
+                                    msg = [packet_id] + inner
+                            else:
+                                msg = [packet_id] + elements
+                                
+                            if len(msg) > 0:
+                                packet_id = msg[0]
+                                if packet_id == PACKET_RASPI_TELEMETRY:
+                                    gse_state.raw_telemetry = str(msg)
+                                    if len(msg) >= 6:
+                                        cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
+                                        launch_v = msg[6] if len(msg) >= 7 else None
+                                        sat_v = msg[7] if len(msg) >= 8 else None
+                                        
+                                        gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
+                                    else:
+                                        gse_state.raw_telemetry += " (Truncated!)"
+                                elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
+                                    gse_state.last_heartbeat_rx = time.time()
+                                    gse_state.connected = True
+                                elif packet_id == PACKET_RASPI_WIRELESS_STATUS:
+                                    if len(msg) >= 2:
+                                        gse_state.wireless_connected = (msg[1] == 1)
+                    except Exception as parse_e:
+                        unpacker = msgpack.Unpacker(raw=False)
 
         except Exception as e:
             print(f"[SERIAL ERROR] {e}")
