@@ -4,11 +4,7 @@
 /// @param pinNumber ピン番号
 Input::Input(uint8_t pinNumber, bool hasExternalPullup) {
   _pinNumber = pinNumber;
-  if (hasExternalPullup) {
-    pinMode(_pinNumber, INPUT_PULLUP);
-  } else {
-    pinMode(_pinNumber, INPUT);
-  }
+  pinMode(_pinNumber, INPUT); // INPUT
   _hasExternalPullup = hasExternalPullup;
 }
 

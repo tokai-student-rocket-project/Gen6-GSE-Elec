@@ -151,7 +151,7 @@ namespace communication
 
   void sendControlSync();
   void sendComCheck();
-  void onFeedbackSyncReceived(uint8_t state);
+  void onFeedbackSyncReceived(uint8_t state, float satelliteVoltage_V);
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA); // 電流受信ハンドラ
   void onComCheckReceived();
@@ -179,6 +179,7 @@ namespace raspi_wireless
   bool isWirelessConnected = false;
   bool remoteArmingState = false;
   float latestPressure_MPa = 0.0f;
+  float latestSatelliteVoltage_V = 0.0f;
 
   enum class RemoteCmd : uint8_t
   {
@@ -230,7 +231,7 @@ void setup()
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(10);
   Tasks.add(&communication::sendControlSync)->startFps(20);
-  Tasks.add(&communication::sendComCheck)->startFps(2);
+  // Tasks.add(&communication::sendComCheck)->startFps(2); // コリジョン防止のため無効化
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
   // Tasks.add(&communication::sendTelemetryForPython)
   //     ->startFps(10); // 10HzでPCへ状態送信
@@ -285,7 +286,7 @@ void setup()
            {
         Serial.println(">>> Requesting Remote Zero-Point Calibration...");
         communication::sendSensorZeroCalibReq(); })
-      ->startOnceAfterSec(5.0);
+      ->startOnceAfterSec(5.02); // 50ms周期のCONTROL_SYNCとの衝突を避けるため5.02秒にずらす
 
   mp3_play(11);
 }
@@ -429,8 +430,9 @@ void communication::sendComCheck()
   communication::disableOutput();
 }
 
-void communication::onFeedbackSyncReceived(uint8_t state)
+void communication::onFeedbackSyncReceived(uint8_t state, float satelliteVoltage_V)
 {
+  raspi_wireless::latestSatelliteVoltage_V = satelliteVoltage_V;
   control::shiftFB.set(state & (1 << 0));
   control::fillFB.set(state & (1 << 1));
   control::dumpFB.set(state & (1 << 2));
@@ -1017,5 +1019,6 @@ void raspi_wireless::sendWirelessTelemetryTask()
       static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
       cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, dummyLimitSwitchState,
       power::input.getVoltage_V(),
-      power::bus12.getVoltage_V());
+      power::bus12.getVoltage_V(),
+      raspi_wireless::latestSatelliteVoltage_V);
 }

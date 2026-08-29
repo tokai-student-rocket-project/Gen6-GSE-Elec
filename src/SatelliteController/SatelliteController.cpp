@@ -345,7 +345,7 @@ void communication::sendReplyToLaunch()
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
 
   communication::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state, power::input.getVoltage_V());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
@@ -359,7 +359,7 @@ void communication::onControlSyncReceived(uint8_t state)
   Serial.println(isArmed);
 
   communication::syncState = state;
-  // communication::preReceivedTime = millis(); // ★Heartbeat: 受信時刻を更新
+  communication::preReceivedTime = millis(); // ★Heartbeat: 受信時刻を更新
   communication::statusLamp.on(); // ★受信成功でCOMランプ点灯
   error::statusLamp.off();        // ★受信成功でERRランプ消灯
 
