@@ -66,6 +66,45 @@ namespace error
 namespace solenoid
 {
   SolenoidMonitor monitor(PIN_PC4);
+  constexpr uint8_t FAULT_CONFIRM_COUNT = 5;
+
+  struct Debouncer
+  {
+    SolenoidMonitor::Status lastRawStatus = SolenoidMonitor::Status::OFF;
+    SolenoidMonitor::Status confirmedStatus = SolenoidMonitor::Status::OFF;
+    uint8_t count = 0;
+
+    SolenoidMonitor::Status update(SolenoidMonitor::Status newStatus)
+    {
+      if (newStatus == lastRawStatus)
+      {
+        count++;
+      }
+      else
+      {
+        lastRawStatus = newStatus;
+        count = 1;
+      }
+
+      if (count >= FAULT_CONFIRM_COUNT)
+      {
+        confirmedStatus = newStatus;
+      }
+      return confirmedStatus;
+    }
+
+    void reset()
+    {
+      lastRawStatus = SolenoidMonitor::Status::OFF;
+      confirmedStatus = SolenoidMonitor::Status::OFF;
+      count = 0;
+    }
+  };
+
+  Debouncer fillDebouncer;
+  Debouncer dumpDebouncer;
+  Debouncer oxygenDebouncer;
+  Debouncer purgeDebouncer;
 
   void checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name);
   void measureTask();
@@ -99,17 +138,22 @@ namespace communication
 {
   enum class Packet : uint8_t
   {
-    CONTROL_SYNC,              // ランチコントローラーからの制御コマンド同期（電磁弁開閉など）
-    FEEDBACK_SYNC,             // サテライトコントローラーからのフィードバック（電磁弁の実際の状態など）
-    PRESSURE_SYNC,             // 算出された圧力値(MPa)の同期
-    COM_CHECK_L_TO_S,          // ランチコントローラーからサテライトコントローラーへの生存確認（通信チェック）
-    COM_CHECK_S_TO_L,          // サテライトコントローラーからランチコントローラーへの生存確認（通信チェック）
-    SENSOR_CONFIG_SYNC,        // センサの基本設定（フルスケールなど）の同期
-    SENSOR_DUMMY_CURRENT_SYNC, // シミュレーション用のダミー電流値同期
-    SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
-    SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
-    SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
+    CONTROL_SYNC = 0,
+    FEEDBACK_SYNC = 1,
+    PRESSURE_SYNC = 2,
+    COM_CHECK_L_TO_S = 3,
+    COM_CHECK_S_TO_L = 4,
+    SENSOR_CONFIG_SYNC = 5,
+    SENSOR_DUMMY_CURRENT_SYNC = 6,
+    SENSOR_CALIB_COEFF_SYNC = 7,
+    SENSOR_ZERO_CALIB_REQ = 8,
+    SENSOR_CURRENT_SYNC = 9,
+    LIMIT_SWITCH_SYNC = 10,
+    COM_CHECK_L_TO_N = 11,
+    COM_CHECK_N_TO_L = 12,
 
+    RASPI_SATELLITE_TELEMETRY = 0x33, // (51) Raspberry Pi 4 へ機体詳細テレメトリ送信
+    RASPI_WIRELESS_STATUS     = 0x34, // (52) 機体無線ステータス
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -122,10 +166,8 @@ namespace communication
   void enableOutput();
   void disableOutput();
 
-  void sendFeedbackSync();
-  void sendPressureSync();
-  void sendCurrentSync(); // 電流値同期用
-  void sendComCheck();
+  void sendReplyToLaunch();
+
   void onControlSyncReceived(uint8_t state);
   void onComCheckReceived();
   void onComCheckFailed();
@@ -136,6 +178,17 @@ namespace communication
 
   Output statusLamp(PIN_PK5); // COM
 } // namespace communication
+namespace raspi_wireless
+{
+  unsigned long lastHeartbeatTime = 0;
+  const unsigned long WIRELESS_TIMEOUT_MS = 3000;
+  bool isWirelessConnected = false;
+
+  void checkWirelessTask();
+  void sendWirelessTelemetryTask();
+  void onHeartbeatReceived();
+} // namespace raspi_wireless
+
 
 /// @brief 送信を有効にする
 void communication::enableOutput()
@@ -166,56 +219,23 @@ void power::measureTask()
 
 void solenoid::measureTask()
 {
-  // 仮の振る舞い
-  // bool isArmed = control::safetyArmed.isManualRaised();
-
-  // 正常
-  // control::shiftFB.set(control::shift.isHigh() && isArmed);
-  // control::fillFB.set(control::fill.isHigh() && isArmed);
-  // control::dumpFB.set(control::dump.isHigh() && isArmed);
-  // control::oxygenFB.set(control::oxygen.isHigh() && isArmed);
-  // control::igniterFB.set(control::igniter.isHigh() && isArmed);
-  // control::openFB.set(control::open.isHigh() && isArmed);
-  // control::closeFB.set(control::close.isHigh() && isArmed);
-  // control::purgeFB.set(control::purge.isHigh() && isArmed);
-
-  // 故障
-  // control::shiftFB.set(control::shift.isHigh() && isArmed ?
-  // !control::shiftFB.isHigh() : LOW);
-  // control::fillFB.set(control::fill.isHigh() && isArmed ?
-  // !control::fillFB.isHigh() : LOW);
-  // control::dumpFB.set(control::dump.isHigh() && isArmed ?
-  // !control::dumpFB.isHigh() : LOW);
-  // control::oxygenFB.set(control::oxygen.isHigh() && isArmed ?
-  // !control::oxygenFB.isHigh() : LOW);
-  // control::igniterFB.set(control::igniter.isHigh() && isArmed ?
-  // !control::igniterFB.isHigh() : LOW);
-  // control::openFB.set(control::open.isHigh() && isArmed ?
-  // !control::openFB.isHigh() : LOW);
-  // control::closeFB.set(control::close.isHigh() && isArmed ?
-  // !control::closeFB.isHigh() : LOW);
-  // control::purgeFB.set(control::purge.isHigh() && isArmed ?
-  // !control::purgeFB.isHigh() : LOW);
-
-  // USBポートから状態を読み出し
   checkSolenoid(SolenoidMonitor::Solenoid::FILL, "FILL");
   checkSolenoid(SolenoidMonitor::Solenoid::DUMP, "DUMP");
   checkSolenoid(SolenoidMonitor::Solenoid::OXYGEN, "OXYGEN");
   checkSolenoid(SolenoidMonitor::Solenoid::PURGE, "PURGE");
 
-  // 正常・故障検知
-  SolenoidMonitor::Status fillStatus =
-      monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
-  SolenoidMonitor::Status dumpStatus =
-      monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
-  SolenoidMonitor::Status oxygenStatus =
-      monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
-  SolenoidMonitor::Status purgeStatus =
-      monitor.getStatus(SolenoidMonitor::Solenoid::PURGE);
+  SolenoidMonitor::Status rawFillStatus = monitor.getStatus(SolenoidMonitor::Solenoid::FILL);
+  SolenoidMonitor::Status rawDumpStatus = monitor.getStatus(SolenoidMonitor::Solenoid::DUMP);
+  SolenoidMonitor::Status rawOxygenStatus = monitor.getStatus(SolenoidMonitor::Solenoid::OXYGEN);
+  SolenoidMonitor::Status rawPurgeStatus = monitor.getStatus(SolenoidMonitor::Solenoid::PURGE);
 
-  // Armedでなければこの時点で終わり
   if (!control::safetyArmed.isManualRaised())
   {
+    fillDebouncer.reset();
+    dumpDebouncer.reset();
+    oxygenDebouncer.reset();
+    purgeDebouncer.reset();
+
     control::fillFB.off();
     control::dumpFB.off();
     control::oxygenFB.off();
@@ -223,11 +243,10 @@ void solenoid::measureTask()
     return;
   }
 
-  // bool isArmed = control::safetyArmed.isManualRaised();
-
-  // control::openFB.set(control::open.isHigh() && isArmed);
-  // control::closeFB.set(control::close.isHigh() && isArmed);
-  // control::igniterFB.set(control::igniter.isHigh() && isArmed);
+  SolenoidMonitor::Status fillStatus = fillDebouncer.update(rawFillStatus);
+  SolenoidMonitor::Status dumpStatus = dumpDebouncer.update(rawDumpStatus);
+  SolenoidMonitor::Status oxygenStatus = oxygenDebouncer.update(rawOxygenStatus);
+  SolenoidMonitor::Status purgeStatus = purgeDebouncer.update(rawPurgeStatus);
 
   control::openFB.set(control::open.isHigh());
   control::closeFB.set(control::close.isHigh());
@@ -235,66 +254,34 @@ void solenoid::measureTask()
 
   switch (fillStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::fillFB.toggle();
-    break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::fillFB.off();
-    break;
-  case SolenoidMonitor::Status::OFF:
-    control::fillFB.off();
-    break;
-  case SolenoidMonitor::Status::ON:
-    control::fillFB.on();
-    break;
+  case SolenoidMonitor::Status::OPEN_FAILURE: control::fillFB.toggle(); break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE: control::fillFB.off(); break;
+  case SolenoidMonitor::Status::OFF: control::fillFB.off(); break;
+  case SolenoidMonitor::Status::ON: control::fillFB.on(); break;
   }
 
   switch (dumpStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::dumpFB.toggle();
-    break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::dumpFB.off();
-    break;
-  case SolenoidMonitor::Status::OFF:
-    control::dumpFB.off();
-    break;
-  case SolenoidMonitor::Status::ON:
-    control::dumpFB.on();
-    break;
+  case SolenoidMonitor::Status::OPEN_FAILURE: control::dumpFB.toggle(); break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE: control::dumpFB.off(); break;
+  case SolenoidMonitor::Status::OFF: control::dumpFB.off(); break;
+  case SolenoidMonitor::Status::ON: control::dumpFB.on(); break;
   }
 
   switch (oxygenStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::oxygenFB.toggle();
-    break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::oxygenFB.off();
-    break;
-  case SolenoidMonitor::Status::OFF:
-    control::oxygenFB.off();
-    break;
-  case SolenoidMonitor::Status::ON:
-    control::oxygenFB.on();
-    break;
+  case SolenoidMonitor::Status::OPEN_FAILURE: control::oxygenFB.toggle(); break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE: control::oxygenFB.off(); break;
+  case SolenoidMonitor::Status::OFF: control::oxygenFB.off(); break;
+  case SolenoidMonitor::Status::ON: control::oxygenFB.on(); break;
   }
 
   switch (purgeStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::purgeFB.toggle();
-    break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE:
-    control::purgeFB.off();
-    break;
-  case SolenoidMonitor::Status::OFF:
-    control::purgeFB.off();
-    break;
-  case SolenoidMonitor::Status::ON:
-    control::purgeFB.on();
-    break;
+  case SolenoidMonitor::Status::OPEN_FAILURE: control::purgeFB.toggle(); break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE: control::purgeFB.off(); break;
+  case SolenoidMonitor::Status::OFF: control::purgeFB.off(); break;
+  case SolenoidMonitor::Status::ON: control::purgeFB.on(); break;
   }
 }
 
@@ -349,7 +336,7 @@ void n2o::measureTask()
 
 void n2o::samplingTask() { n2o::vesim10.sample(); }
 
-void communication::sendFeedbackSync()
+void communication::sendReplyToLaunch()
 {
   uint8_t state =
       (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
@@ -358,39 +345,10 @@ void communication::sendFeedbackSync()
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
 
   communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC),
-      state);
-  Serial1.flush();
-  communication::disableOutput();
-}
-
-void communication::sendPressureSync()
-{
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC),
-      n2o::pressure_MPa);
-  Serial1.flush();
-  communication::disableOutput();
-}
-
-void communication::sendCurrentSync()
-{
-  float current_mA = n2o::vesim10.getCurrent_mA();
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC),
-      current_mA);
-  Serial1.flush();
-  communication::disableOutput();
-}
-
-void communication::sendComCheck()
-{
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
   Serial1.flush();
   communication::disableOutput();
 }
@@ -418,6 +376,8 @@ void communication::onControlSyncReceived(uint8_t state)
   {
     control::dump.off();
   }
+
+  communication::sendReplyToLaunch();
 }
 
 void communication::onComCheckReceived()
@@ -596,7 +556,8 @@ void setup()
 
   // LTC485 (RS485)
   Serial1.begin(115200);
-  communication::preReceivedTime = millis() - communication::timeout;
+  communication::preReceivedTime = millis();
+  raspi_wireless::lastHeartbeatTime = millis();
 
   // MCP3208 (ADC)
   SPI.begin();
@@ -618,11 +579,10 @@ void setup()
   Tasks.add(&n2o::samplingTask)->startFps(100); // 100Hzでサンプリング
   Tasks.add(&n2o::measureTask)->startFps(2);    // 亜酸化窒素の圧力を計測
   Tasks.add(&control::handleManualTask)->startFps(10);
-  Tasks.add(&communication::sendFeedbackSync)->startFps(10);
-  Tasks.add(&communication::sendPressureSync)->startFps(2);
-  Tasks.add(&communication::sendCurrentSync)->startFps(2); // 2Hzで電流値を送信
-  Tasks.add(&communication::sendComCheck)->startFps(2);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
+  Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);
+  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10);
+
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),
       &communication::onControlSyncReceived);
@@ -645,6 +605,10 @@ void setup()
       static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ),
       &communication::onSensorZeroCalibReqReceived);
 
+  MsgPacketizer::subscribe(
+      Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS),
+      &raspi_wireless::onHeartbeatReceived);
+
   control::setChristmasTreeStart();
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 }
@@ -656,4 +620,44 @@ void loop()
 
   communication::accessLamp.update(); // RS485
   control::statusLamp.update();       // Task
+}
+
+// =========================================================================
+// Raspberry Pi 4 無線通信管理
+// =========================================================================
+
+void raspi_wireless::onHeartbeatReceived()
+{
+  raspi_wireless::lastHeartbeatTime = millis();
+  if (!raspi_wireless::isWirelessConnected)
+  {
+    raspi_wireless::isWirelessConnected = true;
+    Serial.println("[RASPI SATELLITE WIRELESS] Link Established / Restored.");
+  }
+}
+
+void raspi_wireless::checkWirelessTask()
+{
+  bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
+  if (timeoutOccurred && raspi_wireless::isWirelessConnected)
+  {
+    raspi_wireless::isWirelessConnected = false;
+    Serial.println("[RASPI SATELLITE WIRELESS WARN] Wireless heartbeat timed out.");
+  }
+}
+
+void raspi_wireless::sendWirelessTelemetryTask()
+{
+  uint8_t fb_state =
+      (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
+      (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
+      (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
+      (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
+
+  // パケット送信: RASPI_SATELLITE_TELEMETRY (send_arr を使って unpack しやすくする)
+  MsgPacketizer::send_arr(
+      Serial,
+      static_cast<uint8_t>(communication::Packet::RASPI_SATELLITE_TELEMETRY),
+      static_cast<uint8_t>(communication::Packet::RASPI_SATELLITE_TELEMETRY),
+      fb_state, n2o::pressure_MPa, n2o::vesim10.getCurrent_mA(), power::input.getVoltage_V(), power::input.getAmpere_A());
 }
