@@ -293,12 +293,15 @@ def serial_worker(port_name, baudrate=115200):
                     for msg in unpacker:
                         if isinstance(msg, list) and len(msg) > 0:
                             packet_id = msg[0]
-                            if packet_id == PACKET_RASPI_TELEMETRY and len(msg) >= 6:
+                            if packet_id == PACKET_RASPI_TELEMETRY:
                                 gse_state.raw_telemetry = str(msg)
-                                cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
-                                launch_v = msg[6] if len(msg) >= 7 else None
-                                sat_v = msg[7] if len(msg) >= 8 else None
-                                gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
+                                if len(msg) >= 6:
+                                    cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
+                                    launch_v = msg[6] if len(msg) >= 7 else None
+                                    sat_v = msg[7] if len(msg) >= 8 else None
+                                    gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
+                                else:
+                                    gse_state.raw_telemetry += " (Truncated!)"
                             elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
                                 gse_state.last_heartbeat_rx = time.time()
                                 gse_state.connected = True
