@@ -311,7 +311,7 @@ def send_msgpacketizer_packet(ser, packet_id, *args):
             packed_args += msgpack.packb(arg)
         
         payload = bytes([packet_id]) + packed_args
-        crc = crc8_smbus(payload)
+        crc = crc8_smbus(packed_args)
         frame = cobs_encode(payload + bytes([crc]))
         
         with ser_lock:
@@ -359,7 +359,7 @@ def serial_worker(port_name, baudrate=115200):
                         payload = decoded[:-1]
                         crc = decoded[-1]
                         
-                        if crc8_smbus(payload) == crc:
+                        if crc8_smbus(payload[1:]) == crc:
                             packet_id = payload[0]
                             unpacker.feed(payload[1:])
                             
