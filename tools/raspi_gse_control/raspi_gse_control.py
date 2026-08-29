@@ -1684,10 +1684,10 @@ HTML_TEMPLATE = """
                     const saVal = document.getElementById('satArmedVal');
                     const saTag = document.getElementById('satArmedTag');
                     if (data.sat_armed) {
-                        saVal.innerText = 'ON (飛行モード)'; saVal.style.color = 'var(--green)';
+                        saVal.innerText = 'ON (アームド)'; saVal.style.color = 'var(--green)';
                         saTag.className = 'mcu-tag ok'; saTag.innerText = '準備完了';
                     } else {
-                        saVal.innerText = 'OFF (安全モード)'; saVal.style.color = 'var(--red)';
+                        saVal.innerText = 'OFF (セーフティ)'; saVal.style.color = 'var(--red)';
                         saTag.className = 'mcu-tag warn'; saTag.innerText = 'ポカヨケ動作中';
                     }
                 }
