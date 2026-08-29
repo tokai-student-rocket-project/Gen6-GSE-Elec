@@ -677,19 +677,19 @@ HTML_TEMPLATE = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
         :root {
-            --bg: #070b14;
-            --bg-card: #0f1729;
-            --bg-card-alt: #162033;
-            --border: #1e2d4a;
-            --blue: #38bdf8;
-            --green: #22c55e;
-            --red: #ef4444;
-            --orange: #f97316;
-            --yellow: #eab308;
-            --purple: #a78bfa;
-            --text: #e2e8f0;
+            --bg: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f8fafc;
+            --border: #cbd5e1;
+            --blue: #0284c7;
+            --green: #16a34a;
+            --red: #dc2626;
+            --orange: #ea580c;
+            --yellow: #ca8a04;
+            --purple: #9333ea;
+            --text: #0f172a;
             --text-dim: #64748b;
-            --text-bright: #f8fafc;
+            --text-bright: #020617;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -713,7 +713,7 @@ HTML_TEMPLATE = """
             100% { opacity: 1; }
         }
         .btn-log-download {
-            background: #1e293b; color: var(--blue); border: 1px solid var(--blue);
+            background: var(--bg-card-alt); color: var(--blue); border: 1px solid var(--blue);
             border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; font-weight: 700;
             cursor: pointer; transition: all 0.2s;
         }
@@ -774,12 +774,12 @@ HTML_TEMPLATE = """
 
         /* ===== Toyota Andon Board (トヨタ式 アンドン表示板) ===== */
         .andon-board {
-            background: linear-gradient(180deg, #0f172a 0%, #090d16 100%);
+            background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
             border: 2px solid var(--border);
             border-radius: 10px;
             padding: 8px 12px;
             margin-bottom: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .andon-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -800,25 +800,25 @@ HTML_TEMPLATE = """
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
         }
         .andon-item {
-            background: #1e293b; border: 1px solid #334155; border-radius: 6px;
+            background: #ffffff; border: 1px solid #94a3b8; border-radius: 6px;
             padding: 6px 8px; display: flex; align-items: center; gap: 8px;
             opacity: 0.35; transition: all 0.3s;
         }
         .andon-item.active {
-            opacity: 1; border-color: #f8fafc;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            opacity: 1; border-color: var(--blue);
+            box-shadow: 0 0 15px rgba(2,132,199,0.3);
             transform: translateY(-1px);
         }
         .andon-light {
-            width: 14px; height: 14px; border-radius: 50%; background: #475569;
-            flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+            width: 14px; height: 14px; border-radius: 50%; background: #94a3b8;
+            flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
         }
         .andon-item.active .andon-light.green  { background: #22c55e; box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e; }
         .andon-item.active .andon-light.blue   { background: #3b82f6; box-shadow: 0 0 12px #3b82f6, 0 0 20px #3b82f6; }
         .andon-item.active .andon-light.yellow { background: #eab308; box-shadow: 0 0 12px #eab308, 0 0 20px #eab308; }
         .andon-item.active .andon-light.red    { background: #ef4444; box-shadow: 0 0 12px #ef4444, 0 0 24px #ef4444; animation: pulse-red 0.8s infinite; }
 
-        .andon-step { font-size: 0.72rem; font-weight: 800; color: #f8fafc; line-height: 1.1; }
+        .andon-step { font-size: 0.72rem; font-weight: 800; color: var(--text-bright); line-height: 1.1; }
         .andon-sub { font-size: 0.55rem; color: var(--text-dim); font-weight: 600; }
         .conn-badge {
             padding: 4px 12px; border-radius: 16px; font-weight: 600; font-size: 0.75rem;
@@ -852,13 +852,13 @@ HTML_TEMPLATE = """
 
         /* ===== Pressure Display (Digital 7-Segment LED Panel) ===== */
         .pressure-box {
-            background: #030e1a;
-            border: 2px solid rgba(56, 189, 248, 0.4);
+            background: #f8fafc;
+            border: 2px solid rgba(2, 132, 199, 0.4);
             border-radius: 8px;
             padding: 8px 12px;
             text-align: center;
             margin: 6px 0;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8), 0 0 10px rgba(56, 189, 248, 0.15);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .pressure-title {
             font-size: 0.68rem; font-weight: 700;
@@ -868,21 +868,21 @@ HTML_TEMPLATE = """
         .pressure-value {
             font-family: 'Share Tech Mono', 'Orbitron', monospace;
             font-size: 3.2rem; font-weight: 900;
-            color: #38bdf8;
-            text-shadow: 0 0 14px rgba(56,189,248,0.8), 0 0 28px rgba(56,189,248,0.4);
+            color: #0369a1;
+            text-shadow: none;
             line-height: 1.0; margin: 4px 0;
             letter-spacing: 3px;
         }
         .pressure-unit {
-            font-size: 1.1rem; color: #7dd3fc;
+            font-size: 1.1rem; color: #0284c7;
             margin-left: 6px; font-weight: 700;
-            text-shadow: 0 0 8px rgba(56,189,248,0.6);
+            text-shadow: none;
         }
         .vesim-ma {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.75rem; font-weight: 700; color: #a78bfa;
-            text-shadow: 0 0 6px rgba(167,139,250,0.5);
-            background: #0f1123; border: 1px solid rgba(167,139,250,0.3);
+            font-size: 0.75rem; font-weight: 700; color: #6d28d9;
+            text-shadow: none;
+            background: #f5f3ff; border: 1px solid rgba(109,40,217,0.3);
             border-radius: 4px; padding: 1px 6px; display: inline-block;
         }
 
@@ -898,7 +898,7 @@ HTML_TEMPLATE = """
         }
         .led {
             width: 9px; height: 9px; border-radius: 50%;
-            background: #334155;
+            background: #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
             transition: all 0.3s;
         }
         .led-on-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
@@ -914,7 +914,7 @@ HTML_TEMPLATE = """
         .toggle-sub { font-size: 0.68rem; color: var(--text-dim); }
         .toggle-track {
             width: 48px; height: 26px;
-            background: #334155;
+            background: #cbd5e1;
             border-radius: 13px;
             position: relative;
             cursor: pointer;
@@ -969,7 +969,7 @@ HTML_TEMPLATE = """
             width: 100%;
             margin-top: 10px;
             padding: 8px 12px;
-            background: #1e293b;
+            background: #ffffff;
             color: var(--orange);
             border: 1px solid var(--orange);
             border-radius: 6px;
@@ -1025,11 +1025,11 @@ HTML_TEMPLATE = """
             100% { box-shadow: 0 0 6px rgba(234,88,12,0.4); }
         }
         .tact-peace {
-            background: #334155;
+            background: #e2e8f0;
             color: var(--text);
         }
         .tact-zero {
-            background: #1e293b;
+            background: #f1f5f9;
             color: var(--text-dim);
             border: 1px solid var(--border);
         }
@@ -1040,24 +1040,24 @@ HTML_TEMPLATE = """
         }
         .timer-box {
             flex: 1;
-            background: #021208;
-            border: 2px solid rgba(34, 197, 94, 0.4);
+            background: #f8fafc;
+            border: 2px solid rgba(22, 163, 74, 0.4);
             border-radius: 8px;
             padding: 6px 8px;
             text-align: center;
-            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 0 8px rgba(34, 197, 94, 0.15);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .timer-label {
             font-size: 0.65rem; font-weight: 800;
-            color: #4ade80; letter-spacing: 1px;
+            color: #15803d; letter-spacing: 1px;
         }
         .timer-value {
             font-family: 'Share Tech Mono', monospace;
             font-size: 1.45rem; font-weight: 900;
-            color: #22c55e;
-            text-shadow: 0 0 10px rgba(34,197,94,0.8), 0 0 20px rgba(34,197,94,0.4);
-            background: #010b04;
-            border: 1px solid rgba(34,197,94,0.3);
+            color: #15803d;
+            text-shadow: none;
+            background: #f0fdf4;
+            border: 1px solid rgba(22,163,74,0.3);
             border-radius: 4px;
             padding: 3px 0;
             margin-top: 4px;
@@ -1075,7 +1075,7 @@ HTML_TEMPLATE = """
             background: var(--bg);
             border: 1px solid var(--border);
         }
-        .seq-fill { border-color: #3b82f6; color: #60a5fa; }
+        .seq-fill { border-color: #3b82f6; color: #0284c7; }
         .seq-ign  { border-color: var(--orange); color: var(--orange); }
         .seq-estop{ border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
         .seq-idle { color: var(--text-dim); }
@@ -1089,15 +1089,15 @@ HTML_TEMPLATE = """
             font-weight: 800;
             letter-spacing: 0.8px;
             margin-bottom: 8px;
-            background: #1e293b;
+            background: #ffffff;
             border: 2px solid var(--border);
             transition: all 0.3s;
         }
-        .status-banner-large.idle    { background: rgba(51,65,85,0.4); border-color: #475569; color: var(--text-dim); }
-        .status-banner-large.armed   { background: rgba(234,179,8,0.15); border-color: var(--yellow); color: var(--yellow); box-shadow: 0 0 15px rgba(234,179,8,0.2); }
-        .status-banner-large.fill    { background: rgba(59,130,246,0.15); border-color: #3b82f6; color: #60a5fa; box-shadow: 0 0 15px rgba(59,130,246,0.2); }
-        .status-banner-large.ready   { background: rgba(249,115,22,0.2); border-color: var(--orange); color: var(--orange); box-shadow: 0 0 20px rgba(249,115,22,0.4); }
-        .status-banner-large.ignite  { background: rgba(239,68,68,0.2); border-color: var(--red); color: #fca5a5; box-shadow: 0 0 25px rgba(239,68,68,0.5); }
+        .status-banner-large.idle    { background: #f8fafc; border-color: #cbd5e1; color: var(--text-dim); }
+        .status-banner-large.armed   { background: rgba(202,138,4,0.1); border-color: var(--yellow); color: var(--yellow); box-shadow: 0 0 10px rgba(202,138,4,0.15); }
+        .status-banner-large.fill    { background: rgba(2,132,199,0.1); border-color: var(--blue); color: var(--blue); box-shadow: 0 0 10px rgba(2,132,199,0.15); }
+        .status-banner-large.ready   { background: rgba(234,88,12,0.1); border-color: var(--orange); color: var(--orange); box-shadow: 0 0 15px rgba(234,88,12,0.2); }
+        .status-banner-large.ignite  { background: rgba(220,38,38,0.1); border-color: var(--red); color: var(--red); box-shadow: 0 0 15px rgba(220,38,38,0.25); }
         .status-banner-large.estop   { background: rgba(239,68,68,0.3); border-color: var(--red); color: #fff; box-shadow: 0 0 30px rgba(239,68,68,0.7); animation: pulse-red 1s infinite; }
         @keyframes pulse-red {
             0% { box-shadow: 0 0 10px rgba(239,68,68,0.4); }
@@ -1267,7 +1267,7 @@ HTML_TEMPLATE = """
 
                     <div class="mcu-metric" style="display:block; margin-top:6px;">
                         <span class="mcu-label" style="display:block; margin-bottom:2px;">Raw Data:</span>
-                        <div class="mcu-val" id="rawTelemetry" style="font-size:0.65rem; color:#888; word-break:break-all; background:#050505; padding:4px; border-radius:3px;">---</div>
+                        <div class="mcu-val" id="rawTelemetry" style="font-size:0.65rem; color:var(--text-dim); word-break:break-all; background:#f1f5f9; padding:4px; border-radius:3px;">---</div>
                     </div>
                 </div>
 
