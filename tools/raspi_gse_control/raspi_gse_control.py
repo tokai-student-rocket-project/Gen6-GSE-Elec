@@ -1200,8 +1200,8 @@ HTML_TEMPLATE = """
     <!-- ===== Toyota Andon Status Board (トヨタ式 アンドン表示板) ===== -->
     <div class="andon-board">
         <div class="andon-header">
-            <span>🏮 アンドン・ステータスボード (ANDON BOARD)</span>
-            <span class="pokayoke-badge" id="pokayokeBadge">🛡️ [ポカヨケ保護中] セーフティ解除待ち</span>
+            <span>🚥 ステータスボード</span>
+            <span class="pokayoke-badge" id="pokayokeBadge">🛡️ [保護中] セーフティ解除待ち</span>
         </div>
         <div class="andon-grid">
             <div class="andon-item active" id="andon1">
@@ -1228,7 +1228,7 @@ HTML_TEMPLATE = """
             <div class="andon-item" id="andon4">
                 <div class="andon-light red"></div>
                 <div class="andon-text">
-                    <div class="andon-step">4. アンドン非常停止</div>
+                    <div class="andon-step">4. 非常停止</div>
                     <div class="andon-sub">ANDON EMERGENCY</div>
                 </div>
             </div>
@@ -1326,8 +1326,8 @@ HTML_TEMPLATE = """
             <!-- Auto Purge Toggle Switch -->
             <div class="toggle-row">
                 <div>
-                    <div class="toggle-label">💨 自動パージ (AUTO PURGE)</div>
-                    <div class="toggle-sub">ON: 緊急停止・点火完了時にパージ弁を自動開放</div>
+                    <div class="toggle-label">🧯 自動パージ (AUTO PURGE)</div>
+                    <div class="toggle-sub">ON: 緊急停止・点火後にパージ弁（N₂）を自動開放</div>
                 </div>
                 <div class="toggle-track on" id="autoPurgeToggle" onclick="toggleAutoPurge()">
                     <div class="toggle-knob"></div>
@@ -1359,7 +1359,7 @@ HTML_TEMPLATE = """
                     <div class="timer-value" id="timerFill">00:00</div>
                 </div>
                 <div class="timer-box">
-                    <div class="timer-label">🔓 T+ OPEN (開放経過)</div>
+                    <div class="timer-label">🚀 T+ OPEN (開放経過)</div>
                     <div class="timer-value" id="timerOpen">00:00</div>
                 </div>
             </div>
@@ -1386,7 +1386,7 @@ HTML_TEMPLATE = """
         <!-- ===== Left Bottom: Valve Toggles ===== -->
         <div class="card" style="grid-column: 1 / -1;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:4px; margin-bottom:8px;">
-                <h3 style="border-bottom:none; margin-bottom:0; padding-bottom:0;">🔧 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
+                <h3 style="border-bottom:none; margin-bottom:0; padding-bottom:0;">⚙️ 電磁弁 手動操作 & フィードバック (Solenoid Valves)</h3>
                 <span class="pokayoke-badge" id="pokayokeValveTag" style="font-size:0.65rem;">🔒 セーフティ施錠中</span>
             </div>
             <div class="valve-grid" id="valveGrid"></div>
