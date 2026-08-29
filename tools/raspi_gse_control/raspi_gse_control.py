@@ -2019,7 +2019,10 @@ HTML_TEMPLATE = """
                         <td>${item.mtime}</td>
                         <td>${item.size_kb} KB</td>
                         <td>${statusTag}</td>
-                        <td><a href="/api/logs/download/${item.filename}" target="_blank" class="btn-dl-sm">📥 DL</a></td>
+                        <td>
+                            <a href="/viewer?log=${item.filename}" target="_blank" class="btn-dl-sm" style="background:#0ea5e9; margin-right:5px; text-decoration:none;">📊 解析</a>
+                            <a href="/api/logs/download/${item.filename}" target="_blank" class="btn-dl-sm" style="text-decoration:none;">📥 DL</a>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -2031,6 +2034,168 @@ HTML_TEMPLATE = """
 </body>
 </html>
 """
+
+VIEWER_HTML = """
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>GSE Telemetry Log Viewer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 15px; background: #f1f5f9; color: #0f172a; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 15px; }
+        .loading { text-align: center; font-size: 1.2rem; margin-top: 50px; color: #64748b; font-weight: bold; }
+        .chart-container { width: 100%; height: 80vh; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 10px; border: 1px solid #e2e8f0; }
+        .btn { padding: 6px 16px; background: #0284c7; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #0369a1; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2 style="margin:0; color:#0f172a;">📊 GSE Telemetry Log Analyzer</h2>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <span style="font-size:0.9rem; color:#475569;">Target Log: <strong>{{ filename }}</strong></span>
+            <button class="btn" onclick="window.close()">閉じる</button>
+        </div>
+    </div>
+    <div id="loading" class="loading">⏳ CSV データを読み込み、解析中です...</div>
+    <div id="chartContainer" class="chart-container" style="display:none;"></div>
+    
+    <script>
+        const filename = '{{ filename }}';
+        if (!filename || filename === 'None') {
+            document.getElementById('loading').innerText = "❌ エラー: ログファイルが指定されていません。";
+        } else {
+            Papa.parse('/api/logs/download/' + filename, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('chartContainer').style.display = 'block';
+                    renderChart(results.data);
+                },
+                error: function(err) {
+                    document.getElementById('loading').innerText = "❌ データの読み込みに失敗しました: " + err.message;
+                }
+            });
+        }
+
+        function renderChart(data) {
+            // 時系列データ (datetime_jst or timestamp_s)
+            const timeData = data.map(row => row.datetime_jst || row.timestamp_s);
+            
+            // アナログ値
+            const pressureData = data.map(row => row.pressure_MPa);
+            const launchVoltData = data.map(row => row.launch_voltage_V);
+            const satVoltData = data.map(row => row.sat_voltage_V);
+            
+            // デジタルフラグ
+            const armedData = data.map(row => row.armed_state ? 1 : 0);
+            const estopData = data.map(row => row.emergency_stop ? 1 : 0);
+            const fillActData = data.map(row => row.fill_active ? 1 : 0);
+            const ignActData = data.map(row => row.ignition_active ? 1 : 0);
+
+            // バルブ FB
+            const fbFillData = data.map(row => row.fb_FILL ? 1 : 0);
+            const fbIgnData = data.map(row => row.fb_IGNITER ? 1 : 0);
+            
+            const traces = [
+                {
+                    x: timeData, y: pressureData,
+                    name: 'Tank Pressure [MPa]',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#0284c7', width: 2.5},
+                    yaxis: 'y1'
+                },
+                {
+                    x: timeData, y: launchVoltData,
+                    name: 'Launch Voltage [V]',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#ea580c', width: 2},
+                    yaxis: 'y2'
+                },
+                {
+                    x: timeData, y: satVoltData,
+                    name: 'Sat Voltage [V]',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#16a34a', width: 2},
+                    yaxis: 'y2'
+                },
+                {
+                    x: timeData, y: armedData,
+                    name: 'Armed',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#ca8a04', width: 1.5, dash: 'dot'},
+                    yaxis: 'y3'
+                },
+                {
+                    x: timeData, y: fbFillData,
+                    name: 'FILL FB',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#3b82f6', width: 1.5, dash: 'dash'},
+                    yaxis: 'y3',
+                    visible: 'legendonly' // デフォルトは非表示
+                },
+                {
+                    x: timeData, y: estopData,
+                    name: 'E-STOP',
+                    type: 'scatter', mode: 'lines',
+                    line: {color: '#dc2626', width: 2},
+                    yaxis: 'y3',
+                    fill: 'tozeroy', fillcolor: 'rgba(220, 38, 38, 0.1)'
+                }
+            ];
+
+            const layout = {
+                title: 'GSE Telemetry Data over Time',
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                hovermode: 'x unified',
+                margin: { l: 60, r: 60, t: 50, b: 50 },
+                legend: { orientation: 'h', y: -0.15 },
+                xaxis: { 
+                    title: 'Time',
+                    showgrid: true, gridcolor: '#e2e8f0'
+                },
+                yaxis: { 
+                    title: 'Pressure [MPa]', 
+                    titlefont: {color: '#0284c7'},
+                    tickfont: {color: '#0284c7'},
+                    range: [-0.5, 12],
+                    showgrid: true, gridcolor: '#e2e8f0'
+                },
+                yaxis2: {
+                    title: 'Voltage [V]',
+                    titlefont: {color: '#16a34a'},
+                    tickfont: {color: '#16a34a'},
+                    anchor: 'x', overlaying: 'y', side: 'right',
+                    range: [-1, 16],
+                    showgrid: false
+                },
+                yaxis3: {
+                    title: 'Digital Flags',
+                    anchor: 'free', overlaying: 'y', side: 'right', position: 0.95,
+                    range: [0, 1.1],
+                    showgrid: false, showticklabels: false
+                }
+            };
+
+            Plotly.newPlot('chartContainer', traces, layout, {responsive: true});
+        }
+    </script>
+</body>
+</html>
+"""
+
+@app.route('/viewer')
+def log_viewer():
+    """解析ビューアのHTMLを返す"""
+    log_filename = request.args.get('log', '')
+    return render_template_string(VIEWER_HTML, filename=log_filename)
 
 @app.route('/')
 def index():
