@@ -1601,7 +1601,7 @@ HTML_TEMPLATE = """
                 btnSeq.innerText = "⛽ シーケンス開始 (SEQUENCE START)";
             }
 
-            document.getElementById('btnConfirm').disabled  = !armed || estopLocked;
+            document.getElementById('btnConfirm').disabled  = !armed || estopLocked || !seqActive;
             document.getElementById('btnPeace').disabled    = !armed || estopLocked;
 
             // Highlight confirm button when ready
@@ -1687,8 +1687,8 @@ HTML_TEMPLATE = """
 
         /* ===== Confirm + Ignite (1-button with dialog) ===== */
         function confirmAndIgnite() {
-            if (!armed || estopLocked) return;
-            if (!confirm('【最終点火確認 (IGNITION CONFIRM)】\\n\\n⚠️  3人同時押し確認スイッチの代替操作です。\\n本当に点火シーケンスを開始しますか？')) return;
+            if (!armed || estopLocked || !isSequenceActive()) return;
+            if (!confirm('【最終確認 (CONFIRM / IGNITE)】\\n\\n⚠️  3人同時押し確認スイッチの代替操作です。\\n本当に実行しますか？')) return;
             sendCmd(4, 0);
         }
 
@@ -2237,6 +2237,7 @@ def api_command():
             with gse_state.lock:
                 dump_on = bool(gse_state.cmd_state & (1 << 2))
                 sat_armed = gse_state.sat_armed or gse_state.demo_mode
+                seq_active = gse_state.fill_active or gse_state.ignition_active
             if not sat_armed:
                 print("[SERVER REJECT] Sequence start blocked: Satellite is not armed!")
                 return jsonify({
@@ -2248,6 +2249,12 @@ def api_command():
                 return jsonify({
                     "status": "blocked_dump_off",
                     "message": "シーケンス開始エラー: DUMP弁(排出弁)をONに設定してからシーケンスを開始してください。"
+                }), 403
+            if cmd_type == CMD_IGNITION_START and not seq_active:
+                print("[SERVER REJECT] Ignition start blocked: Sequence not active!")
+                return jsonify({
+                    "status": "blocked_no_seq",
+                    "message": "点火エラー: シーケンスが開始されていないため、確認・点火操作は無効化されています（Poka-yoke）。"
                 }), 403
 
         success = send_msgpacketizer_packet(ser_instance, PACKET_RASPI_COMMAND, cmd_type, param)
