@@ -1,0 +1,1 @@
+timestamp_s,date_jst,time_jst,datetime_jst,connected,demo_mode,pressure_MPa,vesim_mA,emergency_stop,fill_active,ignition_active,can_confirm,armed_state,auto_purge,limit_ch5,launch_voltage_V,sat_voltage_V,cmd_SHIFT,cmd_FILL,cmd_DUMP,cmd_OXYGEN,cmd_IGNITER,cmd_OPEN,cmd_CLOSE,cmd_PURGE,fb_SHIFT,fb_FILL,fb_DUMP,fb_OXYGEN,fb_IGNITER,fb_OPEN,fb_CLOSE,fb_PURGE

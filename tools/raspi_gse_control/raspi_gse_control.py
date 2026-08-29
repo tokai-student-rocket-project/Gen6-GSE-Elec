@@ -19,6 +19,15 @@ import threading
 import glob
 import argparse
 import random
+from datetime import datetime, timezone, timedelta
+
+# Fix Windows console UTF-8 output issue for emojis
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 try:
     import serial
@@ -382,6 +391,8 @@ def serial_worker(port_name, baudrate=115200):
                             if len(msg) > 0:
                                 packet_id = msg[0]
                                 if packet_id == PACKET_RASPI_TELEMETRY:
+                                    gse_state.last_heartbeat_rx = time.time()
+                                    gse_state.connected = True
                                     gse_state.raw_telemetry = str(msg)
                                     if len(msg) >= 6:
                                         cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
@@ -1449,7 +1460,12 @@ HTML_TEMPLATE = """
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({cmd_type: cmdType, param: param})
-            }).then(r=>r.json()).then(r=>console.log(r)).catch(e=>console.error(e));
+            }).then(r=>r.json()).then(r=>{
+                console.log(r);
+                if (r.status && r.status !== 'ok') {
+                    alert(r.message || ('コマンド実行が拒否されました (エラー: ' + r.status + ')'));
+                }
+            }).catch(e=>console.error(e));
         }
 
         /* Momentary: fire only once per press */
@@ -1921,11 +1937,14 @@ def api_valve_toggle():
     if valve_name not in VALVE_NAMES:
         return jsonify({"status": "invalid_valve", "valid": VALVE_NAMES}), 400
 
-    # 安全保護: 自動シーケンス進行中は手動弁トグルを拒否（上書き防止）
+    # 安全保護: 自動シーケンス進行中およびセーフティ未解除時は手動弁トグルを拒否（上書き防止・誤操作防止）
     with gse_state.lock:
         if gse_state.fill_active or gse_state.ignition_active:
             print("[SERVER REJECT] Valve toggle blocked during active automatic sequence!")
-            return jsonify({"status": "blocked", "message": "Sequence is currently active"}), 403
+            return jsonify({"status": "blocked", "message": "自動シーケンス実行中のため手動弁操作はロックされています"}), 403
+        if not gse_state.armed_state and not gse_state.demo_mode:
+            print("[SERVER REJECT] Valve toggle blocked: Safety not ARMED!")
+            return jsonify({"status": "blocked", "message": "セーフティが解除(ARMED)されていないため手動弁操作はできません"}), 403
 
     idx = VALVE_NAMES.index(valve_name)
 
