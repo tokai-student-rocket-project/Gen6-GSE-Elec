@@ -2158,15 +2158,14 @@ VIEWER_HTML = """
             });
 
             // Add E-STOP at the end so it draws on top
-            traces.push(
-                    x: timeData, y: estopData,
-                    name: 'E-STOP',
-                    type: 'scatter', mode: 'lines',
-                    line: {color: '#dc2626', width: 2},
-                    yaxis: 'y3',
-                    fill: 'tozeroy', fillcolor: 'rgba(220, 38, 38, 0.1)'
-                }
-            ];
+            traces.push({
+                x: timeData, y: estopData,
+                name: 'E-STOP',
+                type: 'scatter', mode: 'lines',
+                line: {color: '#dc2626', width: 2},
+                yaxis: 'y3',
+                fill: 'tozeroy', fillcolor: 'rgba(220, 38, 38, 0.1)'
+            });
 
             const layout = {
                 title: 'GSE Telemetry Data over Time',
