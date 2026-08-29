@@ -1181,16 +1181,39 @@ HTML_TEMPLATE = """
         }
         .valve-led.cmd-on { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
         .valve-led.fb-on  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+        /* ===== Heartbeat & Ping ===== */
+        .heartbeat-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            background-color: var(--green); box-shadow: 0 0 8px var(--green);
+            animation: pulse-heartbeat 1s infinite;
+        }
+        .heartbeat-dot.offline {
+            background-color: var(--red); box-shadow: 0 0 8px var(--red);
+            animation: none;
+        }
+        @keyframes pulse-heartbeat {
+            0% { transform: scale(0.85); opacity: 0.5; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.85); opacity: 0.5; }
+        }
+        .ping-text {
+            font-size: 0.8rem; color: var(--text-dim); font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+            min-width: 55px; text-align: right;
+        }
     </style>
 </head>
 <body>
     <!-- ===== Header ===== -->
     <div class="header">
         <div class="header-title">
-            🚀 Gen6 GSE Remote Control
-            <span id="modeTag" class="mode-tag">REAL</span>
+            🚀 Gen6 GSE Remote Control Panel
+            <span id="modeTag" class="mode-tag"></span>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
+            <div id="heartbeatDot" class="heartbeat-dot offline" title="UI Alive Indicator"></div>
+            <div id="pingText" class="ping-text">-- ms</div>
+            
             <div class="rec-badge" id="recBadge">● REC (0)</div>
             <button class="btn-log-download" onclick="openLogModal()">📊 ログ (CSV) 一覧 / DL</button>
             <div id="connBadge" class="conn-badge conn-ng">● CONNECTING...</div>
@@ -1694,7 +1717,11 @@ HTML_TEMPLATE = """
 
         /* ===== Telemetry polling ===== */
         function updateTelemetry() {
+            const reqStart = performance.now();
             fetch('/api/telemetry').then(r=>r.json()).then(data => {
+                const pingTime = Math.round(performance.now() - reqStart);
+                document.getElementById('pingText').innerText = pingTime + ' ms';
+                document.getElementById('heartbeatDot').className = 'heartbeat-dot';
                 // Connection badge
                 const badge = document.getElementById('connBadge');
                 const modeTag = document.getElementById('modeTag');
@@ -1964,7 +1991,11 @@ HTML_TEMPLATE = """
                     }
                 });
 
-            }).catch(e => console.error(e));
+            }).catch(e => {
+                console.error(e);
+                document.getElementById('pingText').innerText = 'ERR';
+                document.getElementById('heartbeatDot').className = 'heartbeat-dot offline';
+            });
         }
 
         function setLed(id, on, color) {
