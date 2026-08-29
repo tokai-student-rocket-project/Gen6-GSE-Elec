@@ -1641,10 +1641,12 @@ HTML_TEMPLATE = """
                         lbTag.className = 'mcu-tag ok'; lbTag.innerText = '正常';
                     }
                 }
-                if (data.sat_voltage_V !== undefined && data.sat_voltage_V > 0.1) {
+                if (data.sat_voltage_V !== undefined && data.sat_voltage_V !== null) {
                     document.getElementById('satVolts').innerText = data.sat_voltage_V.toFixed(1) + ' V';
                     const sTag = document.getElementById('satVoltTag');
-                    if (data.sat_voltage_V < 10.5) {
+                    if (data.sat_voltage_V < 0.1) {
+                        sTag.className = 'mcu-tag warn'; sTag.innerText = '0V/停電';
+                    } else if (data.sat_voltage_V < 10.5) {
                         sTag.className = 'mcu-tag warn'; sTag.innerText = '低電圧';
                     } else {
                         sTag.className = 'mcu-tag ok'; sTag.innerText = '正常';
