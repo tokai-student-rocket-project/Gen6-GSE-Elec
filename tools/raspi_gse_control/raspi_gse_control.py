@@ -102,7 +102,7 @@ class GSEState:
         self.rocket_node_ok = True
         self.raw_telemetry = ""
 
-    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None):
+    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None, sat_v=None):
         with self.lock:
             self.cmd_state = cmd_b
             self.fb_state = fb_b
@@ -113,6 +113,8 @@ class GSEState:
                 self.launch_voltage_V = launch_v
             if launch_bus_v is not None:
                 self.launch_bus_voltage_V = launch_bus_v
+            if sat_v is not None:
+                self.sat_voltage_V = sat_v
             self.last_heartbeat_rx = time.time()
             self.connected = True
             
@@ -384,9 +386,10 @@ def serial_worker(port_name, baudrate=115200):
                                     if len(msg) >= 6:
                                         cmd_b, fb_b, seq_b, press_f, limit_b = msg[1], msg[2], msg[3], msg[4], msg[5]
                                         launch_v = msg[6] if len(msg) >= 7 else None
-                                        sat_v = msg[7] if len(msg) >= 8 else None
+                                        launch_bus_v = msg[7] if len(msg) >= 8 else None
+                                        sat_v = msg[8] if len(msg) >= 9 else None
                                         
-                                        gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, sat_v)
+                                        gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, launch_bus_v, sat_v)
                                     else:
                                         gse_state.raw_telemetry += " (Truncated!)"
                                 elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
@@ -1249,7 +1252,7 @@ HTML_TEMPLATE = """
                 </div>
 
                 <div class="mcu-box">
-                    <div class="mcu-header">🛰️ Satellite3.0 (機体)</div>
+                    <div class="mcu-header">🛰️ Satellite3.0</div>
                     <div class="mcu-metric">
                         <span class="mcu-label">機体電圧:</span>
                         <span class="mcu-val" id="satVolts">0.0 V</span>
