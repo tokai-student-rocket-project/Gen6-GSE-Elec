@@ -151,9 +151,10 @@ namespace communication
     LIMIT_SWITCH_SYNC = 10,
     COM_CHECK_L_TO_N = 11,
     COM_CHECK_N_TO_L = 12,
+    SATELLITE_VOLTAGE_SYNC = 13,
 
     RASPI_SATELLITE_TELEMETRY = 0x33, // (51) Raspberry Pi 4 へ機体詳細テレメトリ送信
-    RASPI_WIRELESS_STATUS     = 0x34, // (52) 機体無線ステータス
+    RASPI_WIRELESS_STATUS = 0x34,     // (52) 機体無線ステータス
   };
 
   Output sendEnableControl(PIN_PA2);
@@ -189,16 +190,20 @@ namespace raspi_wireless
   void onHeartbeatReceived();
 } // namespace raspi_wireless
 
-
 /// @brief 送信を有効にする
 void communication::enableOutput()
 {
   communication::sendEnableControl.on();
+  delayMicroseconds(50);
   communication::accessLamp.pulse(50);
 }
 
 /// @brief 送信を無効にする
-void communication::disableOutput() { communication::sendEnableControl.off(); }
+void communication::disableOutput()
+{
+  delayMicroseconds(500);
+  communication::sendEnableControl.off();
+}
 
 void power::measureTask()
 {
@@ -254,34 +259,66 @@ void solenoid::measureTask()
 
   switch (fillStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE: control::fillFB.toggle(); break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE: control::fillFB.off(); break;
-  case SolenoidMonitor::Status::OFF: control::fillFB.off(); break;
-  case SolenoidMonitor::Status::ON: control::fillFB.on(); break;
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::fillFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::fillFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::fillFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::fillFB.on();
+    break;
   }
 
   switch (dumpStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE: control::dumpFB.toggle(); break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE: control::dumpFB.off(); break;
-  case SolenoidMonitor::Status::OFF: control::dumpFB.off(); break;
-  case SolenoidMonitor::Status::ON: control::dumpFB.on(); break;
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::dumpFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::dumpFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::dumpFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::dumpFB.on();
+    break;
   }
 
   switch (oxygenStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE: control::oxygenFB.toggle(); break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE: control::oxygenFB.off(); break;
-  case SolenoidMonitor::Status::OFF: control::oxygenFB.off(); break;
-  case SolenoidMonitor::Status::ON: control::oxygenFB.on(); break;
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::oxygenFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::oxygenFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::oxygenFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::oxygenFB.on();
+    break;
   }
 
   switch (purgeStatus)
   {
-  case SolenoidMonitor::Status::OPEN_FAILURE: control::purgeFB.toggle(); break;
-  case SolenoidMonitor::Status::CLOSE_FAILURE: control::purgeFB.off(); break;
-  case SolenoidMonitor::Status::OFF: control::purgeFB.off(); break;
-  case SolenoidMonitor::Status::ON: control::purgeFB.on(); break;
+  case SolenoidMonitor::Status::OPEN_FAILURE:
+    control::purgeFB.toggle();
+    break;
+  case SolenoidMonitor::Status::CLOSE_FAILURE:
+    control::purgeFB.off();
+    break;
+  case SolenoidMonitor::Status::OFF:
+    control::purgeFB.off();
+    break;
+  case SolenoidMonitor::Status::ON:
+    control::purgeFB.on();
+    break;
   }
 }
 
@@ -343,11 +380,16 @@ void communication::sendReplyToLaunch()
       (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
       (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
+  float satVolts = power::input.getVoltage_V();
+  float pressure = n2o::pressure_MPa;
+  float current = n2o::vesim10.getCurrent_mA();
 
   communication::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state, power::input.getVoltage_V());
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), n2o::pressure_MPa);
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
+  Serial.println("[SATELLITE] TX Reply -> Launch");
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_VOLTAGE_SYNC), satVolts);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), pressure);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), current);
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
   Serial1.flush();
   communication::disableOutput();
@@ -356,12 +398,14 @@ void communication::sendReplyToLaunch()
 void communication::onControlSyncReceived(uint8_t state)
 {
   bool isArmed = control::safetyArmed.isManualRaised();
-  Serial.println(isArmed);
+  Serial.print("[SATELLITE] RX SUCCESS! CONTROL_SYNC state = 0x");
+  Serial.println(state, HEX);
 
   communication::syncState = state;
   communication::preReceivedTime = millis(); // ★Heartbeat: 受信時刻を更新
-  communication::statusLamp.on(); // ★受信成功でCOMランプ点灯
-  error::statusLamp.off();        // ★受信成功でERRランプ消灯
+  communication::statusLamp.on();            // ★受信成功でCOMランプ点灯
+  error::statusLamp.off();                   // ★受信成功でERRランプ消灯
+  communication::accessLamp.pulse(50);       // ★RS485アクセスLEDを点滅
 
   // control::shift.set(state & (1 << 0) && isArmed);
   control::fill.set(state & (1 << 1) && isArmed);
@@ -445,16 +489,9 @@ void communication::onComCheckFailed()
   {
     communication::statusLamp.off();
     error::statusLamp.on();
+    Serial.println("[SATELLITE TIMEOUT] No RS485 packets received from Launch (>5s)!");
 
     // 通信失敗時は安全のため全出力を強制OFF
-    // control::dump.off();
-    // control::fill.off();
-    // control::oxygen.off();
-    // control::igniter.off();
-    // control::open.off();
-    // control::close.off();
-    // control::purge.off();
-
     control::dump.set(communication::syncState & 0);
     control::fill.set(communication::syncState & 0);
     control::oxygen.set(communication::syncState & 0);
@@ -556,6 +593,7 @@ void setup()
 
   // LTC485 (RS485)
   Serial1.begin(115200);
+  communication::disableOutput();
   communication::preReceivedTime = millis();
   raspi_wireless::lastHeartbeatTime = millis();
 
@@ -581,7 +619,7 @@ void setup()
   Tasks.add(&control::handleManualTask)->startFps(10);
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
   Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);
-  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10);
+  // Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10); // ★デバッグ中テキスト表示のため一時無効化
 
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),

@@ -129,6 +129,10 @@ namespace communication
     SENSOR_CALIB_COEFF_SYNC,   // 校正係数(a, b)同期用
     SENSOR_ZERO_CALIB_REQ,     // ゼロ点校正実行要求用
     SENSOR_CURRENT_SYNC,       // 生の電流値(mA)同期用
+    LIMIT_SWITCH_SYNC = 10,
+    COM_CHECK_L_TO_N = 11,
+    COM_CHECK_N_TO_L = 12,
+    SATELLITE_VOLTAGE_SYNC = 13,
 
     // --- Raspberry Pi 4 無線通信用パケット ---
     RASPI_COMMAND = 0x20,            // (32) Raspberry Pi 4 からの遠隔制御コマンド
@@ -151,7 +155,8 @@ namespace communication
 
   void sendControlSync();
   void sendComCheck();
-  void onFeedbackSyncReceived(uint8_t state, float satelliteVoltage_V);
+  void onFeedbackSyncReceived(uint8_t state);
+  void onSatelliteVoltageSyncReceived(float voltage);
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA); // 電流受信ハンドラ
   void onComCheckReceived();
@@ -210,6 +215,7 @@ void setup()
 
   // LTC485 (RS485)
   Serial1.begin(115200);
+  communication::disableOutput();
   communication::preReceivedTime = millis() - communication::timeout;
 
   // DFPlayer (Audio)
@@ -230,7 +236,7 @@ void setup()
 
   Tasks.add(&power::measureTask)->startFps(10);
   Tasks.add(&control::handleManualTask)->startFps(10);
-  Tasks.add(&communication::sendControlSync)->startFps(20);
+  Tasks.add(&communication::sendControlSync)->startFps(10);
   // Tasks.add(&communication::sendComCheck)->startFps(2); // コリジョン防止のため無効化
   Tasks.add(&communication::onComCheckFailed)->startFps(2);
   // Tasks.add(&communication::sendTelemetryForPython)
@@ -238,7 +244,7 @@ void setup()
   // Tasks.add(&simulation::updateTask)->startFps(2);
 
   Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);
-  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10);
+  // Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10); // ★デバッグ中テキスト表示のため一時無効化
   communication::sendSensorConfigSync();
   // 起動時に実測校正係数を同期
   communication::sendSensorCalibCoeff(n2o::CALIB_SLOPE_A,
@@ -253,6 +259,9 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC),
       &communication::onCurrentSyncReceived);
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_VOLTAGE_SYNC),
+      &communication::onSatelliteVoltageSyncReceived);
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
@@ -304,11 +313,16 @@ void loop()
 void communication::enableOutput()
 {
   communication::sendEnableControl.on();
+  delayMicroseconds(50);
   communication::accessLamp.pulse(10);
 }
 
 /// @brief 送信を無効にする
-void communication::disableOutput() { communication::sendEnableControl.off(); }
+void communication::disableOutput()
+{
+  delayMicroseconds(500);
+  communication::sendEnableControl.off();
+}
 
 void power::measureTask()
 {
@@ -352,18 +366,16 @@ void power::measureTask()
 
 void communication::sendControlSync()
 {
-  // ★重要：通信失敗（タイムアウト）している間は、送信処理自体をスキップする
-  // if (millis() - communication::preReceivedTime > communication::timeout) {
-  //   return;
-  // }
-
   uint8_t state =
       (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
       (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
       (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
       (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
-  // Serial.println(state, BIN); // ビット列を表示
+
   communication::enableOutput();
+  Serial.print("[LAUNCH] TX CONTROL_SYNC -> Satellite (state=0x");
+  Serial.print(state, HEX);
+  Serial.println(")");
   MsgPacketizer::send(Serial1,
                       static_cast<uint8_t>(communication::Packet::CONTROL_SYNC),
                       state);
@@ -430,9 +442,11 @@ void communication::sendComCheck()
   communication::disableOutput();
 }
 
-void communication::onFeedbackSyncReceived(uint8_t state, float satelliteVoltage_V)
+void communication::onFeedbackSyncReceived(uint8_t state)
 {
-  raspi_wireless::latestSatelliteVoltage_V = satelliteVoltage_V;
+  Serial.print("[LAUNCH] RX SUCCESS! FEEDBACK_SYNC state = 0x");
+  Serial.println(state, HEX);
+
   control::shiftFB.set(state & (1 << 0));
   control::fillFB.set(state & (1 << 1));
   control::dumpFB.set(state & (1 << 2));
@@ -441,8 +455,11 @@ void communication::onFeedbackSyncReceived(uint8_t state, float satelliteVoltage
   control::openFB.set(state & (1 << 5));
   control::closeFB.set(state & (1 << 6));
   control::purgeFB.set(state & (1 << 7));
+}
 
-  // communication::statusLamp.blink();
+void communication::onSatelliteVoltageSyncReceived(float voltage)
+{
+  raspi_wireless::latestSatelliteVoltage_V = voltage;
 }
 
 void communication::onPressureSyncReceived(float pressure)
@@ -966,7 +983,7 @@ void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
 
 void raspi_wireless::checkWirelessTask()
 {
-  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R), static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
+  // MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R), static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
 
   bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
 
@@ -987,7 +1004,7 @@ void raspi_wireless::checkWirelessTask()
   }
 
   uint8_t wirelessState = (raspi_wireless::isWirelessConnected ? 1 : 0);
-  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
+  // MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
 }
 
 void raspi_wireless::sendWirelessTelemetryTask()
