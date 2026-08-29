@@ -244,7 +244,7 @@ void setup()
   // Tasks.add(&simulation::updateTask)->startFps(2);
 
   Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);
-  // Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10); // ★デバッグ中テキスト表示のため一時無効化
+  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10);
   communication::sendSensorConfigSync();
   // 起動時に実測校正係数を同期
   communication::sendSensorCalibCoeff(n2o::CALIB_SLOPE_A,
@@ -983,7 +983,7 @@ void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
 
 void raspi_wireless::checkWirelessTask()
 {
-  // MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R), static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
+  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R), static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
 
   bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
 
@@ -1004,7 +1004,7 @@ void raspi_wireless::checkWirelessTask()
   }
 
   uint8_t wirelessState = (raspi_wireless::isWirelessConnected ? 1 : 0);
-  // MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
+  MsgPacketizer::send_arr(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
 }
 
 void raspi_wireless::sendWirelessTelemetryTask()
