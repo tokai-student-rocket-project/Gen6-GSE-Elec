@@ -1,3 +1,4 @@
+#define MSGPACK_MAX_ARRAY_SIZE 12
 #include "Input.hpp"
 #include "Output.hpp"
 #include "PowerMonitor.hpp"
