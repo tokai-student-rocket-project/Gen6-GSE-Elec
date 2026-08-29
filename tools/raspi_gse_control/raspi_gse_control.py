@@ -95,22 +95,23 @@ class GSEState:
         self.auto_purge_enabled = True
 
         # MCU Health & Voltages (LaunchController3.0 & SatelliteController3.0)
-        self.launch_voltage_V = 12.4
-        self.sat_voltage_V = 12.1
+        self.launch_voltage_V = 0.0
+        self.launch_bus_voltage_V = 0.0
+        self.sat_voltage_V = 0.0
         self.rs485_ok = True
         self.rocket_node_ok = True
 
-    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, sat_v=None):
+    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None):
         with self.lock:
             self.cmd_state = cmd_b
             self.fb_state = fb_b
             self.sequence_flag = seq_b
             self.pressure_MPa = press_f
             self.limit_switch_state = limit_b
-            if launch_v is not None and launch_v > 0.0:
+            if launch_v is not None:
                 self.launch_voltage_V = launch_v
-            if sat_v is not None and sat_v > 0.0:
-                self.sat_voltage_V = sat_v
+            if launch_bus_v is not None:
+                self.launch_bus_voltage_V = launch_bus_v
             self.last_heartbeat_rx = time.time()
             self.connected = True
             
@@ -137,6 +138,7 @@ class GSEState:
                 "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
                 "launch_voltage_V": round(self.launch_voltage_V, 1),
+                "launch_bus_voltage_V": round(self.launch_bus_voltage_V, 1),
                 "sat_voltage_V": round(self.sat_voltage_V, 1),
                 "vesim_current_mA": round(4.0 + self.pressure_MPa * 1.6, 2),
                 "rs485_ok": self.rs485_ok,
@@ -407,8 +409,9 @@ def simulator_worker():
                     gse_state.can_confirm = True
 
             # 電圧ジッター
-            gse_state.launch_voltage_V = max(11.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
-            gse_state.sat_voltage_V = max(10.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
+            gse_state.launch_voltage_V = max(0.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
+            gse_state.launch_bus_voltage_V = max(0.0, min(13.8, 12.0 + random.uniform(-0.02, 0.02)))
+            gse_state.sat_voltage_V = max(0.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
 
             # フィードバック状態を追従させる
             if gse_state.armed_state:
@@ -1136,6 +1139,11 @@ HTML_TEMPLATE = """
                         <span class="mcu-tag ok" id="launchVoltTag">正常</span>
                     </div>
                     <div class="mcu-metric">
+                        <span class="mcu-label">12Vバス電圧:</span>
+                        <span class="mcu-val" id="launchBusVolts">12.0 V</span>
+                        <span class="mcu-tag ok" id="launchBusVoltTag">正常</span>
+                    </div>
+                    <div class="mcu-metric">
                         <span class="mcu-label">RS485通信:</span>
                         <span class="mcu-val" id="rs485Val">● 接続</span>
                     </div>
@@ -1153,8 +1161,8 @@ HTML_TEMPLATE = """
                     <div class="mcu-header">🛰️ Satellite3.0 (機体)</div>
                     <div class="mcu-metric">
                         <span class="mcu-label">機体電圧:</span>
-                        <span class="mcu-val" id="satVolts">12.1 V</span>
-                        <span class="mcu-tag ok" id="satVoltTag">正常</span>
+                        <span class="mcu-val" id="satVolts">0.0 V</span>
+                        <span class="mcu-tag warn" id="satVoltTag">N/A</span>
                     </div>
                     <div class="mcu-metric">
                         <span class="mcu-label">電磁弁診断:</span>
@@ -1514,7 +1522,16 @@ HTML_TEMPLATE = """
                         lTag.className = 'mcu-tag ok'; lTag.innerText = '正常';
                     }
                 }
-                if (data.sat_voltage_V !== undefined) {
+                if (data.launch_bus_voltage_V !== undefined) {
+                    document.getElementById('launchBusVolts').innerText = data.launch_bus_voltage_V.toFixed(1) + ' V';
+                    const lbTag = document.getElementById('launchBusVoltTag');
+                    if (data.launch_bus_voltage_V < 11.0) {
+                        lbTag.className = 'mcu-tag warn'; lbTag.innerText = '低電圧';
+                    } else {
+                        lbTag.className = 'mcu-tag ok'; lbTag.innerText = '正常';
+                    }
+                }
+                if (data.sat_voltage_V !== undefined && data.sat_voltage_V > 0.1) {
                     document.getElementById('satVolts').innerText = data.sat_voltage_V.toFixed(1) + ' V';
                     const sTag = document.getElementById('satVoltTag');
                     if (data.sat_voltage_V < 10.5) {
@@ -1522,6 +1539,10 @@ HTML_TEMPLATE = """
                     } else {
                         sTag.className = 'mcu-tag ok'; sTag.innerText = '正常';
                     }
+                } else {
+                    document.getElementById('satVolts').innerText = '--- V';
+                    const sTag = document.getElementById('satVoltTag');
+                    sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
                 }
 
                 document.getElementById('limitSwCh5Val').innerText = data.limit_switch_ch5 ? "CLOSED" : "OPEN";
