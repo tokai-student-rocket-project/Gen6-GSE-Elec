@@ -147,16 +147,13 @@ class GSEState:
                 "ignition_active": self.ignition_active,
                 "can_confirm": self.can_confirm,
                 "mcu_wireless_ok": self.mcu_wireless_ok or self.demo_mode,
-                "rs485_ok": self.rocket_node_ok or self.demo_mode,
+                "rocket_node_ok": self.rocket_node_ok or self.demo_mode,
                 "armed_state": self.armed_state,
                 "auto_purge": self.auto_purge_enabled,
                 "limit_switch_ch5": bool(self.limit_switch_state & (1 << 5)),
                 "launch_voltage_V": round(self.launch_voltage_V, 1),
                 "launch_bus_voltage_V": round(self.launch_bus_voltage_V, 1),
                 "sat_voltage_V": round(self.sat_voltage_V, 1),
-                "vesim_current_mA": round(4.0 + self.pressure_MPa * 1.6, 2),
-                "rs485_ok": self.rs485_ok,
-                "rocket_node_ok": self.rocket_node_ok,
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
                 "raw_telemetry": self.raw_telemetry,
@@ -1254,7 +1251,7 @@ HTML_TEMPLATE = """
                         <span class="mcu-val" id="rs485Val">● 接続</span>
                     </div>
                     <div class="mcu-metric">
-                        <span class="mcu-label">ロケットノード:</span>
+                        <span class="mcu-label">アビオニクス:</span>
                         <span class="mcu-val" id="rocketNodeVal">● 結合</span>
                     </div>
 
@@ -1270,18 +1267,6 @@ HTML_TEMPLATE = """
                         <span class="mcu-label">機体電圧:</span>
                         <span class="mcu-val" id="satVolts">0.0 V</span>
                         <span class="mcu-tag warn" id="satVoltTag">N/A</span>
-                    </div>
-                    <div class="mcu-metric">
-                        <span class="mcu-label">電磁弁診断:</span>
-                        <span class="mcu-val" id="solenoidHealthVal" style="color:var(--green)">全弁正常</span>
-                    </div>
-                    <div class="mcu-metric">
-                        <span class="mcu-label">生電流:</span>
-                        <span class="mcu-val" id="vesimCurrentVal">4.02 mA</span>
-                    </div>
-                    <div class="mcu-metric">
-                        <span class="mcu-label">無線リンク:</span>
-                        <span class="mcu-val" id="satWirelessVal" style="color:var(--green)">良好</span>
                     </div>
                 </div>
             </div>
