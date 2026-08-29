@@ -1644,10 +1644,10 @@ HTML_TEMPLATE = """
                     sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
                 }
 
-                if (data.rs485_ok !== undefined) {
+                if (data.rocket_node_ok !== undefined) {
                     const rsVal = document.getElementById('rs485Val');
                     const rnVal = document.getElementById('rocketNodeVal');
-                    if (data.rs485_ok) {
+                    if (data.rocket_node_ok) {
                         rsVal.innerText = '● 接続'; rsVal.style.color = 'var(--green)';
                         rnVal.innerText = '● 結合'; rnVal.style.color = 'var(--green)';
                     } else {
