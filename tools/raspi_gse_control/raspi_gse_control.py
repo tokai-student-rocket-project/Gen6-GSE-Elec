@@ -107,11 +107,12 @@ class GSEState:
         self.launch_voltage_V = 0.0
         self.launch_bus_voltage_V = 0.0
         self.sat_voltage_V = 0.0
+        self.sat_bus_voltage_V = 0.0
         self.rs485_ok = True
         self.rocket_node_ok = True
         self.raw_telemetry = ""
 
-    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None, sat_v=None):
+    def update_telemetry(self, cmd_b, fb_b, seq_b, press_f, limit_b, launch_v=None, launch_bus_v=None, sat_v=None, sat_bus_v=None):
         with self.lock:
             self.cmd_state = cmd_b
             self.fb_state = fb_b
@@ -124,6 +125,8 @@ class GSEState:
                 self.launch_bus_voltage_V = launch_bus_v
             if sat_v is not None:
                 self.sat_voltage_V = sat_v
+            if sat_bus_v is not None:
+                self.sat_bus_voltage_V = sat_bus_v
             self.last_heartbeat_rx = time.time()
             self.connected = True
             
@@ -154,6 +157,7 @@ class GSEState:
                 "launch_voltage_V": round(self.launch_voltage_V, 1),
                 "launch_bus_voltage_V": round(self.launch_bus_voltage_V, 1),
                 "sat_voltage_V": round(self.sat_voltage_V, 1),
+                "sat_bus_voltage_V": round(self.sat_bus_voltage_V, 1),
                 "valves_cmd": valves_cmd,
                 "valves_fb": valves_fb,
                 "raw_telemetry": self.raw_telemetry,
@@ -398,8 +402,9 @@ def serial_worker(port_name, baudrate=115200):
                                         launch_v = msg[6] if len(msg) >= 7 else None
                                         launch_bus_v = msg[7] if len(msg) >= 8 else None
                                         sat_v = msg[8] if len(msg) >= 9 else None
+                                        sat_bus_v = msg[9] if len(msg) >= 10 else None
                                         
-                                        gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, launch_bus_v, sat_v)
+                                        gse_state.update_telemetry(cmd_b, fb_b, seq_b, press_f, limit_b, launch_v, launch_bus_v, sat_v, sat_bus_v)
                                     else:
                                         gse_state.raw_telemetry += " (Truncated!)"
                                 elif packet_id == PACKET_RASPI_HEARTBEAT_L_TO_R:
@@ -520,6 +525,7 @@ def simulator_worker():
             gse_state.launch_voltage_V = max(0.0, min(13.8, 12.4 + random.uniform(-0.05, 0.05)))
             gse_state.launch_bus_voltage_V = max(0.0, min(13.8, 12.0 + random.uniform(-0.02, 0.02)))
             gse_state.sat_voltage_V = max(0.0, min(13.8, 12.1 + random.uniform(-0.05, 0.05)))
+            gse_state.sat_bus_voltage_V = max(0.0, min(13.8, 12.0 + random.uniform(-0.02, 0.02)))
 
             # フィードバック状態を追従させる
             if gse_state.armed_state:
@@ -1264,9 +1270,14 @@ HTML_TEMPLATE = """
                 <div class="mcu-box">
                     <div class="mcu-header">🛰️ Satellite3.0</div>
                     <div class="mcu-metric">
-                        <span class="mcu-label">機体電圧:</span>
+                        <span class="mcu-label">入力電圧:</span>
                         <span class="mcu-val" id="satVolts">0.0 V</span>
                         <span class="mcu-tag warn" id="satVoltTag">N/A</span>
+                    </div>
+                    <div class="mcu-metric">
+                        <span class="mcu-label">12Vバス電圧:</span>
+                        <span class="mcu-val" id="satBusVolts">0.0 V</span>
+                        <span class="mcu-tag warn" id="satBusVoltTag">N/A</span>
                     </div>
                 </div>
             </div>
@@ -1642,6 +1653,22 @@ HTML_TEMPLATE = """
                     document.getElementById('satVolts').innerText = '--- V';
                     const sTag = document.getElementById('satVoltTag');
                     sTag.className = 'mcu-tag warn'; sTag.innerText = 'N/A';
+                }
+                
+                if (data.sat_bus_voltage_V !== undefined && data.sat_bus_voltage_V !== null) {
+                    document.getElementById('satBusVolts').innerText = data.sat_bus_voltage_V.toFixed(1) + ' V';
+                    const sbTag = document.getElementById('satBusVoltTag');
+                    if (data.sat_bus_voltage_V < 0.1) {
+                        sbTag.className = 'mcu-tag warn'; sbTag.innerText = '0V/停電';
+                    } else if (data.sat_bus_voltage_V < 11.0) {
+                        sbTag.className = 'mcu-tag warn'; sbTag.innerText = '低電圧';
+                    } else {
+                        sbTag.className = 'mcu-tag ok'; sbTag.innerText = '正常';
+                    }
+                } else {
+                    document.getElementById('satBusVolts').innerText = '--- V';
+                    const sbTag = document.getElementById('satBusVoltTag');
+                    sbTag.className = 'mcu-tag warn'; sbTag.innerText = 'N/A';
                 }
 
                 if (data.rocket_node_ok !== undefined) {
