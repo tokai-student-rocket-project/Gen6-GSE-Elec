@@ -188,6 +188,7 @@
       ],
       "track_widths": [
         0.0,
+        0.4,
         0.6,
         0.8,
         1.0,
@@ -225,8 +226,8 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.5,
-          "drill": 0.25
+          "diameter": 0.8,
+          "drill": 0.5
         }
       ],
       "zones_allow_external_fillets": false
@@ -532,7 +533,7 @@
     },
     "bom_presets": [],
     "bom_settings": {
-      "exclude_dnp": false,
+      "exclude_dnp": true,
       "fields_ordered": [
         {
           "group_by": false,
@@ -635,8 +636,8 @@
       "group_symbols": true,
       "include_excluded_from_bom": true,
       "name": "",
-      "sort_asc": true,
-      "sort_field": "Description"
+      "sort_asc": false,
+      "sort_field": "Digikey_PN"
     },
     "connection_grid_size": 50.0,
     "drawing": {

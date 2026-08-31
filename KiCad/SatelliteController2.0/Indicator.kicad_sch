@@ -5543,7 +5543,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "02af0d29-7c52-43c1-862e-6fd7efeaa052")
-		(property "Reference" "R45"
+		(property "Reference" "R47"
 			(at 203.2 43.815 0)
 			(effects
 				(font
@@ -5615,7 +5615,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R45")
+					(reference "R47")
 					(unit 1)
 				)
 			)
@@ -5658,7 +5658,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 180.34 52.07 90)
 			(effects
 				(font
@@ -5685,7 +5685,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 180.34 52.07 90)
 			(effects
 				(font
@@ -5719,7 +5719,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "04cd9426-7b20-4f3a-8af6-990f8aceae38")
-		(property "Reference" "R34"
+		(property "Reference" "R36"
 			(at 27.94 43.815 0)
 			(effects
 				(font
@@ -5791,7 +5791,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R34")
+					(reference "R36")
 					(unit 1)
 				)
 			)
@@ -5807,7 +5807,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "04ea5855-6fb2-4055-94db-80dd847f9eed")
-		(property "Reference" "R35"
+		(property "Reference" "R37"
 			(at 48.26 107.315 0)
 			(effects
 				(font
@@ -5879,7 +5879,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R35")
+					(reference "R37")
 					(unit 1)
 				)
 			)
@@ -5922,7 +5922,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 242.57 115.57 90)
 			(effects
 				(font
@@ -5949,7 +5949,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 242.57 115.57 90)
 			(effects
 				(font
@@ -5983,7 +5983,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0bb9d525-af01-4a38-a6ed-3dc5d73f6a15")
-		(property "Reference" "#PWR089"
+		(property "Reference" "#PWR091"
 			(at 111.76 63.5 0)
 			(effects
 				(font
@@ -6033,7 +6033,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR089")
+					(reference "#PWR091")
 					(unit 1)
 				)
 			)
@@ -6049,7 +6049,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0ce17eca-2fff-4be0-9743-e3c86035d586")
-		(property "Reference" "R47"
+		(property "Reference" "R49"
 			(at 224.79 43.815 0)
 			(effects
 				(font
@@ -6121,7 +6121,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R47")
+					(reference "R49")
 					(unit 1)
 				)
 			)
@@ -6137,7 +6137,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0d5cc15c-bc22-441e-a0aa-3369c7707b5f")
-		(property "Reference" "#PWR091"
+		(property "Reference" "#PWR093"
 			(at 179.07 127 0)
 			(effects
 				(font
@@ -6187,7 +6187,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR091")
+					(reference "#PWR093")
 					(unit 1)
 				)
 			)
@@ -6203,7 +6203,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0f37c698-f93b-419c-9bd3-436b47685d53")
-		(property "Reference" "#PWR080"
+		(property "Reference" "#PWR082"
 			(at 25.4 63.5 0)
 			(effects
 				(font
@@ -6253,7 +6253,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR080")
+					(reference "#PWR082")
 					(unit 1)
 				)
 			)
@@ -6296,7 +6296,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 243.84 52.07 90)
 			(effects
 				(font
@@ -6323,7 +6323,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 243.84 52.07 90)
 			(effects
 				(font
@@ -6357,7 +6357,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "181b0110-742e-440c-9109-7018cc979dd2")
-		(property "Reference" "R43"
+		(property "Reference" "R45"
 			(at 181.61 107.315 0)
 			(effects
 				(font
@@ -6429,7 +6429,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R43")
+					(reference "R45")
 					(unit 1)
 				)
 			)
@@ -6445,7 +6445,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1a12cc55-9e66-4bdb-9143-21f11b259d19")
-		(property "Reference" "#PWR096"
+		(property "Reference" "#PWR098"
 			(at 222.25 127 0)
 			(effects
 				(font
@@ -6495,7 +6495,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR096")
+					(reference "#PWR098")
 					(unit 1)
 				)
 			)
@@ -6511,7 +6511,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1ded1f4d-48da-4061-9890-954438a61e46")
-		(property "Reference" "R49"
+		(property "Reference" "R51"
 			(at 245.11 107.315 0)
 			(effects
 				(font
@@ -6583,7 +6583,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R49")
+					(reference "R51")
 					(unit 1)
 				)
 			)
@@ -6599,7 +6599,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "200e62d3-4924-4f5b-b4ea-92db7e10014e")
-		(property "Reference" "R37"
+		(property "Reference" "R39"
 			(at 69.85 112.395 0)
 			(effects
 				(font
@@ -6671,7 +6671,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R37")
+					(reference "R39")
 					(unit 1)
 				)
 			)
@@ -6687,7 +6687,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "263cabae-2c99-410f-bb97-585fe5f3b9b8")
-		(property "Reference" "#PWR097"
+		(property "Reference" "#PWR099"
 			(at 242.57 127 0)
 			(effects
 				(font
@@ -6737,7 +6737,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR097")
+					(reference "#PWR099")
 					(unit 1)
 				)
 			)
@@ -6753,7 +6753,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "42dcfa10-e6a5-4791-b9f6-edad2271629c")
-		(property "Reference" "#PWR092"
+		(property "Reference" "#PWR094"
 			(at 180.34 63.5 0)
 			(effects
 				(font
@@ -6803,7 +6803,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR092")
+					(reference "#PWR094")
 					(unit 1)
 				)
 			)
@@ -6819,7 +6819,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4451c903-d915-4c1d-88be-6c45d9c26aef")
-		(property "Reference" "#PWR086"
+		(property "Reference" "#PWR088"
 			(at 68.58 63.5 0)
 			(effects
 				(font
@@ -6869,7 +6869,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR086")
+					(reference "#PWR088")
 					(unit 1)
 				)
 			)
@@ -6885,7 +6885,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "44e9fbfc-111c-4511-8900-5c00de006918")
-		(property "Reference" "R50"
+		(property "Reference" "R52"
 			(at 246.38 43.815 0)
 			(effects
 				(font
@@ -6957,7 +6957,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R50")
+					(reference "R52")
 					(unit 1)
 				)
 			)
@@ -7000,7 +7000,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 222.25 115.57 90)
 			(effects
 				(font
@@ -7027,7 +7027,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 222.25 115.57 90)
 			(effects
 				(font
@@ -7061,7 +7061,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "47e1d105-20c6-4310-af4e-0526b3cf1999")
-		(property "Reference" "R48"
+		(property "Reference" "R50"
 			(at 224.79 107.315 0)
 			(effects
 				(font
@@ -7133,7 +7133,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R48")
+					(reference "R50")
 					(unit 1)
 				)
 			)
@@ -7149,7 +7149,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4b267827-5a2d-4de3-8d75-be5e6d12c737")
-		(property "Reference" "#PWR082"
+		(property "Reference" "#PWR084"
 			(at 45.72 99.06 0)
 			(effects
 				(font
@@ -7199,7 +7199,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR082")
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -7215,7 +7215,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4c4d5bba-bf39-40b5-bcbb-b285943a8ade")
-		(property "Reference" "#PWR081"
+		(property "Reference" "#PWR083"
 			(at 41.91 40.64 0)
 			(effects
 				(font
@@ -7264,7 +7264,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR081")
+					(reference "#PWR083")
 					(unit 1)
 				)
 			)
@@ -7307,7 +7307,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/19q4hcm7"
 			(at 111.76 115.57 90)
 			(effects
 				(font
@@ -7334,7 +7334,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12U8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D12U8WT86CCT-ND"
 			(at 111.76 115.57 90)
 			(effects
 				(font
@@ -7395,7 +7395,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 222.25 52.07 90)
 			(effects
 				(font
@@ -7422,7 +7422,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 222.25 52.07 90)
 			(effects
 				(font
@@ -7456,7 +7456,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "533e282b-9bd8-4c93-ab45-edc71e0ef86d")
-		(property "Reference" "R41"
+		(property "Reference" "R43"
 			(at 114.3 43.815 0)
 			(effects
 				(font
@@ -7528,7 +7528,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R41")
+					(reference "R43")
 					(unit 1)
 				)
 			)
@@ -7571,7 +7571,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 179.07 115.57 90)
 			(effects
 				(font
@@ -7598,7 +7598,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 179.07 115.57 90)
 			(effects
 				(font
@@ -7659,7 +7659,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 200.66 52.07 90)
 			(effects
 				(font
@@ -7686,7 +7686,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 200.66 52.07 90)
 			(effects
 				(font
@@ -7720,7 +7720,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6392fede-5394-4bc8-be0a-202c5e484875")
-		(property "Reference" "R38"
+		(property "Reference" "R40"
 			(at 71.12 43.815 0)
 			(effects
 				(font
@@ -7792,7 +7792,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R38")
+					(reference "R40")
 					(unit 1)
 				)
 			)
@@ -7808,7 +7808,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "67b5077e-cd50-4a01-96c5-7b7d234cf5ad")
-		(property "Reference" "#PWR083"
+		(property "Reference" "#PWR085"
 			(at 46.99 63.5 0)
 			(effects
 				(font
@@ -7858,7 +7858,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR083")
+					(reference "#PWR085")
 					(unit 1)
 				)
 			)
@@ -7901,7 +7901,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 265.43 52.07 90)
 			(effects
 				(font
@@ -7928,7 +7928,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 265.43 52.07 90)
 			(effects
 				(font
@@ -7962,7 +7962,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6e7c0762-6244-4f53-bcfc-9200f959372e")
-		(property "Reference" "R33"
+		(property "Reference" "R35"
 			(at 26.67 107.315 0)
 			(effects
 				(font
@@ -8034,7 +8034,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R33")
+					(reference "R35")
 					(unit 1)
 				)
 			)
@@ -8050,7 +8050,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7258e2f1-eae5-489c-9c51-615861d9c3b7")
-		(property "Reference" "R42"
+		(property "Reference" "R44"
 			(at 114.3 107.315 0)
 			(effects
 				(font
@@ -8122,7 +8122,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R42")
+					(reference "R44")
 					(unit 1)
 				)
 			)
@@ -8138,7 +8138,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "725ae50d-131a-496b-a361-742fc45731a4")
-		(property "Reference" "#PWR090"
+		(property "Reference" "#PWR092"
 			(at 111.76 127 0)
 			(effects
 				(font
@@ -8188,7 +8188,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR090")
+					(reference "#PWR092")
 					(unit 1)
 				)
 			)
@@ -8204,7 +8204,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "772ae3cd-374f-44d1-8bd8-2fafc43ab7f9")
-		(property "Reference" "#PWR085"
+		(property "Reference" "#PWR087"
 			(at 67.31 132.08 0)
 			(effects
 				(font
@@ -8254,7 +8254,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR085")
+					(reference "#PWR087")
 					(unit 1)
 				)
 			)
@@ -8270,7 +8270,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7f66e77b-e0ab-4277-88a9-cd32f3724fae")
-		(property "Reference" "#PWR088"
+		(property "Reference" "#PWR090"
 			(at 90.17 127 0)
 			(effects
 				(font
@@ -8320,7 +8320,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR088")
+					(reference "#PWR090")
 					(unit 1)
 				)
 			)
@@ -8336,7 +8336,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8230fb89-8a92-4478-9a05-c04ed109b8bd")
-		(property "Reference" "#PWR079"
+		(property "Reference" "#PWR081"
 			(at 24.13 99.06 0)
 			(effects
 				(font
@@ -8386,7 +8386,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR079")
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
@@ -8402,7 +8402,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "85ff9296-0f8a-4b31-88b3-0f2f710463ab")
-		(property "Reference" "#PWR0100"
+		(property "Reference" "#PWR0102"
 			(at 265.43 127 0)
 			(effects
 				(font
@@ -8452,7 +8452,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR0100")
+					(reference "#PWR0102")
 					(unit 1)
 				)
 			)
@@ -8495,7 +8495,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 25.4 52.07 90)
 			(effects
 				(font
@@ -8522,7 +8522,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 25.4 52.07 90)
 			(effects
 				(font
@@ -8556,7 +8556,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8e1c0973-26a7-4f0f-8654-8e7bf88046d8")
-		(property "Reference" "#PWR084"
+		(property "Reference" "#PWR086"
 			(at 63.5 40.64 0)
 			(effects
 				(font
@@ -8605,7 +8605,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR084")
+					(reference "#PWR086")
 					(unit 1)
 				)
 			)
@@ -8648,7 +8648,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/19q4hcm7"
 			(at 90.17 115.57 90)
 			(effects
 				(font
@@ -8675,7 +8675,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12U8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D12U8WT86CCT-ND"
 			(at 90.17 115.57 90)
 			(effects
 				(font
@@ -8709,7 +8709,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8ebd6b8b-9660-4a88-80f9-dd13dc86efff")
-		(property "Reference" "#PWR099"
+		(property "Reference" "#PWR0101"
 			(at 265.43 63.5 0)
 			(effects
 				(font
@@ -8759,7 +8759,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR099")
+					(reference "#PWR0101")
 					(unit 1)
 				)
 			)
@@ -8775,7 +8775,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "95c44870-c853-49ce-a5cc-5d31af654c57")
-		(property "Reference" "R40"
+		(property "Reference" "R42"
 			(at 92.71 107.315 0)
 			(effects
 				(font
@@ -8847,7 +8847,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R40")
+					(reference "R42")
 					(unit 1)
 				)
 			)
@@ -8863,7 +8863,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "970f6661-2135-4481-9203-04d70402555d")
-		(property "Reference" "#PWR095"
+		(property "Reference" "#PWR097"
 			(at 222.25 63.5 0)
 			(effects
 				(font
@@ -8913,7 +8913,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR095")
+					(reference "#PWR097")
 					(unit 1)
 				)
 			)
@@ -8929,7 +8929,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9886f717-4087-4bd5-99c9-f780e2d040c6")
-		(property "Reference" "R51"
+		(property "Reference" "R53"
 			(at 267.97 43.815 0)
 			(effects
 				(font
@@ -9001,7 +9001,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R51")
+					(reference "R53")
 					(unit 1)
 				)
 			)
@@ -9017,7 +9017,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a4ef6aa1-c360-4984-8f52-5e6ccaa919c7")
-		(property "Reference" "#PWR094"
+		(property "Reference" "#PWR096"
 			(at 200.66 127 0)
 			(effects
 				(font
@@ -9067,7 +9067,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR094")
+					(reference "#PWR096")
 					(unit 1)
 				)
 			)
@@ -9110,7 +9110,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 46.99 52.07 90)
 			(effects
 				(font
@@ -9137,7 +9137,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 46.99 52.07 90)
 			(effects
 				(font
@@ -9171,7 +9171,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b3f04c8a-fdce-419d-8423-4a956829259e")
-		(property "Reference" "#PWR098"
+		(property "Reference" "#PWR0100"
 			(at 243.84 63.5 0)
 			(effects
 				(font
@@ -9221,7 +9221,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR098")
+					(reference "#PWR0100")
 					(unit 1)
 				)
 			)
@@ -9237,7 +9237,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b9a06cef-e04f-43d8-9591-ec6c55516eca")
-		(property "Reference" "R39"
+		(property "Reference" "R41"
 			(at 92.71 43.815 0)
 			(effects
 				(font
@@ -9309,7 +9309,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R39")
+					(reference "R41")
 					(unit 1)
 				)
 			)
@@ -9325,7 +9325,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bc5d0ba9-3196-4e03-8065-51471b764f97")
-		(property "Reference" "R52"
+		(property "Reference" "R54"
 			(at 267.97 107.315 0)
 			(effects
 				(font
@@ -9397,7 +9397,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R52")
+					(reference "R54")
 					(unit 1)
 				)
 			)
@@ -9440,7 +9440,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 265.43 115.57 90)
 			(effects
 				(font
@@ -9467,7 +9467,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 265.43 115.57 90)
 			(effects
 				(font
@@ -9528,7 +9528,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 45.72 100.33 90)
 			(effects
 				(font
@@ -9555,7 +9555,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 45.72 100.33 90)
 			(effects
 				(font
@@ -9589,7 +9589,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c7a8bc66-8186-4de2-ab3c-c6332ea47fba")
-		(property "Reference" "R46"
+		(property "Reference" "R48"
 			(at 203.2 107.315 0)
 			(effects
 				(font
@@ -9661,7 +9661,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R46")
+					(reference "R48")
 					(unit 1)
 				)
 			)
@@ -9677,7 +9677,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c8ede7b3-cce1-46bf-83c3-84d8540ba91e")
-		(property "Reference" "R36"
+		(property "Reference" "R38"
 			(at 49.53 43.815 0)
 			(effects
 				(font
@@ -9749,7 +9749,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R36")
+					(reference "R38")
 					(unit 1)
 				)
 			)
@@ -9765,7 +9765,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cb358a33-b300-471c-8bde-2009e475ef81")
-		(property "Reference" "#PWR087"
+		(property "Reference" "#PWR089"
 			(at 90.17 63.5 0)
 			(effects
 				(font
@@ -9815,7 +9815,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR087")
+					(reference "#PWR089")
 					(unit 1)
 				)
 			)
@@ -9831,7 +9831,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cee599ab-18c3-4d80-bc5c-eac8470326c7")
-		(property "Reference" "#PWR093"
+		(property "Reference" "#PWR095"
 			(at 200.66 63.5 0)
 			(effects
 				(font
@@ -9881,7 +9881,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "#PWR093")
+					(reference "#PWR095")
 					(unit 1)
 				)
 			)
@@ -9924,7 +9924,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 200.66 115.57 90)
 			(effects
 				(font
@@ -9951,7 +9951,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 200.66 115.57 90)
 			(effects
 				(font
@@ -10012,7 +10012,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/fm47v8fr"
 			(at 67.31 120.65 90)
 			(effects
 				(font
@@ -10039,7 +10039,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SMLD12BN1WT86CT-ND "
+		(property "Digikey_PN" "SMLD12BN1WT86CT-ND"
 			(at 67.31 120.65 90)
 			(effects
 				(font
@@ -10100,7 +10100,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 68.58 52.07 90)
 			(effects
 				(font
@@ -10127,7 +10127,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 68.58 52.07 90)
 			(effects
 				(font
@@ -10188,7 +10188,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 111.76 52.07 90)
 			(effects
 				(font
@@ -10215,7 +10215,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12P8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
 			(at 111.76 52.07 90)
 			(effects
 				(font
@@ -10276,7 +10276,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 24.13 100.33 90)
 			(effects
 				(font
@@ -10303,7 +10303,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12P8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
 			(at 24.13 100.33 90)
 			(effects
 				(font
@@ -10364,7 +10364,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 90.17 52.07 90)
 			(effects
 				(font
@@ -10391,7 +10391,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12P8WT86CCT-ND "
+		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
 			(at 90.17 52.07 90)
 			(effects
 				(font
@@ -10425,7 +10425,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f556d714-7195-49e1-9441-be95eba2a994")
-		(property "Reference" "R44"
+		(property "Reference" "R46"
 			(at 182.88 43.815 0)
 			(effects
 				(font
@@ -10497,7 +10497,7 @@
 		(instances
 			(project "SatelliteController2.0"
 				(path "/de793fd6-c32a-40e6-9ae3-03fbb6e83f09/1bf6bf4c-9694-4ea2-be4d-6ed7d1b8b46a"
-					(reference "R44")
+					(reference "R46")
 					(unit 1)
 				)
 			)
