@@ -152,6 +152,8 @@ namespace communication
     COM_CHECK_L_TO_N = 11,
     COM_CHECK_N_TO_L = 12,
     SATELLITE_VOLTAGE_SYNC = 13,
+    SATELLITE_BUS_VOLTAGE_SYNC = 14,
+    SATELLITE_ARMED_SYNC = 15,
 
     RASPI_SATELLITE_TELEMETRY = 0x33, // (51) Raspberry Pi 4 へ機体詳細テレメトリ送信
     RASPI_WIRELESS_STATUS = 0x34,     // (52) 機体無線ステータス
@@ -383,13 +385,16 @@ void communication::sendReplyToLaunch()
   float satVolts = power::input.getVoltage_V();
   float pressure = n2o::pressure_MPa;
   float current = n2o::vesim10.getCurrent_mA();
+  uint8_t isArmed = control::safetyArmed.isManualRaised() ? 1 : 0;
 
   communication::enableOutput();
   Serial.println("[SATELLITE] TX Reply -> Launch");
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_VOLTAGE_SYNC), satVolts);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_BUS_VOLTAGE_SYNC), power::bus12.getVoltage_V());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::PRESSURE_SYNC), pressure);
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), current);
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_ARMED_SYNC), isArmed);
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
   Serial1.flush();
   communication::disableOutput();

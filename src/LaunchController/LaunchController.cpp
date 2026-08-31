@@ -133,6 +133,8 @@ namespace communication
     COM_CHECK_L_TO_N = 11,
     COM_CHECK_N_TO_L = 12,
     SATELLITE_VOLTAGE_SYNC = 13,
+    SATELLITE_BUS_VOLTAGE_SYNC = 14,
+    SATELLITE_ARMED_SYNC = 15,
 
     // --- Raspberry Pi 4 無線通信用パケット ---
     RASPI_COMMAND = 0x20,            // (32) Raspberry Pi 4 からの遠隔制御コマンド
@@ -157,6 +159,8 @@ namespace communication
   void sendComCheck();
   void onFeedbackSyncReceived(uint8_t state);
   void onSatelliteVoltageSyncReceived(float voltage);
+  void onSatelliteBusVoltageSyncReceived(float voltage);
+  void onSatelliteArmedSyncReceived(uint8_t isArmed);
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA); // 電流受信ハンドラ
   void onComCheckReceived();
@@ -185,6 +189,8 @@ namespace raspi_wireless
   bool remoteArmingState = false;
   float latestPressure_MPa = 0.0f;
   float latestSatelliteVoltage_V = 0.0f;
+  float latestSatelliteBusVoltage_V = 0.0f;
+  bool latestSatelliteArmed = false;
 
   enum class RemoteCmd : uint8_t
   {
@@ -262,6 +268,12 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_VOLTAGE_SYNC),
       &communication::onSatelliteVoltageSyncReceived);
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_BUS_VOLTAGE_SYNC),
+      &communication::onSatelliteBusVoltageSyncReceived);
+  MsgPacketizer::subscribe(
+      Serial1, static_cast<uint8_t>(communication::Packet::SATELLITE_ARMED_SYNC),
+      &communication::onSatelliteArmedSyncReceived);
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
@@ -462,6 +474,16 @@ void communication::onSatelliteVoltageSyncReceived(float voltage)
   raspi_wireless::latestSatelliteVoltage_V = voltage;
 }
 
+void communication::onSatelliteBusVoltageSyncReceived(float voltage)
+{
+  raspi_wireless::latestSatelliteBusVoltage_V = voltage;
+}
+
+void communication::onSatelliteArmedSyncReceived(uint8_t isArmed)
+{
+  raspi_wireless::latestSatelliteArmed = (isArmed != 0);
+}
+
 void communication::onPressureSyncReceived(float pressure)
 {
   n2o::tm1637.displayNumber(pressure);
@@ -506,6 +528,13 @@ void communication::onComCheckFailed()
     control::openFB.off();
     control::closeFB.off();
     control::purgeFB.off();
+
+    // ★機体通信切断時はセンサ・電圧データを0または無効値にリセットする
+    raspi_wireless::latestSatelliteVoltage_V = 0.0f;
+    raspi_wireless::latestSatelliteBusVoltage_V = 0.0f;
+    raspi_wireless::latestSatelliteArmed = false;
+    raspi_wireless::latestPressure_MPa = 0.0f;
+    n2o::tm1637.clearDisplay();
   }
 }
 
@@ -1026,7 +1055,9 @@ void raspi_wireless::sendWirelessTelemetryTask()
       (sequence::fillSequenceIsActive << 1) |
       (sequence::ignitionSequenceIsActive << 2) |
       (sequence::canConfirm << 3) |
-      (raspi_wireless::isWirelessConnected << 4);
+      (raspi_wireless::isWirelessConnected << 4) |
+      ((millis() - communication::preReceivedTime <= communication::timeout) ? (1 << 5) : 0) |
+      (raspi_wireless::latestSatelliteArmed ? (1 << 6) : 0);
 
   uint8_t dummyLimitSwitchState = 0; // LaunchController.cpp はリミットスイッチ状態を同期していないため 0 固定
 
@@ -1037,5 +1068,6 @@ void raspi_wireless::sendWirelessTelemetryTask()
       cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, dummyLimitSwitchState,
       power::input.getVoltage_V(),
       power::bus12.getVoltage_V(),
-      raspi_wireless::latestSatelliteVoltage_V);
+      raspi_wireless::latestSatelliteVoltage_V,
+      raspi_wireless::latestSatelliteBusVoltage_V);
 }
