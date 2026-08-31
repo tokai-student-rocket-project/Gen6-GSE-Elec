@@ -6684,7 +6684,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.jp/ja/products/detail/hirose-electric-co-ltd/DF51A-6DP-2DSA/9381834"
 			(at 29.21 107.95 0)
 			(effects
 				(font
@@ -6902,7 +6902,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.digikey.jp/ja/products/detail/hirose-electric-co-ltd/DF51A-14DP-2DS-50/15849709"
 			(at 29.21 58.42 0)
 			(effects
 				(font

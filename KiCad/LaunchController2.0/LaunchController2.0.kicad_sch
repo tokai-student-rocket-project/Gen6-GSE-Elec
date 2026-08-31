@@ -5916,7 +5916,7 @@
 		)
 		(uuid "96287222-f77c-4f67-91f0-3a33a3632d29")
 	)
-	(text "向きに気をつけよう"
+	(text "配線（符号）に気をつけよう"
 		(exclude_from_sim no)
 		(at 270.51 49.022 0)
 		(effects
@@ -12503,7 +12503,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/bbj307jp"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g113312/"
 			(at 21.59 53.34 0)
 			(effects
 				(font
@@ -12538,7 +12538,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-4941-1-ND"
+		(property "Digikey_PN" ""
+			(at 21.59 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "113312"
 			(at 21.59 53.34 90)
 			(effects
 				(font
@@ -12794,7 +12803,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 72.39 19.05 0)
 			(effects
 				(font
@@ -12829,7 +12838,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 72.39 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 72.39 19.05 0)
 			(effects
 				(font
@@ -13096,7 +13114,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 190.5 110.49 0)
 			(effects
 				(font
@@ -13122,7 +13140,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 190.5 110.49 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 190.5 110.49 90)
 			(effects
 				(font
@@ -13934,7 +13961,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 82.55 19.05 0)
 			(effects
 				(font
@@ -13969,7 +13996,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 82.55 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 82.55 19.05 0)
 			(effects
 				(font
@@ -14129,6 +14165,24 @@
 				(hide yes)
 			)
 		)
+		(property "Mouser_PN" ""
+			(at 214.63 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" ""
+			(at 214.63 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4881cc94-c862-4ce0-8c92-ad0e27a3e0aa")
 		)
@@ -14179,7 +14233,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 45.72 55.88 0)
 			(effects
 				(font
@@ -14214,7 +14268,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 45.72 55.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 45.72 55.88 90)
 			(effects
 				(font
@@ -14372,7 +14435,7 @@
 		(at 137.16 125.73 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -14395,7 +14458,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4mm"
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_Pad_Via"
 			(at 137.16 125.73 0)
 			(effects
 				(font
@@ -14414,6 +14477,33 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 137.16 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" ""
+			(at 137.16 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser_PN" ""
+			(at 137.16 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" ""
 			(at 137.16 125.73 0)
 			(effects
 				(font
@@ -14545,7 +14635,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "USBLC6-2SC6"
+		(property "Value" "SP0504SHTG"
 			(at 259.4611 36.83 0)
 			(effects
 				(font
@@ -14565,7 +14655,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/rv3q24zz"
+		(property "Datasheet" "https://www.digikey.jp/short/npv4wv57"
 			(at 259.08 50.165 0)
 			(effects
 				(font
@@ -14584,7 +14674,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "497-5235-1-ND"
+		(property "Digikey_PN" "F5775CT-ND"
 			(at 257.81 41.91 0)
 			(effects
 				(font
@@ -15062,7 +15152,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 261.62 120.65 0)
 			(effects
 				(font
@@ -15088,7 +15178,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 261.62 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 261.62 120.65 90)
 			(effects
 				(font
@@ -15554,7 +15653,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 214.63 95.25 0)
 			(effects
 				(font
@@ -15580,7 +15679,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 214.63 95.25 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 214.63 95.25 90)
 			(effects
 				(font
@@ -15760,7 +15868,7 @@
 		(at 137.16 132.08 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -15783,7 +15891,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4mm"
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_Pad_Via"
 			(at 137.16 132.08 0)
 			(effects
 				(font
@@ -16038,7 +16146,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 125.73 33.02 0)
 			(effects
 				(font
@@ -16073,7 +16181,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 125.73 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 125.73 33.02 0)
 			(effects
 				(font
@@ -16196,7 +16313,7 @@
 		(at 137.16 138.43 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -16219,7 +16336,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4mm"
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_Pad_Via"
 			(at 137.16 138.43 0)
 			(effects
 				(font
@@ -16597,6 +16714,24 @@
 			)
 		)
 		(property "Akiduki_PN" "114356"
+			(at 218.44 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Digikey_PN" ""
+			(at 218.44 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser_PN" ""
 			(at 218.44 41.91 0)
 			(effects
 				(font
@@ -17104,7 +17239,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 92.71 19.05 0)
 			(effects
 				(font
@@ -17139,7 +17274,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 92.71 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 92.71 19.05 0)
 			(effects
 				(font
@@ -17168,7 +17312,7 @@
 		(at 137.16 144.78 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -17191,7 +17335,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_4mm"
+		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4_Pad_Via"
 			(at 137.16 144.78 0)
 			(effects
 				(font
@@ -17262,7 +17406,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 114.3 81.28 90)
 			(effects
 				(font
@@ -17297,7 +17441,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 114.3 81.28 0)
 			(effects
 				(font
@@ -17434,7 +17578,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/bbj307jp"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g113312/"
 			(at 21.59 43.18 0)
 			(effects
 				(font
@@ -17469,7 +17613,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-4941-1-ND"
+		(property "Digikey_PN" ""
+			(at 21.59 43.18 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "113312"
 			(at 21.59 43.18 90)
 			(effects
 				(font

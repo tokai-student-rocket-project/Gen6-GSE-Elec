@@ -6040,7 +6040,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "02122e01-5a16-4585-8d61-58170b52644c")
-		(property "Reference" "#PWR0125"
+		(property "Reference" "#PWR0122"
 			(at 210.82 64.77 0)
 			(effects
 				(font
@@ -6089,7 +6089,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0125")
+					(reference "#PWR0122")
 					(unit 1)
 				)
 			)
@@ -6105,7 +6105,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "02da248d-ae36-4aaf-97f4-92245ad9c0f3")
-		(property "Reference" "D16"
+		(property "Reference" "D17"
 			(at 186.69 52.6415 90)
 			(effects
 				(font
@@ -6132,7 +6132,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 184.15 53.34 90)
 			(effects
 				(font
@@ -6158,7 +6158,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 184.15 53.34 90)
 			(effects
 				(font
@@ -6176,7 +6176,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D16")
+					(reference "D17")
 					(unit 1)
 				)
 			)
@@ -6279,7 +6279,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "06db8aaa-83d2-4b3d-8843-0fb9d4b2fc97")
-		(property "Reference" "#PWR0122"
+		(property "Reference" "#PWR0119"
 			(at 162.56 128.27 0)
 			(effects
 				(font
@@ -6328,7 +6328,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0122")
+					(reference "#PWR0119")
 					(unit 1)
 				)
 			)
@@ -6344,7 +6344,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0834e642-515f-45e4-a999-9c626f1a42f5")
-		(property "Reference" "D25"
+		(property "Reference" "D26"
 			(at 278.13 116.1415 90)
 			(effects
 				(font
@@ -6371,7 +6371,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 275.59 116.84 90)
 			(effects
 				(font
@@ -6397,7 +6397,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 275.59 116.84 90)
 			(effects
 				(font
@@ -6415,7 +6415,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D25")
+					(reference "D26")
 					(unit 1)
 				)
 			)
@@ -6431,7 +6431,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0b203d73-d115-44e7-987d-ab94f4dfec0c")
-		(property "Reference" "#PWR0116"
+		(property "Reference" "#PWR0112"
 			(at 64.77 41.91 0)
 			(effects
 				(font
@@ -6480,7 +6480,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0116")
+					(reference "#PWR0112")
 					(unit 1)
 				)
 			)
@@ -6496,7 +6496,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "11a82bfc-8942-42aa-9664-fe0ffbb64423")
-		(property "Reference" "#PWR0112"
+		(property "Reference" "#PWR0108"
 			(at 24.13 100.33 0)
 			(effects
 				(font
@@ -6545,7 +6545,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0112")
+					(reference "#PWR0108")
 					(unit 1)
 				)
 			)
@@ -6561,7 +6561,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "134f5f27-f569-49c8-8089-afe2086662b2")
-		(property "Reference" "D17"
+		(property "Reference" "D18"
 			(at 186.69 116.1415 90)
 			(effects
 				(font
@@ -6588,7 +6588,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 184.15 116.84 90)
 			(effects
 				(font
@@ -6614,7 +6614,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 184.15 116.84 90)
 			(effects
 				(font
@@ -6632,7 +6632,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D17")
+					(reference "D18")
 					(unit 1)
 				)
 			)
@@ -6648,7 +6648,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "151b0ed4-b7a9-4454-ad46-87963ab2d301")
-		(property "Reference" "#PWR0117"
+		(property "Reference" "#PWR0114"
 			(at 69.85 64.77 0)
 			(effects
 				(font
@@ -6697,7 +6697,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0117")
+					(reference "#PWR0114")
 					(unit 1)
 				)
 			)
@@ -6713,7 +6713,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "152eb31b-1177-4309-8311-afc576be76b3")
-		(property "Reference" "D22"
+		(property "Reference" "D23"
 			(at 256.54 52.6415 90)
 			(effects
 				(font
@@ -6740,7 +6740,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 254 53.34 90)
 			(effects
 				(font
@@ -6766,7 +6766,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 254 53.34 90)
 			(effects
 				(font
@@ -6784,7 +6784,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D22")
+					(reference "D23")
 					(unit 1)
 				)
 			)
@@ -6800,7 +6800,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "200e62d3-4924-4f5b-b4ea-92db7e10014e")
-		(property "Reference" "R48"
+		(property "Reference" "R50"
 			(at 69.85 111.125 0)
 			(effects
 				(font
@@ -6871,7 +6871,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R48")
+					(reference "R50")
 					(unit 1)
 				)
 			)
@@ -6887,7 +6887,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "25fbe246-fdd2-4545-8577-13744585978e")
-		(property "Reference" "#PWR0123"
+		(property "Reference" "#PWR0120"
 			(at 184.15 64.77 0)
 			(effects
 				(font
@@ -6936,7 +6936,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0123")
+					(reference "#PWR0120")
 					(unit 1)
 				)
 			)
@@ -6952,7 +6952,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3649c641-dcd8-466d-b315-3e7dfdea01ae")
-		(property "Reference" "R60"
+		(property "Reference" "R61"
 			(at 234.95 45.085 0)
 			(effects
 				(font
@@ -7023,7 +7023,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R60")
+					(reference "R61")
 					(unit 1)
 				)
 			)
@@ -7039,7 +7039,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3a10e3b7-291c-4de3-b4e6-68bdb8144783")
-		(property "Reference" "R50"
+		(property "Reference" "R51"
 			(at 72.39 45.085 0)
 			(effects
 				(font
@@ -7110,7 +7110,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R50")
+					(reference "R51")
 					(unit 1)
 				)
 			)
@@ -7126,7 +7126,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3c7e56b4-73ab-4fb9-b8d3-16ca3e8c9fa7")
-		(property "Reference" "#PWR0113"
+		(property "Reference" "#PWR0109"
 			(at 26.67 64.77 0)
 			(effects
 				(font
@@ -7175,7 +7175,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0113")
+					(reference "#PWR0109")
 					(unit 1)
 				)
 			)
@@ -7191,7 +7191,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "40433810-8406-418c-a102-929987ec44f2")
-		(property "Reference" "R63"
+		(property "Reference" "R64"
 			(at 256.54 108.585 0)
 			(effects
 				(font
@@ -7262,7 +7262,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R63")
+					(reference "R64")
 					(unit 1)
 				)
 			)
@@ -7278,7 +7278,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "41844fe0-c07e-49c0-a8bd-92fa8715668f")
-		(property "Reference" "R56"
+		(property "Reference" "R57"
 			(at 186.69 45.085 0)
 			(effects
 				(font
@@ -7349,7 +7349,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R56")
+					(reference "R57")
 					(unit 1)
 				)
 			)
@@ -7365,7 +7365,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "435f4bbf-fbee-45e0-a7c8-6b7010080fee")
-		(property "Reference" "R55"
+		(property "Reference" "R56"
 			(at 165.1 108.585 0)
 			(effects
 				(font
@@ -7436,7 +7436,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R55")
+					(reference "R56")
 					(unit 1)
 				)
 			)
@@ -7452,7 +7452,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4511da0c-e15f-4250-94d2-6a2b3a5e4d66")
-		(property "Reference" "R59"
+		(property "Reference" "R60"
 			(at 213.36 108.585 0)
 			(effects
 				(font
@@ -7523,7 +7523,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R59")
+					(reference "R60")
 					(unit 1)
 				)
 			)
@@ -7539,7 +7539,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "46bf8a8b-633b-4acc-bd73-81de1ab23f4e")
-		(property "Reference" "R65"
+		(property "Reference" "R66"
 			(at 278.13 108.585 0)
 			(effects
 				(font
@@ -7610,7 +7610,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R65")
+					(reference "R66")
 					(unit 1)
 				)
 			)
@@ -7626,7 +7626,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "46e9f915-2a6f-477b-afc2-60d270cb8dd5")
-		(property "Reference" "D23"
+		(property "Reference" "D24"
 			(at 256.54 116.1415 90)
 			(effects
 				(font
@@ -7653,7 +7653,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 254 116.84 90)
 			(effects
 				(font
@@ -7679,7 +7679,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 254 116.84 90)
 			(effects
 				(font
@@ -7697,7 +7697,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D23")
+					(reference "D24")
 					(unit 1)
 				)
 			)
@@ -7713,7 +7713,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4f19686f-1a77-4a64-8c09-a1b03e645ec2")
-		(property "Reference" "D13"
+		(property "Reference" "D14"
 			(at 113.03 118.6815 90)
 			(effects
 				(font
@@ -7784,7 +7784,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D13")
+					(reference "D14")
 					(unit 1)
 				)
 			)
@@ -7800,7 +7800,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "511ea982-da11-486f-8b6e-8b4ae9e6bf6e")
-		(property "Reference" "D20"
+		(property "Reference" "D21"
 			(at 234.95 52.6415 90)
 			(effects
 				(font
@@ -7827,7 +7827,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 232.41 53.34 90)
 			(effects
 				(font
@@ -7853,7 +7853,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 232.41 53.34 90)
 			(effects
 				(font
@@ -7871,7 +7871,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D20")
+					(reference "D21")
 					(unit 1)
 				)
 			)
@@ -7887,7 +7887,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "54256c48-8ccd-4126-ae7b-ce25cb79342a")
-		(property "Reference" "#PWR0120"
+		(property "Reference" "#PWR0117"
 			(at 110.49 130.81 0)
 			(effects
 				(font
@@ -7936,7 +7936,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0120")
+					(reference "#PWR0117")
 					(unit 1)
 				)
 			)
@@ -7952,7 +7952,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5500755e-d3a7-470a-9c53-9926539ffd17")
-		(property "Reference" "D19"
+		(property "Reference" "D20"
 			(at 213.36 116.1415 90)
 			(effects
 				(font
@@ -7979,7 +7979,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 210.82 116.84 90)
 			(effects
 				(font
@@ -8005,7 +8005,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 210.82 116.84 90)
 			(effects
 				(font
@@ -8023,7 +8023,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D19")
+					(reference "D20")
 					(unit 1)
 				)
 			)
@@ -8039,7 +8039,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5537f074-291c-4f8a-b20b-5e923be8657f")
-		(property "Reference" "D18"
+		(property "Reference" "D19"
 			(at 213.36 52.6415 90)
 			(effects
 				(font
@@ -8066,7 +8066,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 210.82 53.34 90)
 			(effects
 				(font
@@ -8092,7 +8092,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 210.82 53.34 90)
 			(effects
 				(font
@@ -8110,7 +8110,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D18")
+					(reference "D19")
 					(unit 1)
 				)
 			)
@@ -8126,7 +8126,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5a191f40-7e03-4ce9-bc6b-d9a40d62604b")
-		(property "Reference" "R53"
+		(property "Reference" "R54"
 			(at 113.03 111.125 0)
 			(effects
 				(font
@@ -8197,7 +8197,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R53")
+					(reference "R54")
 					(unit 1)
 				)
 			)
@@ -8213,7 +8213,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5db8ed78-acbe-4e56-975f-5c5ef71f3116")
-		(property "Reference" "#PWR0121"
+		(property "Reference" "#PWR0118"
 			(at 113.03 64.77 0)
 			(effects
 				(font
@@ -8262,7 +8262,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0121")
+					(reference "#PWR0118")
 					(unit 1)
 				)
 			)
@@ -8278,7 +8278,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "61bd23a6-47e3-4600-ab94-2410d4a1c789")
-		(property "Reference" "#PWR0130"
+		(property "Reference" "#PWR0127"
 			(at 254 128.27 0)
 			(effects
 				(font
@@ -8327,7 +8327,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0130")
+					(reference "#PWR0127")
 					(unit 1)
 				)
 			)
@@ -8343,7 +8343,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6c11f909-3ab8-4e05-9e2e-5f23a4db8188")
-		(property "Reference" "D24"
+		(property "Reference" "D25"
 			(at 278.13 52.6415 90)
 			(effects
 				(font
@@ -8370,7 +8370,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 275.59 53.34 90)
 			(effects
 				(font
@@ -8396,7 +8396,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 275.59 53.34 90)
 			(effects
 				(font
@@ -8414,7 +8414,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D24")
+					(reference "D25")
 					(unit 1)
 				)
 			)
@@ -8517,7 +8517,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7162150e-7321-4138-87fa-dbfd0f8bf0e5")
-		(property "Reference" "#PWR0131"
+		(property "Reference" "#PWR0128"
 			(at 275.59 64.77 0)
 			(effects
 				(font
@@ -8566,7 +8566,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0131")
+					(reference "#PWR0128")
 					(unit 1)
 				)
 			)
@@ -8582,7 +8582,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "746a72ef-09e8-4259-b61d-e0d7102ea10f")
-		(property "Reference" "#PWR0124"
+		(property "Reference" "#PWR0121"
 			(at 184.15 128.27 0)
 			(effects
 				(font
@@ -8631,7 +8631,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0124")
+					(reference "#PWR0121")
 					(unit 1)
 				)
 			)
@@ -8647,7 +8647,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "74959c96-34a4-4762-87e7-61e81fd5fecb")
-		(property "Reference" "#PWR0126"
+		(property "Reference" "#PWR0123"
 			(at 210.82 128.27 0)
 			(effects
 				(font
@@ -8696,7 +8696,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0126")
+					(reference "#PWR0123")
 					(unit 1)
 				)
 			)
@@ -8712,7 +8712,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7969fb3e-3521-46ed-a015-0a1e29bfa658")
-		(property "Reference" "#PWR0129"
+		(property "Reference" "#PWR0126"
 			(at 254 64.77 0)
 			(effects
 				(font
@@ -8761,7 +8761,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0129")
+					(reference "#PWR0126")
 					(unit 1)
 				)
 			)
@@ -8777,7 +8777,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7d288cbd-ac0f-4a18-9bf1-ace1063d3cf8")
-		(property "Reference" "#PWR0127"
+		(property "Reference" "#PWR0124"
 			(at 232.41 64.77 0)
 			(effects
 				(font
@@ -8826,7 +8826,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0127")
+					(reference "#PWR0124")
 					(unit 1)
 				)
 			)
@@ -8842,7 +8842,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7f607936-cbd9-4fd3-87e1-b2edbed2c305")
-		(property "Reference" "D26"
+		(property "Reference" "D8"
 			(at 48.26 100.9015 90)
 			(effects
 				(font
@@ -8869,7 +8869,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fm47v8fr"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 45.72 101.6 90)
 			(effects
 				(font
@@ -8895,7 +8895,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SMLD12BN1WT86CT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 45.72 101.6 90)
 			(effects
 				(font
@@ -8913,7 +8913,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D26")
+					(reference "D8")
 					(unit 1)
 				)
 			)
@@ -8929,7 +8929,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "85515442-117f-41b3-be4c-396b9e014ee9")
-		(property "Reference" "R57"
+		(property "Reference" "R58"
 			(at 186.69 108.585 0)
 			(effects
 				(font
@@ -9000,7 +9000,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R57")
+					(reference "R58")
 					(unit 1)
 				)
 			)
@@ -9043,7 +9043,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 26.67 53.34 90)
 			(effects
 				(font
@@ -9069,7 +9069,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 26.67 53.34 90)
 			(effects
 				(font
@@ -9103,7 +9103,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8e9cfd70-affb-44a4-add5-85727f6c7639")
-		(property "Reference" "D11"
+		(property "Reference" "D12"
 			(at 91.44 118.6815 90)
 			(effects
 				(font
@@ -9174,7 +9174,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D11")
+					(reference "D12")
 					(unit 1)
 				)
 			)
@@ -9190,7 +9190,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9886f717-4087-4bd5-99c9-f780e2d040c6")
-		(property "Reference" "R64"
+		(property "Reference" "R65"
 			(at 278.13 45.085 0)
 			(effects
 				(font
@@ -9261,7 +9261,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R64")
+					(reference "R65")
 					(unit 1)
 				)
 			)
@@ -9277,7 +9277,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "99d6499c-0d23-4d05-a859-e6204682696c")
-		(property "Reference" "R66"
+		(property "Reference" "R48"
 			(at 48.26 108.585 0)
 			(effects
 				(font
@@ -9348,7 +9348,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R66")
+					(reference "R48")
 					(unit 1)
 				)
 			)
@@ -9364,7 +9364,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9b00ff02-4ab0-41b6-9cc9-c95357dfe1b9")
-		(property "Reference" "#PWR0115"
+		(property "Reference" "#PWR0111"
 			(at 48.26 64.77 0)
 			(effects
 				(font
@@ -9413,7 +9413,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0115")
+					(reference "#PWR0111")
 					(unit 1)
 				)
 			)
@@ -9429,7 +9429,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a2bab7a0-3c02-4d54-a2de-b46ff70217e6")
-		(property "Reference" "R58"
+		(property "Reference" "R59"
 			(at 213.36 45.085 0)
 			(effects
 				(font
@@ -9500,7 +9500,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R58")
+					(reference "R59")
 					(unit 1)
 				)
 			)
@@ -9516,7 +9516,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a8b7b472-a0ec-4d33-ac7a-3d977d4a7d99")
-		(property "Reference" "R61"
+		(property "Reference" "R62"
 			(at 234.95 108.585 0)
 			(effects
 				(font
@@ -9587,7 +9587,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R61")
+					(reference "R62")
 					(unit 1)
 				)
 			)
@@ -9630,7 +9630,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 48.26 53.34 90)
 			(effects
 				(font
@@ -9656,7 +9656,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 48.26 53.34 90)
 			(effects
 				(font
@@ -9690,7 +9690,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b6809a01-bca9-47b9-8973-d719c15da4d0")
-		(property "Reference" "#PWR0133"
+		(property "Reference" "#PWR0110"
 			(at 45.72 100.33 0)
 			(effects
 				(font
@@ -9739,7 +9739,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0133")
+					(reference "#PWR0110")
 					(unit 1)
 				)
 			)
@@ -9755,7 +9755,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c119f01a-d81a-497c-bd95-baa6bdd14365")
-		(property "Reference" "#PWR0119"
+		(property "Reference" "#PWR0116"
 			(at 91.44 64.77 0)
 			(effects
 				(font
@@ -9804,7 +9804,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0119")
+					(reference "#PWR0116")
 					(unit 1)
 				)
 			)
@@ -9820,7 +9820,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c1abc14d-b0e2-4fc7-a1a0-ecc820a0dec4")
-		(property "Reference" "R62"
+		(property "Reference" "R63"
 			(at 256.54 45.085 0)
 			(effects
 				(font
@@ -9891,7 +9891,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R62")
+					(reference "R63")
 					(unit 1)
 				)
 			)
@@ -9907,7 +9907,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c410380a-f70d-48a2-b250-aae69238cf8c")
-		(property "Reference" "R51"
+		(property "Reference" "R52"
 			(at 91.44 111.125 0)
 			(effects
 				(font
@@ -9978,7 +9978,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R51")
+					(reference "R52")
 					(unit 1)
 				)
 			)
@@ -9994,7 +9994,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cacd264d-9b8d-487b-993e-7d1a105e1578")
-		(property "Reference" "#PWR0118"
+		(property "Reference" "#PWR0115"
 			(at 88.9 130.81 0)
 			(effects
 				(font
@@ -10043,7 +10043,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0118")
+					(reference "#PWR0115")
 					(unit 1)
 				)
 			)
@@ -10059,7 +10059,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cb563ff3-8075-4743-95bb-d4ace2284278")
-		(property "Reference" "#PWR0114"
+		(property "Reference" "#PWR0113"
 			(at 67.31 130.81 0)
 			(effects
 				(font
@@ -10108,7 +10108,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0114")
+					(reference "#PWR0113")
 					(unit 1)
 				)
 			)
@@ -10124,7 +10124,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cf69be1f-9b7e-4d77-863e-cff1ffb73e03")
-		(property "Reference" "D21"
+		(property "Reference" "D22"
 			(at 234.95 116.1415 90)
 			(effects
 				(font
@@ -10151,7 +10151,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 232.41 116.84 90)
 			(effects
 				(font
@@ -10177,7 +10177,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 232.41 116.84 90)
 			(effects
 				(font
@@ -10195,7 +10195,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D21")
+					(reference "D22")
 					(unit 1)
 				)
 			)
@@ -10211,7 +10211,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d20fb51d-4edc-4753-a23b-3864f4f13f0f")
-		(property "Reference" "D8"
+		(property "Reference" "D10"
 			(at 69.85 118.6815 90)
 			(effects
 				(font
@@ -10282,7 +10282,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D8")
+					(reference "D10")
 					(unit 1)
 				)
 			)
@@ -10298,7 +10298,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d55bf778-bfbb-4bbd-af34-bf82a67087c3")
-		(property "Reference" "#PWR0132"
+		(property "Reference" "#PWR0129"
 			(at 275.59 128.27 0)
 			(effects
 				(font
@@ -10347,7 +10347,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0132")
+					(reference "#PWR0129")
 					(unit 1)
 				)
 			)
@@ -10363,7 +10363,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d5ee7049-7286-4b25-9a74-02a1cf2d118b")
-		(property "Reference" "D10"
+		(property "Reference" "D11"
 			(at 72.39 52.6415 90)
 			(effects
 				(font
@@ -10390,7 +10390,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 69.85 53.34 90)
 			(effects
 				(font
@@ -10416,7 +10416,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 69.85 53.34 90)
 			(effects
 				(font
@@ -10434,7 +10434,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D10")
+					(reference "D11")
 					(unit 1)
 				)
 			)
@@ -10450,7 +10450,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d877ab80-1908-4d49-ae62-38904ed18a08")
-		(property "Reference" "#PWR0128"
+		(property "Reference" "#PWR0125"
 			(at 232.41 128.27 0)
 			(effects
 				(font
@@ -10499,7 +10499,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "#PWR0128")
+					(reference "#PWR0125")
 					(unit 1)
 				)
 			)
@@ -10515,7 +10515,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d89e289a-6eb1-4053-b802-11a4aa4c6718")
-		(property "Reference" "D14"
+		(property "Reference" "D15"
 			(at 115.57 52.6415 90)
 			(effects
 				(font
@@ -10542,7 +10542,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/pmdzdv5j"
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 113.03 53.34 90)
 			(effects
 				(font
@@ -10586,7 +10586,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D14")
+					(reference "D15")
 					(unit 1)
 				)
 			)
@@ -10602,7 +10602,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "dae959cf-d497-4b3e-a6c5-8899dc08038a")
-		(property "Reference" "R54"
+		(property "Reference" "R55"
 			(at 115.57 45.085 0)
 			(effects
 				(font
@@ -10673,7 +10673,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R54")
+					(reference "R55")
 					(unit 1)
 				)
 			)
@@ -10803,7 +10803,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fm47v8fr"
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 24.13 101.6 90)
 			(effects
 				(font
@@ -10829,7 +10829,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SMLD12BN1WT86CT-ND"
+		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
 			(at 24.13 101.6 90)
 			(effects
 				(font
@@ -10863,7 +10863,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "efb2ddcd-5958-4def-adca-a47bf77b5ac3")
-		(property "Reference" "D12"
+		(property "Reference" "D13"
 			(at 93.98 52.6415 90)
 			(effects
 				(font
@@ -10890,7 +10890,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/pmdzdv5j"
+		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
 			(at 91.44 53.34 90)
 			(effects
 				(font
@@ -10934,7 +10934,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D12")
+					(reference "D13")
 					(unit 1)
 				)
 			)
@@ -10950,7 +10950,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f57120f0-8860-47dd-8a56-6058450a3ebe")
-		(property "Reference" "D15"
+		(property "Reference" "D16"
 			(at 165.1 116.1415 90)
 			(effects
 				(font
@@ -10977,7 +10977,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3p7j3w3t"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 162.56 116.84 90)
 			(effects
 				(font
@@ -11003,7 +11003,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12D8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 162.56 116.84 90)
 			(effects
 				(font
@@ -11021,7 +11021,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "D15")
+					(reference "D16")
 					(unit 1)
 				)
 			)
@@ -11037,7 +11037,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f5796ead-dae9-4b54-a7e5-b80e7ce69f18")
-		(property "Reference" "R52"
+		(property "Reference" "R53"
 			(at 93.98 45.085 0)
 			(effects
 				(font
@@ -11108,7 +11108,7 @@
 		(instances
 			(project "LaunchController2.0"
 				(path "/017c5872-fa6f-4200-9242-8d168e4d6b79/d0e970d2-9f19-40e6-827a-170053f5d0ec"
-					(reference "R52")
+					(reference "R53")
 					(unit 1)
 				)
 			)

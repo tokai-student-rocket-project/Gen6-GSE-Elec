@@ -7849,7 +7849,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ttd7bqv9"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 233.68 107.95 0)
 			(effects
 				(font
@@ -7867,7 +7867,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 233.68 107.95 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 233.68 107.95 90)
 			(effects
 				(font
@@ -8572,7 +8581,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 71.12 33.02 0)
 			(effects
 				(font
@@ -8598,7 +8607,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 71.12 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 71.12 33.02 0)
 			(effects
 				(font
@@ -8657,7 +8675,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fbbb4909"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g113388/"
 			(at 269.24 91.44 0)
 			(effects
 				(font
@@ -8683,7 +8701,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-GCM21BC71C106KE36KCT-ND"
+		(property "Digikey_PN" ""
+			(at 269.24 91.44 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "113388"
 			(at 269.24 91.44 90)
 			(effects
 				(font
@@ -9289,7 +9316,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 176.53 40.64 0)
 			(effects
 				(font
@@ -9315,7 +9342,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 176.53 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 176.53 40.64 0)
 			(effects
 				(font
@@ -9879,7 +9915,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "LED_Y"
+		(property "Value" "LED_O"
 			(at 161.29 105.3464 90)
 			(effects
 				(font
@@ -9897,7 +9933,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/4nhvjzth"
+		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
 			(at 158.75 104.14 90)
 			(effects
 				(font
@@ -9923,7 +9959,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "SML-D12Y8WT86CCT-ND"
+		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
 			(at 158.75 104.14 90)
 			(effects
 				(font
@@ -10047,7 +10083,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fbbb4909"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g113388/"
 			(at 254 26.67 0)
 			(effects
 				(font
@@ -10073,7 +10109,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-GCM21BC71C106KE36KCT-ND"
+		(property "Digikey_PN" ""
+			(at 254 26.67 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "113388"
 			(at 254 26.67 90)
 			(effects
 				(font
@@ -10506,7 +10551,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/2jznv97v"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g130397/"
 			(at 91.44 102.87 0)
 			(effects
 				(font
@@ -10532,7 +10577,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-GCM188D71H105KE36JCT-ND"
+		(property "Digikey_PN" ""
+			(at 91.44 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "130397"
 			(at 91.44 102.87 0)
 			(effects
 				(font
@@ -10826,7 +10880,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ttd7bqv9"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 218.44 43.18 0)
 			(effects
 				(font
@@ -10844,7 +10898,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 218.44 43.18 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 218.44 43.18 90)
 			(effects
 				(font
@@ -11072,7 +11135,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 254 36.83 0)
 			(effects
 				(font
@@ -11098,7 +11161,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 254 36.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 254 36.83 90)
 			(effects
 				(font
@@ -12184,7 +12256,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 140.97 40.64 0)
 			(effects
 				(font
@@ -12210,7 +12282,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 140.97 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 140.97 40.64 0)
 			(effects
 				(font
@@ -12399,7 +12480,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/ftvh328f"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g114559/"
 			(at 269.24 101.6 0)
 			(effects
 				(font
@@ -12425,7 +12506,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-8020-1-ND"
+		(property "Digikey_PN" ""
+			(at 269.24 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "114559"
 			(at 269.24 101.6 90)
 			(effects
 				(font
@@ -13182,7 +13272,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fbbb4909"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g113388/"
 			(at 170.18 102.87 0)
 			(effects
 				(font
@@ -13208,7 +13298,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-GCM21BC71C106KE36KCT-ND"
+		(property "Digikey_PN" ""
+			(at 170.18 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "113388"
 			(at 170.18 102.87 0)
 			(effects
 				(font
@@ -13356,7 +13455,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/2jznv97v"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g130397/"
 			(at 127 113.03 0)
 			(effects
 				(font
@@ -13382,7 +13481,16 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey_PN" "490-GCM188D71H105KE36JCT-ND"
+		(property "Digikey_PN" ""
+			(at 127 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "130397"
 			(at 127 113.03 0)
 			(effects
 				(font
