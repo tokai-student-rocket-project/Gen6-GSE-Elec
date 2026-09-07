@@ -10,6 +10,30 @@
 #include <MsgPacketizer.h>
 #include <TaskManager.h>
 
+// =====================================================================
+//  デモモード設定 (DEMO_MODE)
+// ---------------------------------------------------------------------
+//  下の #define のコメントを外してビルドすると「デモモード」になります。
+//  （または PlatformIO 等のビルドフラグで -DDEMO_MODE を指定）
+//
+//  想定する構成:
+//    ランチコントローラー ＋ サテライトコントローラー は接続した状態。
+//    SatelliteNode（リミットスイッチ）と RocketNode は未接続。
+//  この状態でも充填〜点火シーケンスを最後まで流せるようにします。
+//
+//  デモモードで変わるのは以下の「SatelliteNode 依存部分」だけです:
+//    - リミットスイッチによる安全ゲート(isSafetyGateMet)を常に成立扱いにする
+//    - SatelliteNode のハートビート途絶を通信正常判定・タイムアウト監視から除外する
+//  ★ ランチ⇔サテライト間の通信タイムアウト・フェールセーフはそのまま有効です。
+//    サテライトとの通信が切れれば、通常どおりシーケンスは強制停止されます。
+//
+//  ■ 安全に関する注意
+//    - 現場で運用する際は、必ず DEMO_MODE を無効（コメントアウト）にして
+//      ビルドしたファームウェアを使用してください。
+//    - 起動時にシリアルへ警告バナーを表示します。
+// =====================================================================
+// #define DEMO_MODE
+
 namespace power
 {
   // キルスイッチ入力 (CTL_KILL): 電源を落とすためのボタン
@@ -217,7 +241,15 @@ namespace communication
 
   /// @brief 安全ゲート（必要なリミットスイッチがすべて押されているか）の判定
   /// @return true: 安全（すべて押されている）、false: 危険（どれかが押されていない）
-  inline bool isSafetyGateMet() { return (limitSwitchState & SAFETY_GATE_MASK) == SAFETY_GATE_MASK; }
+  inline bool isSafetyGateMet()
+  {
+#ifdef DEMO_MODE
+    // デモモード: リミットスイッチ(SatelliteNode)が無くても安全ゲートを成立扱いにする
+    return true;
+#else
+    return (limitSwitchState & SAFETY_GATE_MASK) == SAFETY_GATE_MASK;
+#endif
+  }
 
   // RS485の送信を有効/無効化する関数
   void enableOutput();
@@ -275,6 +307,18 @@ void setup()
 
   // FT232RL (USB - PCとの通信用シリアル)
   Serial.begin(115200);
+
+#ifdef DEMO_MODE
+  Serial.println();
+  Serial.println("#########################################################");
+  Serial.println("#   DEMO MODE ENABLED / デモモード有効                   #");
+  Serial.println("#   SatelliteNode(リミットSW)/RocketNode 未接続でも      #");
+  Serial.println("#   ランチ+サテライトのみでシーケンスを実行できます      #");
+  Serial.println("#   ランチ<->サテライト間のフェールセーフは通常どおり有効 #");
+  Serial.println("#   ※現場運用時は DEMO_MODE を無効化してビルドする事     #");
+  Serial.println("#########################################################");
+  Serial.println();
+#endif
 
   // LTC485 (RS485 - サテライトコントローラーとの通信用シリアル1)
   Serial1.begin(115200);
@@ -737,9 +781,16 @@ void communication::onComCheckReceived()
   // 通信受信時刻を更新
   communication::preReceivedTime = millis();
 
+#ifdef DEMO_MODE
+  // デモモード: SatelliteNode 未接続前提のため、ノードの生存は問わない
+  const bool nodeAlive = true;
+#else
+  const bool nodeAlive =
+      (millis() - communication::preReceivedTime_Node <= communication::timeout);
+#endif
+
   // 両方がタイムアウト以内の場合のみ通信正常ランプを点灯
-  if (millis() - communication::preReceivedTime <= communication::timeout &&
-      millis() - communication::preReceivedTime_Node <= communication::timeout)
+  if (millis() - communication::preReceivedTime <= communication::timeout && nodeAlive)
   {
     communication::statusLamp.on();
     error::statusLamp.off();
@@ -778,6 +829,13 @@ void communication::onComCheckFailed()
   bool controllerTimeout = (millis() - communication::preReceivedTime > communication::timeout);
   bool nodeTimeout = (millis() - communication::preReceivedTime_Node > communication::timeout);
   bool rocketNodeTimeout = (millis() - communication::preReceivedTime_RocketNode > communication::timeout);
+
+#ifdef DEMO_MODE
+  // デモモード: SatelliteNode（リミットスイッチ）は未接続前提のため、
+  // ノードのタイムアウトは無視する。
+  // ※ ランチ⇔サテライト間(controllerTimeout)のフェールセーフはそのまま有効。
+  nodeTimeout = false;
+#endif
 
   if (controllerTimeout || nodeTimeout || rocketNodeTimeout)
   {
