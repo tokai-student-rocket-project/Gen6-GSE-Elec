@@ -1,0 +1,212 @@
+TVS Diode Arrays (SPA® Diodes) Datasheet© 2022 Littelfuse, Inc.
+Specifications are subject to change without notice.
+Revised: GD. 08/12/221
+SP0504S Series
+0.85pF Diode ArrayDescription
+ApplicationsThe SP0504S integrates low capacitance rail-to-rail diodes with an 
+integrated proprietary avalanche breakdown diode that protects 
+applications against ESD, EFT and low surge events. This 
+component is rated for the maximum IEC 61000-4-2 ESD (level 4) 
+contact and air discharge events. Their very low off-state 
+capacitance also makes them ideal for protecting high speed signal 
+pins such as HDMI, DVI, USB2.0, and IEEE 1394.
+Features & Benefits
+ ■RoHS compliant and lead-free
+ ■Low off-state capacitance of 
+0.85 pF (TYP) per I/O
+ ■ ESD rating of ±12kV contact 
+discharge,  
+±15kV air discharge,  
+(IEC 61000-4-2)
+ ■ EFT protection, IEC 61000-4-
+4, 40A (5/50ns) ■Low leakage current of 0.5μA 
+(MAX) at 5V
+ ■Small packaging options 
+saves board space
+ ■ Lightning, 4.5A (8/20μs as 
+defined in IEC 61000-4-5 2nd 
+edition)
+ ■AEC-Q101 qualified
+ ■Computer Peripherals
+ ■Mobile Phones
+ ■P DA’s
+ ■Digital Cameras ■Network Hardware/Ports
+ ■Test Equipment
+ ■Medical Equipment
+ ■Automotive Network
+Functional Block Diagram
+I/O2
+I/O1 GND I/O3VCC I/O4Pinout
+I/O 1
+I/O 2
+SOT23-6VCC
+I/O 3I/O 4
+GND
+Life Support Note:
+Not Intended for Use in Life Support or Life Saving Applications
+The products shown herein are not designed for use in life sustaining or life saving 
+applications unless otherwise expressly indicated.RoHS Pb
+Application Example
+RJ-45
+Connecto r Ethernet PHY
+  J1
+  J8
+GNDNC
+Tx-
+Rx+
+Rx-Tx+
+SP0504S
+A single 4 channel SP0504S component can be used to protect 
+four of the data lines in a HDMI/DVI interface.  Two (2) SP0504S 
+components provide protection for the main data lines. Low 
+voltage ASIC HDMI/DVI drivers can also be protected with the 
+SP0504S, the +VCC  pins on the SP0504S can be substituted with 
+a suitable bypass capacitor or in some backdrive applications the 
++VCC  of the SP0504S can be floated or NC.Resources Accessories SamplesAdditional InformationTVS Diode Arrays (SPA® Diodes) Datasheet© 2022 Littelfuse, Inc.
+Specifications are subject to change without notice.
+Revised: GD. 08/12/222
+SP0504S Series
+0.85pF Diode ArrayParameter Symbol T est Conditions Min Ty p Max Units
+Reverse Standoff Voltage VRWMIR = 1µA - - 6.0 V
+Reverse Leakage Current ILEAKVR=5V - - 0.5 µA
+Breakdown Voltage VBRIR=1mA 6.3 8 8.8 V
+Clamp Voltage1VCIPP=1A, tp=8/20µs, I/O to GND - 9.5 11. 0 V
+IPP=2A, tp=8/20µs, I/O to GND - 10.6 13.0 V
+ESD Withstand Voltage1VESDIEC 61000-4-2 (Contact) ±12 - - kV
+IEC 61000-4-2 (Air) ±15 - - kV
+Diode Capacitance1CI/O-GNDReverse Bias=0V, f=1MHz 0.95 1. 1 1 .25 pF
+Reverse Bias=1 .65V, f=1MHz 0.7 0.85 1. 0 pF
+Diode Capacitance1CI/O-I/OReverse Bias=0V, f=1MHz - 0.5 - pFCaution: Stresses above those listed in “Absolute Maximum Ratings” may cause permanent damage to the component. This is a stress only rating and operation of the component at these or any other conditions above those 
+indicated in the operational sections of this specification is not implied. Absolute Maximum Ratings
+Symbol Parameter Value Units
+IPPPeak Current (tp=8/20μs) 4.5 A
+TOPOperating Temperature –40 to 125 °C
+TSTORStorage Temperature –55 to 150 °C
+Electrical Characteristics (TOP=25ºC)
+Note: 1. Parameter is guaranteed by design and/or component characterization.
+           2.Transmission Line Pulse (TLP) with 100ns width, 2ns rise time, and average window t1=70ns to t2= 90nsTVS Diode Arrays (SPA® Diodes) Datasheet© 2022 Littelfuse, Inc.
+Specifications are subject to change without notice.
+Revised: GD. 08/12/223
+SP0504S Series
+0.85pF Diode ArrayCapacitance vs. Bias Voltage Insertion Loss (S21) I/O to GND
+-20-15-10-50
+1.E+06 1.E+07 1.E+08 1.E+09 1.E+1 0
+Frequency [Hz]Inser tion Loss [dB]
+0.0 0.5 1.01 .5 2.0 2.5 3.0 3.5 4.0 4.5 5.01.50
+1.40
+1.30
+1.20
+1.10
+1.00
+0.90
+0.80
+0.70
+0.60
+0.50
+I/O Capacitance (pF)
+I/O DC Bias (V)VCC = 5VVCC = 3.3VVCC = Float
+Capacitance vs. Frequency
+02E-1 34E-1 36E-1 38E-1 31E-1 21.2E-1 21.4E-1 21.6E-1 21.8E-1 22E-1 2
+1.E+06 1.E+07 1.E+08 1.E+09
+Frequency [Hz]Capacitance [F]
+IEC 61000 -4-2 -8 kV Contact ESD Clamping Voltage IEC 61000 -4-2 +8 kV Contact ESD Clamping Voltage
+TVS Diode Arrays (SPA® Diodes) Datasheet© 2022 Littelfuse, Inc.
+Specifications are subject to change without notice.
+Revised: GD. 08/12/224
+SP0504S Series
+0.85pF Diode ArrayTime
+TemperatureTP
+TL
+TS(max)
+TS(min)
+25tP
+tL
+tS
+time to peak temperaturePreheatPreheatRamp-upRamp-up
+Ramp-downRamp- dowCritical Zone
+TL to T PCritical Zon e
+TL to TPReflow Condition Pb – Free assembly
+Pre Heat- T emperature Min (Ts(min)) 150°C 
+- T emperature Max (Ts(max)) 200°C
+- Time (min to max) (ts) 60 – 120 secs
+Average ramp up rate (Liquidus)  T emp (TL) to 
+peak3°C/second max
+TS(max) to TL - Ramp-up Rate 3°C/second max
+Reflow- T emperature (TL) (Liquidus) 217°C 
+- T emperature (tL) 60 – 150 seconds
+Peak T emperature (TP) 260+0/-5 °C
+Time within 5°C of actual peak T emperature (tp)30 seconds
+Ramp-down Rate 6°C/second max
+Time 25°C to peak T emperature (TP) 8 minutes Max.
+Do not exceed 260°CSoldering Parameters
+Product Characteristics
+Lead Plating Matte Tin
+Lead Material Copper Alloy
+Lead Coplanarity 0.0004 inches (0.102mm)
+Substitute Material Silicon
+Body Material Molded Compund
+FlammabilityUL Recognized compund meeting 
+flammability rating V-0
+Ordering Information
+Part Number Package Min. Order Qty.
+SP0504SHTG SOT23-6 3000Part Numbering System
+Part Marking SystemSP0504S TG
+SeriesPackage
+H = SOT23-6TG= Tape & ReelH
+TVS Diode Arrays 
+(SPA®  Diodes)
+E*4E*4
+Product Series
+E = SP0504S series
+Assembl y Site
+(varies)Number of ChannelsTVS Diode Arrays (SPA® Diodes) Datasheet© 2022 Littelfuse, Inc.
+Specifications are subject to change without notice.
+Revised: GD. 08/12/225
+SP0504S Series
+0.85pF Diode ArrayPackage Dimensions — SOT23-6
+OP
+RMRecommended Solder P ad La youtPackage SOT23
+Pins 6
+JEDEC MO-178AB
+Millimeters InchesNotesMin Max Min Max
+A 0.900 1 .450 0.035 0.057 -
+A1 0.000 0.150 0.000 0.006 -
+A2 0.900 1 .300 0.035 0.051 -
+b 0.250 0.500 0.0098 0.0196 -
+C 0.080 0.220 0.0031 0.009 -
+D 2.800 3.050 0.11 0.120 3
+E 2.600 3.000 0.102 0.118 -
+E1 1 .500 1 .750 0.06 0.069 3
+e 0.95 Ref 0.0374 ref -
+e1 1 .9 Ref 0.0748 Ref -
+L 0.30 0.600  0.012 0.023 4,5
+N 6 6 6
+a 0º 8º 0º 8º -
+M 2.590 0.102 -
+O 0.690 .027 TYP -
+P 0.990 .039 TYP -
+R 0.950 0.038 -
+Notes:
+1. Dimensioning and tolerancing Per ASME Y14.5M-1994.
+2. Package conforms to EIAJ SC-74 (1992).
+3. Dimensions D and E1 are exclusive of mold flash, protrusions, or gate burrs.
+4. Foot length L measured at reference to seating plane.
+5. “L” is the length of flat foot surface for soldering to substrate.
+6. “N” is the number of terminal positions.
+7. Controlling dimension: MILLIMETER. Converted inch dimensions are not necessarily exact.
+Embossed Carrier T ape & Reel Speciﬁcation — SOT23-6
+8mm Tape And Reel
+General Informa tion
+1. 3000 Pieces Per Reel.
+2. Order In Mul tiples Of Full Reels Only .
+3. Meets Eia-481 Revision "A" Speciﬁcations.2.0mm4.0mm
+CL1.75mm1.5mm
+Dia. Hole
+8mm
+4.0mm
+8.4mm180mm14.4mm
+13mm
+60mmAccess hole
+COVER TAPEUser Direction Of Feed PIN 1SOT-23 (8mm Pocket Pitch)
+Disclaimer Notice - Information furnished is believed to be accurate and reliable. However, users should independently evaluate the suitability of and test each product selected for their own applications.  Littelfuse products are 
+not designed for, and may not be used in, all applications. Read complete Disclaimer Notice at www.littelfuse.com/disclaimer-electronics.
