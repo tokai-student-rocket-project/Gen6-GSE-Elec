@@ -39,3 +39,12 @@ KiCad/XT60Socket
 
 # PlatformIO 自動生成ファイル
 .pio/
+
+Documents/Development/DateSheet/MOXA
+# ポスター作成用（個人作業ファイル）
+Documents/Poster/
+
+# Python キャッシュファイル
+__pycache__/
+*.py[cod]
+*$py.class
