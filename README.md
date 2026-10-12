@@ -23,13 +23,15 @@
 - [2025年3月8日 H-60号機打上げ実験](https://github.com/tokai-student-rocket-project/Gen6-GSE-Elec/blob/main/Documents/Pictures/Gallery/Gallery.md)
 
 ## ドキュメント
-- [仕様](./Documents/Specification.md)
-- [パーツリスト](./Documents/)
-- [自動シークエンスタイミングの考え方](./Documents/AutoSequence.md)
-- [通信・タスク管理ライブラリについて](./Documents/library_guide.md)
-- [亜酸化窒素の圧力計測について](./Documents/VESIM10_Manual.md)
-  - [校正シート](./Documents/VESIM10_Calibration.xlsx)
+- [仕様](./Documents/Manuals/Specification.md)
+- [GSE運用マニュアル](./Documents/Manuals/Gen6GSEManual-Elec.md)
+- [パーツリスト](./Documents/Development/PartsList.xlsx)
+- [自動シークエンスタイミングの考え方](./Documents/Software/AutoSequence.md)
+- [通信・タスク管理ライブラリについて](./Documents/Software/library_guide.md)
+- [亜酸化窒素の圧力計測について](./Documents/Sensor/VESIM10_Manual.md)
+  - [校正シート](./Documents/Sensor/VESIM10_Calibration.xlsx)
   - [試験成績表(TSRP Only)](https://u-tokai.box.com/s/f19nbcfg3vuwrdxsdca0jw9x3lm8z8kp)
+- [各種ドキュメント一覧・目次](./Documents/README.md)
 
 ## フォルダ構成
 
