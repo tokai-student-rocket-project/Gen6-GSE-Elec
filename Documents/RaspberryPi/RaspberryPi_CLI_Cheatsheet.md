@@ -97,7 +97,7 @@ Raspberry Pi OS (Debian Bookworm) では NetworkManager を使用して固定 IP
 
 ## 8. 関連ドキュメントリンク
 
-* [RaspberryPi_OS_Comparison_and_Setup.md](file:///d:/Projects/TSRP/Gen6-GSE-Elec/Documents/RaspberryPi_OS_Comparison_and_Setup.md)
-* [RaspberryPi_Debug_and_Demo_Guide.md](file:///d:/Projects/TSRP/Gen6-GSE-Elec/Documents/RaspberryPi_Debug_and_Demo_Guide.md)
-* [Launch3_Satellite3_Wireless_Guide.md](file:///d:/Projects/TSRP/Gen6-GSE-Elec/Documents/Launch3_Satellite3_Wireless_Guide.md)
-* [raspi-gse.service](file:///d:/Projects/TSRP/Gen6-GSE-Elec/tools/raspi_gse_control/raspi-gse.service)
+* [RaspberryPi_OS_Comparison_and_Setup.md](./RaspberryPi_OS_Comparison_and_Setup.md)
+* [RaspberryPi_Debug_and_Demo_Guide.md](./RaspberryPi_Debug_and_Demo_Guide.md)
+* [Launch3_Satellite3_Wireless_Guide.md](../Extensions/Launch3_Satellite3_Wireless_Guide.md)
+* [raspi-gse.service](../../tools/raspi_gse_control/raspi-gse.service)

@@ -2,7 +2,7 @@
 
 ## ランチコントローラー
 <div align = "center">
-<img src="./Pictures/SafetyReview/LaunchController.jpg" width="50%">
+<img src="../Pictures/SafetyReview/LaunchController.jpg" width="50%">
 </div>
 
 ロケットから離れた点火所から酸化剤充填を行うコントローラーです．
@@ -47,7 +47,7 @@ DCジャックは**センタープラス**なので，センタープラスのAC
 
 ## パネル
 <div align = "center">
-<img src="./Pictures/SafetyReview/LaunchControllerPanel.JPG" width="50%">
+<img src="../Pictures/SafetyReview/LaunchControllerPanel.JPG" width="50%">
 </div>
 
 ロケットを打上げる操作パネルとなっています．
@@ -62,7 +62,7 @@ DCジャックは**センタープラス**なので，センタープラスのAC
 
 ## サテライトコントローラー
 <div align = "center">
-<img src="./Pictures/SafetyReview/SatelliteController.jpg" width="50%">
+<img src="../Pictures/SafetyReview/SatelliteController.jpg" width="50%">
 </div>
 
 ロケットの近くに設置され，ランチコントローラーからの指令を受けて，各種装置へ出力を行う中継装置です．
@@ -107,14 +107,14 @@ DCジャックは**センタープラス**なので，センタープラスのAC
 
 ## こもあユニット
 <div align = "center">
-<img src="./Pictures/SafetyReview/ComoaUnit.jpg" width="50%">
+<img src="../Pictures/SafetyReview/ComoaUnit.jpg" width="50%">
 </div>
 
 1次側に信号が入力されると2次側にAC100V出力します．リレーと同じ役割をしています．
 
 ## アンビリカルケーブル
 <div align = "center">
-<img src="./Pictures/SafetyReview/UmbilicalCable.jpg" width="50%">
+<img src="../Pictures/SafetyReview/UmbilicalCable.jpg" width="50%">
 </div>
 
 ロケットに電力と信号を供給するためのケーブルです．画像中央のBOXを基準とし，右側がロケットに接続（搭載計器）され，左側が電源とサテライトコントローラーに接続されます．左側にある黒色のコネクタが4ピンコネクタ・大です．
