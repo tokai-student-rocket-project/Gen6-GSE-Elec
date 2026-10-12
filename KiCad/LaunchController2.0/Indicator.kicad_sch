@@ -6132,7 +6132,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 184.15 53.34 90)
 			(effects
 				(font
@@ -6159,6 +6159,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 184.15 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 184.15 53.34 90)
 			(effects
 				(font
@@ -6246,6 +6255,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD5101FCT-ND"
+			(at 26.67 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD5101FCT-ND"
 			(at 26.67 45.72 0)
 			(effects
 				(font
@@ -6371,7 +6389,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 275.59 116.84 90)
 			(effects
 				(font
@@ -6398,6 +6416,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 275.59 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 275.59 116.84 90)
 			(effects
 				(font
@@ -6588,7 +6615,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 184.15 116.84 90)
 			(effects
 				(font
@@ -6615,6 +6642,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 184.15 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 184.15 116.84 90)
 			(effects
 				(font
@@ -6740,7 +6776,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 254 53.34 90)
 			(effects
 				(font
@@ -6767,6 +6803,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 254 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 254 53.34 90)
 			(effects
 				(font
@@ -6854,6 +6899,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 67.31 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 67.31 111.76 0)
 			(effects
 				(font
@@ -7014,6 +7068,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 232.41 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f522f6fa-8444-49c0-9239-d469cd233272")
 		)
@@ -7093,6 +7156,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 69.85 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 69.85 45.72 0)
 			(effects
 				(font
@@ -7253,6 +7325,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 254 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7c490209-1714-4768-8099-6fd0b0c7f172")
 		)
@@ -7332,6 +7413,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 184.15 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 184.15 45.72 0)
 			(effects
 				(font
@@ -7427,6 +7517,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 162.56 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "614aef8f-71b1-4338-9ffb-a0da57dabbd5")
 		)
@@ -7506,6 +7605,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 210.82 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 210.82 109.22 0)
 			(effects
 				(font
@@ -7601,6 +7709,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 275.59 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c31ec7e0-f80d-43a0-a967-620ee7a24225")
 		)
@@ -7653,7 +7770,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 254 116.84 90)
 			(effects
 				(font
@@ -7680,6 +7797,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 254 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 254 116.84 90)
 			(effects
 				(font
@@ -7740,7 +7866,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/19q4hcm7"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g111879"
 			(at 110.49 119.38 90)
 			(effects
 				(font
@@ -7767,6 +7893,24 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D12U8WT86CCT-ND"
+			(at 110.49 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 110.49 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111879"
 			(at 110.49 119.38 90)
 			(effects
 				(font
@@ -7827,7 +7971,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 232.41 53.34 90)
 			(effects
 				(font
@@ -7854,6 +7998,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 232.41 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 232.41 53.34 90)
 			(effects
 				(font
@@ -7979,7 +8132,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 210.82 116.84 90)
 			(effects
 				(font
@@ -8006,6 +8159,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 210.82 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 210.82 116.84 90)
 			(effects
 				(font
@@ -8066,7 +8228,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 210.82 53.34 90)
 			(effects
 				(font
@@ -8093,6 +8255,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 210.82 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 210.82 53.34 90)
 			(effects
 				(font
@@ -8180,6 +8351,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 110.49 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 110.49 111.76 0)
 			(effects
 				(font
@@ -8370,7 +8550,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 275.59 53.34 90)
 			(effects
 				(font
@@ -8397,6 +8577,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 275.59 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 275.59 53.34 90)
 			(effects
 				(font
@@ -8484,6 +8673,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 24.13 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 24.13 109.22 0)
 			(effects
 				(font
@@ -8869,7 +9067,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 45.72 101.6 90)
 			(effects
 				(font
@@ -8896,6 +9094,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 45.72 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 45.72 101.6 90)
 			(effects
 				(font
@@ -8991,6 +9198,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 184.15 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "95e11678-7839-49aa-ac01-a4b4646edbbd")
 		)
@@ -9043,7 +9259,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 26.67 53.34 90)
 			(effects
 				(font
@@ -9070,6 +9286,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 26.67 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 26.67 53.34 90)
 			(effects
 				(font
@@ -9130,7 +9355,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/19q4hcm7"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g111879"
 			(at 88.9 119.38 90)
 			(effects
 				(font
@@ -9157,6 +9382,24 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D12U8WT86CCT-ND"
+			(at 88.9 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 88.9 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111879"
 			(at 88.9 119.38 90)
 			(effects
 				(font
@@ -9252,6 +9495,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 275.59 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "9096b9a3-ca7c-44a0-a53e-4fddc1cd426b")
 		)
@@ -9331,6 +9583,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 45.72 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 45.72 109.22 0)
 			(effects
 				(font
@@ -9491,6 +9752,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 210.82 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e41c9680-950d-4148-9873-b2fa579c2cb7")
 		)
@@ -9578,6 +9848,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 232.41 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c840b7b4-04c1-4825-9d45-46d3ffa7ebcb")
 		)
@@ -9630,7 +9909,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 48.26 53.34 90)
 			(effects
 				(font
@@ -9657,6 +9936,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 48.26 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 48.26 53.34 90)
 			(effects
 				(font
@@ -9882,6 +10170,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 254 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2bdb0406-77bc-4216-8421-7b971ba622d3")
 		)
@@ -9961,6 +10258,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 88.9 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 88.9 111.76 0)
 			(effects
 				(font
@@ -10151,7 +10457,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 232.41 116.84 90)
 			(effects
 				(font
@@ -10178,6 +10484,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 232.41 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 232.41 116.84 90)
 			(effects
 				(font
@@ -10238,7 +10553,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/fm47v8fr"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g103982/"
 			(at 67.31 119.38 90)
 			(effects
 				(font
@@ -10265,6 +10580,24 @@
 			)
 		)
 		(property "Digikey_PN" "SMLD12BN1WT86CT-ND"
+			(at 67.31 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 67.31 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "103982"
 			(at 67.31 119.38 90)
 			(effects
 				(font
@@ -10390,7 +10723,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 69.85 53.34 90)
 			(effects
 				(font
@@ -10417,6 +10750,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 69.85 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 69.85 53.34 90)
 			(effects
 				(font
@@ -10542,7 +10884,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g111878"
 			(at 113.03 53.34 90)
 			(effects
 				(font
@@ -10569,6 +10911,24 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
+			(at 113.03 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 113.03 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111878"
 			(at 113.03 53.34 90)
 			(effects
 				(font
@@ -10664,6 +11024,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 113.03 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "54d6b005-30e3-462e-829a-8ed49750560b")
 		)
@@ -10751,6 +11120,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD5101FCT-ND"
+			(at 48.26 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "12cb2469-78dd-4cea-a380-d8f28a4b19d8")
 		)
@@ -10803,7 +11181,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g111878"
 			(at 24.13 101.6 90)
 			(effects
 				(font
@@ -10830,6 +11208,24 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
+			(at 24.13 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 24.13 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111878"
 			(at 24.13 101.6 90)
 			(effects
 				(font
@@ -10890,7 +11286,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/vzhvc4hc"
+		(property "Datasheet" "https://akizukidenshi.com/catalog/g/g111878"
 			(at 91.44 53.34 90)
 			(effects
 				(font
@@ -10917,6 +11313,24 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D12P8WT86CCT-ND"
+			(at 91.44 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 91.44 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111878"
 			(at 91.44 53.34 90)
 			(effects
 				(font
@@ -10977,7 +11391,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 162.56 116.84 90)
 			(effects
 				(font
@@ -11004,6 +11418,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 162.56 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 162.56 116.84 90)
 			(effects
 				(font
@@ -11091,6 +11514,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 91.44 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 91.44 45.72 0)
 			(effects
 				(font

@@ -5977,6 +5977,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 105.41 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "98522290-2b1f-452f-ac5b-60da4e4e920a")
 		)
@@ -6259,6 +6268,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 86.36 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "75ac9bf8-e511-4d78-8a5c-864e21c65e82")
 		)
@@ -6335,6 +6353,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 86.36 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 259.08 86.36 90)
 			(effects
 				(font
@@ -6635,6 +6662,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "ef4349ae-5d17-4151-b9c2-0c63b5f7f23b")
 		)
@@ -6777,6 +6813,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 171.45 48.26 90)
 			(effects
 				(font
@@ -7003,6 +7048,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 29.21 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 171.45 29.21 90)
 			(effects
 				(font
@@ -7462,6 +7516,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 67.31 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c0f2e74c-6a26-4869-9a0d-8773fee77097")
 		)
@@ -7687,6 +7750,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 124.46 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 259.08 124.46 90)
 			(effects
 				(font
@@ -8317,6 +8389,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 124.46 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "bbab76c7-f363-4aff-b046-4f674d2a4edf")
 		)
@@ -8401,6 +8482,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 67.31 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "258a1add-19d8-4701-9ac5-691f828ea65a")
 		)
@@ -8477,6 +8567,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 29.21 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 259.08 29.21 90)
 			(effects
 				(font
@@ -8637,6 +8736,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 162.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 259.08 162.56 90)
 			(effects
 				(font
@@ -9429,6 +9537,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 259.08 143.51 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c6079282-a4b6-4254-8591-d38a3bf24217")
 		)
@@ -9505,6 +9622,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 71.12 55.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 71.12 55.88 90)
 			(effects
 				(font
@@ -9665,6 +9791,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1001FCT-ND"
+			(at 171.45 105.41 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1001FCT-ND"
 			(at 171.45 105.41 90)
 			(effects
 				(font

@@ -7971,6 +7971,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2946-2601-3102-ND"
+			(at 35.56 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "3d6ef14e-dff8-49d8-aaeb-79aaf73a8f9b")
 		)
@@ -8123,6 +8132,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 26.67 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "fcad91fa-a1f9-41b2-8c18-78453abe9363")
 		)
@@ -8201,6 +8219,15 @@
 			)
 		)
 		(property "Digikey_PN" "296-27898-1-ND"
+			(at 251.46 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "296-27898-1-ND"
 			(at 251.46 114.3 0)
 			(effects
 				(font
@@ -8806,6 +8833,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 26.67 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c25d8fbf-7eae-4dff-90f3-298fbc55103d")
 		)
@@ -9017,6 +9053,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD5601FCT-ND"
+			(at 81.28 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD5601FCT-ND"
 			(at 81.28 33.02 0)
 			(effects
 				(font
@@ -9447,6 +9492,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD10R0FCT-ND"
+			(at 228.6 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "82b541ba-8b04-4532-aeb0-1518fd710c23")
 		)
@@ -9525,6 +9579,15 @@
 			)
 		)
 		(property "Digikey_PN" "296-27898-1-ND"
+			(at 236.22 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "296-27898-1-ND"
 			(at 236.22 49.53 0)
 			(effects
 				(font
@@ -9798,6 +9861,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "296-TPS2116DRLRCT-ND"
+			(at 139.7 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "877c8721-73a9-493f-8d69-0c0eb3258a84")
 		)
@@ -9933,7 +10005,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.digikey.jp/short/3ww5zf50"
+		(property "Datasheet" "https://www.digikey.jp/short/58tn8j9t"
 			(at 158.75 104.14 90)
 			(effects
 				(font
@@ -9960,6 +10032,15 @@
 			)
 		)
 		(property "Digikey_PN" "SML-D15DWT86CCT-ND"
+			(at 158.75 104.14 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "160-1434-1-ND"
 			(at 158.75 104.14 90)
 			(effects
 				(font
@@ -10434,6 +10515,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 106.68 55.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "da71a6aa-691e-4987-aacd-4aeb48124e31")
 		)
@@ -10830,6 +10920,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2946-2601-3102-ND"
+			(at 34.29 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e22ceef8-7a7a-480e-962b-531635d197df")
 		)
@@ -11077,6 +11176,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1000FCT-ND"
+			(at 153.67 109.22 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1000FCT-ND"
 			(at 153.67 109.22 90)
 			(effects
 				(font
@@ -11338,8 +11446,17 @@
 				(hide yes)
 			)
 		)
-		(property "Akiduki_PN" ""
+		(property "Akiduki_PN" "111878"
 			(at 233.68 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" ""
+			(at 233.68 91.44 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11595,6 +11712,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD3483FCT-ND"
+			(at 107.95 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "626746f8-60e2-4533-8981-0e790dcabb73")
 		)
@@ -11745,6 +11871,24 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" ""
+			(at 218.44 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Akiduki_PN" "111878"
+			(at 218.44 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f4a4ce82-c523-4ca6-8c21-df4cdef2b2d0")
 		)
@@ -11823,6 +11967,15 @@
 			)
 		)
 		(property "Digikey_PN" "2946-2601-3102-ND"
+			(at 34.29 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2946-2601-3102-ND"
 			(at 34.29 71.12 0)
 			(effects
 				(font
@@ -11975,6 +12128,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD10R0FCT-ND"
+			(at 223.52 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD10R0FCT-ND"
 			(at 223.52 34.29 0)
 			(effects
 				(font
@@ -12611,6 +12773,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD10R0FCT-ND"
+			(at 213.36 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7aad49aa-cc10-48ab-b077-41048891de26")
 		)
@@ -12690,6 +12861,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD3301FCT-ND"
+			(at 91.44 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD3301FCT-ND"
 			(at 91.44 43.18 0)
 			(effects
 				(font
@@ -12908,6 +13088,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1003FCT-ND"
+			(at 107.95 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1003FCT-ND"
 			(at 107.95 111.76 0)
 			(effects
 				(font
@@ -13403,6 +13592,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD10R0FCT-ND"
+			(at 238.76 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "1de38231-925a-4b1a-9e03-0db9b988cdce")
 		)
@@ -13708,6 +13906,15 @@
 			)
 		)
 		(property "Digikey_PN" "2019-RK73H1JTTD1002FCT-ND"
+			(at 101.6 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H1JTTD1002FCT-ND"
 			(at 101.6 60.96 0)
 			(effects
 				(font

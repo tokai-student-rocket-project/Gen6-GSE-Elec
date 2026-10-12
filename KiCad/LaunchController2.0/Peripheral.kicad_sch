@@ -7714,6 +7714,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "445-5785-1-ND"
+			(at 101.6 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8268421b-a69b-4fad-8dab-cea285fc3cdb")
 		)
@@ -8135,6 +8144,15 @@
 			)
 		)
 		(property "Akiduki_PN" ""
+			(at 132.08 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2019-RK73H2ATTD1200FCT-ND"
 			(at 132.08 104.14 0)
 			(effects
 				(font
@@ -8658,6 +8676,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "2946-2601-3102-ND"
+			(at 24.13 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "38aa9769-5654-4d91-81ee-6766945f0f72")
 		)
@@ -8868,6 +8895,15 @@
 			)
 		)
 		(property "Digikey_PN" "2946-2601-3104-ND"
+			(at 166.37 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2946-2601-3104-ND"
 			(at 166.37 102.87 0)
 			(effects
 				(font
@@ -9277,6 +9313,15 @@
 			)
 		)
 		(property "Digikey_PN" "445-MMZ1608S202ATA00CT-ND"
+			(at 173.99 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "445-MMZ1608S202ATA00CT-ND"
 			(at 173.99 119.38 90)
 			(effects
 				(font
@@ -9903,6 +9948,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "445-5785-1-ND"
+			(at 111.76 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "ae5e7035-92b5-4a6f-9d86-67e498ba1c7b")
 		)
@@ -10450,6 +10504,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "445-MMZ1608S202ATA00CT-ND"
+			(at 173.99 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e0469e14-fd2f-4a3a-8a7d-039476e6e8b1")
 		)
@@ -10927,6 +10990,15 @@
 			)
 		)
 		(property "Digikey_PN" "2946-2601-3102-ND"
+			(at 24.13 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "2946-2601-3102-ND"
 			(at 24.13 35.56 0)
 			(effects
 				(font

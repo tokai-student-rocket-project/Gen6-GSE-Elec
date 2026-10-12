@@ -6376,6 +6376,15 @@
 				(hide yes)
 			)
 		)
+		(property "DigiKey_PN" "26-DF51A-22DP-2DS(20)-ND"
+			(at 133.35 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7990f96a-1f04-406c-ba1a-7c16a6fbac0f")
 		)
@@ -6513,6 +6522,15 @@
 			)
 		)
 		(property "Digikey_PN" "26-DF51A-18DP-2DS(20)-ND"
+			(at 91.44 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey_PN" "26-DF51A-18DP-2DS(20)-ND"
 			(at 91.44 59.69 0)
 			(effects
 				(font

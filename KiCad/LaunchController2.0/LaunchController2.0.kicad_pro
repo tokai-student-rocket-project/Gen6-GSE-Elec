@@ -575,6 +575,12 @@
           "group_by": true,
           "label": "Digikey_PN",
           "name": "Digikey_PN",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "DigiKey_PN",
+          "name": "DigiKey_PN",
           "show": true
         },
         {
@@ -643,7 +649,7 @@
       "include_excluded_from_bom": false,
       "name": "",
       "sort_asc": false,
-      "sort_field": "Digikey_PN"
+      "sort_field": "DigiKey_PN"
     },
     "connection_grid_size": 50.0,
     "drawing": {
@@ -653,7 +659,7 @@
       "default_text_size": 50.0,
       "field_names": [
         {
-          "name": "Digikey_PN",
+          "name": "DigiKey_PN",
           "url": false,
           "visible": false
         },
