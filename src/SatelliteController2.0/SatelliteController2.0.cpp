@@ -198,9 +198,7 @@ namespace communication
   // 最後に通信を受信した時刻 (タイムアウト判定用)
   unsigned long preReceivedTime = 0;
   // 通信タイムアウト時間 (ミリ秒)
-  const long timeout = 5000;
-
-
+  const long timeout = 20000; // 5000
 
   /// @brief ch5 リミットスイッチが押されているか判定するヘルパー
   /// @return true: ch5が押されている（bit5=1）, false: 押されていない
@@ -469,7 +467,7 @@ void communication::sendReplyToLaunch()
       (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
       (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
 
-  communication::enableOutput(); 
+  communication::enableOutput();
 
   // FEEDBACK_SYNC, PRESSURE_SYNC, SENSOR_CURRENT_SYNC, COM_CHECK_S_TO_L を一括送信
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC), state);
@@ -477,6 +475,7 @@ void communication::sendReplyToLaunch()
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
 
+  delayMicroseconds(500);
   Serial1.flush();
   communication::disableOutput();
 }
@@ -744,13 +743,13 @@ void setup()
   // n2o::vesim10.calibrateBlocking(10);
 
   // TaskManagerへ各種タスクを登録し、実行頻度（Hz）を設定する
-  Tasks.add(&power::measureTask)->startFps(5);              // 5Hzで電源状態を監視
-  Tasks.add(&solenoid::measureTask)->startFps(5);           // 5Hzで電磁弁の状態を監視
-  Tasks.add(&n2o::samplingTask)->startFps(20);              // 20Hzで圧力センサをサンプリング
-  Tasks.add(&n2o::measureTask)->startFps(2);                // 2Hzで圧力を計算・表示
-  Tasks.add(&control::handleManualTask)->startFps(5);       // 5Hzで手動スイッチ入力をチェック
+  Tasks.add(&power::measureTask)->startFps(5);        // 5Hzで電源状態を監視
+  Tasks.add(&solenoid::measureTask)->startFps(5);     // 5Hzで電磁弁の状態を監視
+  Tasks.add(&n2o::samplingTask)->startFps(20);        // 20Hzで圧力センサをサンプリング
+  Tasks.add(&n2o::measureTask)->startFps(2);          // 2Hzで圧力を計算・表示
+  Tasks.add(&control::handleManualTask)->startFps(5); // 5Hzで手動スイッチ入力をチェック
   // 非同期送信タスクは削除し、ポーリング受信時に返信するように変更しました
-  Tasks.add(&communication::onComCheckFailed)->startFps(2);      // 2Hzで通信途絶の監視を行う
+  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで通信途絶の監視を行う
   // MsgPacketizer（パケット通信ライブラリ）の受信設定。対応するパケットが届いた際のコールバックを登録
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), &communication::onControlSyncReceived);
   MsgPacketizer::subscribe(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S), &communication::onComCheckReceived);
@@ -777,5 +776,5 @@ void loop()
   communication::accessLamp.update(); // RS485用
   control::statusLamp.update();       // タスク稼働確認用
 
-  Serial.println(communication::preReceivedTime);
+  // Serial.println(communication::preReceivedTime);
 }

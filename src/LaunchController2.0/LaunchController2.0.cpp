@@ -34,6 +34,22 @@
 // =====================================================================
 // #define DEMO_MODE
 
+// =====================================================================
+//  RS485 通信デバッグ
+// ---------------------------------------------------------------------
+//  どちらも PlatformIO のビルドフラグで有効化する (現場運用では無効にすること)。
+//    -D RS485_RX_LOG     … 受信ログ。Serial(USB)へパケット受信ごとの [RX] 行と、
+//                          1秒ごとの [RX-STAT] (受信バイト数/パケット種別ごとの件数) を出力
+//    -D RS485_ECHO_TEST  … エコーテスト。通常動作(ポーリング等)は停止し、Serial1 で
+//                          受信したバイトをそのまま送り返し、16進で Serial(USB)に表示
+//  ※ ログ行は Python GUI 向けのテレメトリ(V_DATA:...)と同じ Serial に出る。
+// =====================================================================
+#ifdef RS485_RX_LOG
+#define RX_LOG(id) communication::rxLog(communication::id)
+#else
+#define RX_LOG(id) ((void)0)
+#endif
+
 namespace power
 {
   // キルスイッチ入力 (CTL_KILL): 電源を落とすためのボタン
@@ -176,12 +192,12 @@ namespace solenoid
   // 各弁の「コマンド/FB不一致連続検出カウンタ」
   // 「弁をONに指示したのにFBがOFF」 or 「OFFに指示したのにFBがON」を連続検出した回数
   // 一致した場合はリセット
-  uint8_t fillFaultCount   = 0;
-  uint8_t dumpFaultCount   = 0;
+  uint8_t fillFaultCount = 0;
+  uint8_t dumpFaultCount = 0;
   uint8_t oxygenFaultCount = 0;
-  uint8_t purgeFaultCount  = 0;
-  uint8_t openFaultCount   = 0;
-  uint8_t closeFaultCount  = 0;
+  uint8_t purgeFaultCount = 0;
+  uint8_t openFaultCount = 0;
+  uint8_t closeFaultCount = 0;
 } // namespace solenoid
 
 namespace communication
@@ -221,7 +237,7 @@ namespace communication
   // ロケットノード離脱検知済みフラグ
   bool isRocketNodeDisconnected = false;
   // 通信タイムアウト時間 (ミリ秒)
-  const long timeout = 5000;
+  const long timeout = 20000; // 5000
 
   // SatelliteController 経由で転送された SatelliteNode のリミットスイッチ状態
   // bit0=ch0, bit1=ch1, ..., bit5=ch5
@@ -268,11 +284,37 @@ namespace communication
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA);
   void onComCheckReceived();
-  void onComCheckNodeReceived(); // ノード向け生存確認受信
+  void onComCheckNodeReceived();       // ノード向け生存確認受信
   void onComCheckRocketNodeReceived(); // ロケットノード向け生存確認受信
-  void onComCheckFailed(); // タイムアウト時のフェールセーフ処理
+  void onComCheckFailed();             // タイムアウト時のフェールセーフ処理
   // SatelliteController 経由でリミットスイッチ状態を受信した際のコールバック
   void onLimitSwitchSyncReceived(uint8_t state);
+
+#ifdef RS485_RX_LOG
+  // 受信ログ用 (RS485_RX_LOG 有効時のみ)
+  enum RxId : uint8_t
+  {
+    RX_FEEDBACK,
+    RX_PRESSURE,
+    RX_CURRENT,
+    RX_COMCHECK_S,
+    RX_COMCHECK_N,
+    RX_COMCHECK_RN,
+    RX_LIMIT,
+    RX_ID_COUNT
+  };
+  // Serial1 の生受信バイト数 (parse() 直前の available() の累計。概算値)
+  uint32_t rxByteCount = 0;
+  uint32_t rxPacketCount[RX_ID_COUNT] = {0};
+  unsigned long rxLastPacketMs = 0;
+  void rxLog(RxId id);
+  void rxDebugTask(); // 1Hz で統計を出力
+#endif
+
+#ifdef RS485_ECHO_TEST
+  // エコーテスト (RS485_ECHO_TEST 有効時のみ)
+  void echoTest();
+#endif
 
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
@@ -320,6 +362,13 @@ void setup()
   Serial.println();
 #endif
 
+#ifdef RS485_RX_LOG
+  Serial.println("[DEBUG] RS485_RX_LOG enabled: [RX] / [RX-STAT] lines will be printed");
+#endif
+#ifdef RS485_ECHO_TEST
+  Serial.println("[DEBUG] RS485_ECHO_TEST enabled: Serial1 echo only, polling/failsafe stopped");
+#endif
+
   // LTC485 (RS485 - サテライトコントローラーとの通信用シリアル1)
   Serial1.begin(115200);
   // 初期状態でタイムアウト判定にならないよう、過去の時刻をセットしておく
@@ -349,13 +398,16 @@ void setup()
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
   Tasks.add(&control::handleManualTask)->startFps(9); // 10Hzで実行
   // 機体およびノードへポーリング要求を送信するタスク (各10Hz相当)
-  Tasks.add(&communication::pollingTask)->startFps(5);
+  Tasks.add(&communication::pollingTask)->startIntervalSec(3.0);
   // 通信がタイムアウトしていないか監視するタスク
-  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
+  // Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
   Tasks.add(&communication::sendTelemetryForPython)->startFps(10); // 10Hzで実行
   // シミュレーション用のタスク（ダミー電流送信など）
   Tasks.add(&simulation::updateTask)->startFps(2); // 2Hzで実行
+#ifdef RS485_RX_LOG
+  Tasks.add(&communication::rxDebugTask)->startFps(1); // 受信統計 1Hz
+#endif
 
   // 起動時に機体側へセンサの基本設定（フルスケール値など）を送信
   communication::sendSensorConfigSync();
@@ -419,6 +471,16 @@ void setup()
 
 void loop()
 {
+#ifdef RS485_ECHO_TEST
+  // エコーテスト: 通常のパケット処理・タスク(ポーリング/フェールセーフ)は実行しない
+  communication::echoTest();
+  communication::accessLamp.update();
+#else
+#ifdef RS485_RX_LOG
+  // parse() が受信バッファを消費する前に、溜まっているバイト数を加算する
+  communication::rxByteCount += Serial1.available();
+#endif
+
   // 受信したパケットを解析し、subscribeで登録したコールバックを呼び出す
   MsgPacketizer::parse();
 
@@ -428,7 +490,118 @@ void loop()
   // ランプ(LED)の点滅(pulse/blink)状態を更新する
   communication::accessLamp.update();
   control::statusLamp.update();
+#endif
 }
+
+#ifdef RS485_RX_LOG
+/// @brief パケット受信ごとのログ出力と件数カウント
+void communication::rxLog(RxId id)
+{
+  static const char *const names[RX_ID_COUNT] = {
+      "FEEDBACK_SYNC", "PRESSURE_SYNC", "SENSOR_CURRENT_SYNC", "COM_CHECK_S_TO_L",
+      "COM_CHECK_N_TO_L", "COM_CHECK_RN_TO_L", "LIMIT_SWITCH_SYNC"};
+  rxPacketCount[id]++;
+  rxLastPacketMs = millis();
+  Serial.print("[RX] ");
+  Serial.print(names[id]);
+  Serial.print(" t=");
+  Serial.println(rxLastPacketMs);
+}
+
+/// @brief 1秒ごとに受信統計を出力する
+void communication::rxDebugTask()
+{
+  static uint32_t prevBytes = 0;
+  uint32_t delta = rxByteCount - prevBytes;
+  prevBytes = rxByteCount;
+
+  uint32_t totalPackets = 0;
+  for (uint8_t i = 0; i < RX_ID_COUNT; i++)
+    totalPackets += rxPacketCount[i];
+
+  Serial.print("[RX-STAT] bytes=");
+  Serial.print(rxByteCount);
+  Serial.print(" (+");
+  Serial.print(delta);
+  Serial.print("/s) FB=");
+  Serial.print(rxPacketCount[RX_FEEDBACK]);
+  Serial.print(" PRS=");
+  Serial.print(rxPacketCount[RX_PRESSURE]);
+  Serial.print(" CUR=");
+  Serial.print(rxPacketCount[RX_CURRENT]);
+  Serial.print(" CC_S=");
+  Serial.print(rxPacketCount[RX_COMCHECK_S]);
+  Serial.print(" CC_N=");
+  Serial.print(rxPacketCount[RX_COMCHECK_N]);
+  Serial.print(" CC_RN=");
+  Serial.print(rxPacketCount[RX_COMCHECK_RN]);
+  Serial.print(" LIM=");
+  Serial.print(rxPacketCount[RX_LIMIT]);
+  Serial.print(" lastPkt=");
+  if (totalPackets == 0)
+  {
+    Serial.println("none");
+  }
+  else
+  {
+    Serial.print(millis() - rxLastPacketMs);
+    Serial.println("ms ago");
+  }
+
+  // 切り分けのヒント: バイトが全く来ない / バイトは来るがパケットにならない
+  if (delta == 0)
+  {
+    Serial.println("[RX-STAT] no bytes received (check wiring / NPort serial settings / DE-RE)");
+  }
+  else if (totalPackets == 0 || millis() - rxLastPacketMs > 3000)
+  {
+    Serial.println("[RX-STAT] bytes arrive but no valid packet (check baud/format/packet index/framing)");
+  }
+}
+#endif
+
+#ifdef RS485_ECHO_TEST
+/// @brief Serial1 で受信したバイトをそのまま送り返し、16進で Serial(USB) に表示する
+/// 受信が途切れて約1ms経過したらまとめて送り返す (DEの切替を最小限にするため)
+void communication::echoTest()
+{
+  static uint8_t buf[64];
+  static uint8_t len = 0;
+  static unsigned long lastRxUs = 0;
+  static uint32_t totalBytes = 0;
+
+  while (Serial1.available() && len < sizeof(buf))
+  {
+    buf[len++] = static_cast<uint8_t>(Serial1.read());
+    lastRxUs = micros();
+  }
+
+  if (len > 0 && (len == sizeof(buf) || micros() - lastRxUs > 1000))
+  {
+    totalBytes += len;
+    Serial.print("[ECHO] rx ");
+    Serial.print(len);
+    Serial.print("B (total ");
+    Serial.print(totalBytes);
+    Serial.print("):");
+    for (uint8_t i = 0; i < len; i++)
+    {
+      Serial.print(' ');
+      if (buf[i] < 0x10)
+        Serial.print('0');
+      Serial.print(buf[i], HEX);
+    }
+    Serial.println();
+
+    communication::enableOutput();
+    Serial1.write(buf, len);
+    Serial1.flush();
+    delayMicroseconds(200); // 最終バイトが線上に出切るまで DE を保持
+    communication::disableOutput();
+    len = 0;
+  }
+}
+#endif
 
 /// @brief 外部EEPROMの読み書きテスト関数
 void storage::readWriteTest()
@@ -558,8 +731,10 @@ void communication::pollingTask()
     // 3. ロケットノード（RocketNode）へのリクエスト（状態同期 ＆ 生存確認）
     // ----------------------------------------------------
     uint8_t syncState = 0;
-    if (control::igniter.isRaised()) syncState |= (1 << 0);
-    if (control::open.isRaised()) syncState |= (1 << 1);
+    if (control::igniter.isRaised())
+      syncState |= (1 << 0);
+    if (control::open.isRaised())
+      syncState |= (1 << 1);
 
     communication::enableOutput();
     MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::ROCKET_NODE_STATE_SYNC), syncState);
@@ -629,6 +804,7 @@ void communication::sendSensorZeroCalibReq()
 /// 内部変数 limitSwitchState に保存し、isCh0Pressed() 〜 isCh5Pressed() で参照する。
 void communication::onLimitSwitchSyncReceived(uint8_t state)
 {
+  RX_LOG(RX_LIMIT);
   // ソフトウェア・デバウンス（チャタリング防止）処理
   // コメントアウトすることでデバウンスを無効化できます
 #define DEBOUNCE_LIMIT_SWITCH
@@ -675,6 +851,7 @@ void communication::onLimitSwitchSyncReceived(uint8_t state)
 /// @brief 機体から実際の電磁弁状態（フィードバック）を受信した際のコールバック
 void communication::onFeedbackSyncReceived(uint8_t state)
 {
+  RX_LOG(RX_FEEDBACK);
   // 受信したビット列を展開し、各フィードバック用LEDに状態を反映させる
   control::shiftFB.set(state & (1 << 0));
   control::fillFB.set(state & (1 << 1));
@@ -724,18 +901,18 @@ void communication::onFeedbackSyncReceived(uint8_t state)
     };
 
     bool hasFault = false;
-    hasFault |= checkFault(control::fill.isRaised(),   (state & (1 << 1)) != 0,
-                           solenoid::fillFaultCount,   "FILL");
-    hasFault |= checkFault(control::dump.isRaised(),   (state & (1 << 2)) != 0,
-                           solenoid::dumpFaultCount,   "DUMP");
+    hasFault |= checkFault(control::fill.isRaised(), (state & (1 << 1)) != 0,
+                           solenoid::fillFaultCount, "FILL");
+    hasFault |= checkFault(control::dump.isRaised(), (state & (1 << 2)) != 0,
+                           solenoid::dumpFaultCount, "DUMP");
     hasFault |= checkFault(control::oxygen.isRaised(), (state & (1 << 3)) != 0,
                            solenoid::oxygenFaultCount, "OXYGEN");
-    hasFault |= checkFault(control::purge.isRaised(),  (state & (1 << 7)) != 0,
-                           solenoid::purgeFaultCount,  "PURGE");
-    hasFault |= checkFault(control::open.isRaised(),   (state & (1 << 5)) != 0,
-                           solenoid::openFaultCount,   "OPEN");
-    hasFault |= checkFault(control::close.isRaised(),  (state & (1 << 6)) != 0,
-                           solenoid::closeFaultCount,  "CLOSE");
+    hasFault |= checkFault(control::purge.isRaised(), (state & (1 << 7)) != 0,
+                           solenoid::purgeFaultCount, "PURGE");
+    hasFault |= checkFault(control::open.isRaised(), (state & (1 << 5)) != 0,
+                           solenoid::openFaultCount, "OPEN");
+    hasFault |= checkFault(control::close.isRaised(), (state & (1 << 6)) != 0,
+                           solenoid::closeFaultCount, "CLOSE");
 
     if (hasFault)
     {
@@ -750,18 +927,19 @@ void communication::onFeedbackSyncReceived(uint8_t state)
   else
   {
     // Armed解除中はカウンタをリセット
-    solenoid::fillFaultCount   = 0;
-    solenoid::dumpFaultCount   = 0;
+    solenoid::fillFaultCount = 0;
+    solenoid::dumpFaultCount = 0;
     solenoid::oxygenFaultCount = 0;
-    solenoid::purgeFaultCount  = 0;
-    solenoid::openFaultCount   = 0;
-    solenoid::closeFaultCount  = 0;
+    solenoid::purgeFaultCount = 0;
+    solenoid::openFaultCount = 0;
+    solenoid::closeFaultCount = 0;
   }
 }
 
 /// @brief 機体から算出された圧力値を受信した際のコールバック
 void communication::onPressureSyncReceived(float pressure)
 {
+  RX_LOG(RX_PRESSURE);
   // 7セグメントディスプレイに圧力を表示
   n2o::tm1637.displayNumber(pressure);
 }
@@ -771,6 +949,7 @@ void communication::onPressureSyncReceived(float pressure)
  */
 void communication::onCurrentSyncReceived(float current_mA)
 {
+  RX_LOG(RX_CURRENT);
   Serial.print(">VESIM10 Current: ");
   Serial.println(current_mA);
 }
@@ -778,6 +957,7 @@ void communication::onCurrentSyncReceived(float current_mA)
 /// @brief 機体から通信生存確認（ハートビート）を受信した際のコールバック
 void communication::onComCheckReceived()
 {
+  RX_LOG(RX_COMCHECK_S);
   // 通信受信時刻を更新
   communication::preReceivedTime = millis();
 
@@ -800,6 +980,7 @@ void communication::onComCheckReceived()
 /// @brief ノードから通信生存確認（ハートビート）を受信した際のコールバック
 void communication::onComCheckNodeReceived()
 {
+  RX_LOG(RX_COMCHECK_N);
   // 通信受信時刻を更新
   communication::preReceivedTime_Node = millis();
 
@@ -815,11 +996,13 @@ void communication::onComCheckNodeReceived()
 /// @brief ロケットノードからの生存確認パケット受信時の処理
 void communication::onComCheckRocketNodeReceived()
 {
+  RX_LOG(RX_COMCHECK_RN);
   communication::preReceivedTime_RocketNode = millis(); // 時刻を更新
-  
-  if (communication::isRocketNodeDisconnected) {
-      communication::isRocketNodeDisconnected = false;
-      Serial.println("[INFO] RocketNode Connected");
+
+  if (communication::isRocketNodeDisconnected)
+  {
+    communication::isRocketNodeDisconnected = false;
+    Serial.println("[INFO] RocketNode Connected");
   }
 }
 
@@ -842,15 +1025,21 @@ void communication::onComCheckFailed()
     static unsigned long lastLogTime = 0;
     if (millis() - lastLogTime > 2000) // 2秒おきに出力
     {
-      if (controllerTimeout && nodeTimeout) {
+      if (controllerTimeout && nodeTimeout)
+      {
         Serial.println("[COM ERROR] Both SatelliteController and SatelliteNode timed out!");
-      } else if (controllerTimeout) {
+      }
+      else if (controllerTimeout)
+      {
         Serial.println("[COM ERROR] SatelliteController timed out!");
-      } else if (nodeTimeout) {
+      }
+      else if (nodeTimeout)
+      {
         Serial.println("[COM ERROR] SatelliteNode timed out!");
       }
 
-      if (rocketNodeTimeout) {
+      if (rocketNodeTimeout)
+      {
         Serial.println("[WARN] RocketNode is currently DISCONNECTED (Umbilical Released)!");
       }
       lastLogTime = millis();
@@ -1034,9 +1223,8 @@ void control::handleManualTask()
   // (シーケンスによってAutomaticに制御されていない場合のみ有効)
   control::shift.setManual();
 
-
   control::fill.setManual();
-  
+
   // FILLのみリミットスイッチによる安全ゲートで制限しようと思ったが，
   // FILL弁からN2OをDUMPしたいときに不都合なためコメントアウト
   ///////////////////////////////////////////////////////////////////////////
@@ -1166,9 +1354,9 @@ void sequence::fill()
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::fill() blocked: limit switch safety gate not met.");
-    error::statusLamp.on(); // 未押下をエラーランプで通知
+    error::statusLamp.on();   // 未押下をエラーランプで通知
     sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
-    mp3_play(13); // エラー音再生
+    mp3_play(13);             // エラー音再生
     return;
   }
 
@@ -1216,9 +1404,9 @@ void sequence::ignition()
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::ignition() blocked: limit switch safety gate not met.");
-    error::statusLamp.on(); // 未押下をエラーランプで通知
+    error::statusLamp.on();   // 未押下をエラーランプで通知
     sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
-    mp3_play(13); // エラー音再生
+    mp3_play(13);             // エラー音再生
     return;
   }
 
