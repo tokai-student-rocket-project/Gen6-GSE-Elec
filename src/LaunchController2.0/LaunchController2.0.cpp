@@ -400,7 +400,7 @@ void setup()
   // 機体およびノードへポーリング要求を送信するタスク (各10Hz相当)
   Tasks.add(&communication::pollingTask)->startIntervalSec(3.0);
   // 通信がタイムアウトしていないか監視するタスク
-  // Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
+  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
   Tasks.add(&communication::sendTelemetryForPython)->startFps(10); // 10Hzで実行
   // シミュレーション用のタスク（ダミー電流送信など）
