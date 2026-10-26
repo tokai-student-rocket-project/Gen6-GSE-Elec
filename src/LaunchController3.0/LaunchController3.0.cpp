@@ -267,17 +267,20 @@ namespace communication
   // 通信タイムアウト時間 (ミリ秒)
   // MOXA NPort + WiFi 経由では遅延が揺らぐため、ポーリング (POLL_SLOT_MS 〜 REPLY_TIMEOUT_MS 間隔) の数回分を見込む。
   // 実測して調整すること
-  const long timeout = 2000;
+  const long timeout = 2000; // RTTが400msに近い場合は値を広げる
 
   // ---- MOXA NPort + WiFi 経由のポーリング設定 ----
   // 応答が届く時刻が読めないため、「問い合わせ → 応答 (またはタイムアウト) → 次の送信」の順を必ず守る。
   // DE/RE が共用 (CTL_RS485_DERE) なので、送信中に届いた応答は受信できない。
   // 問い合わせ間隔の最短値 (ミリ秒)
   constexpr unsigned long POLL_SLOT_MS = 150;
+
   // 応答が来ない場合に次の送信を始めるまでの最大待ち時間 (ミリ秒)
-  constexpr unsigned long REPLY_TIMEOUT_MS = 400;
+  constexpr unsigned long REPLY_TIMEOUT_MS = 400; // RTTが400msに近い場合は値を広げる
+
   // 送信前に「受信が途切れた」とみなす無通信時間 (マイクロ秒)。115200bps で約23バイト分
   constexpr unsigned long RX_IDLE_US = 2000;
+
   // 受信の途切れを待つ上限 (ミリ秒)
   constexpr unsigned long RX_IDLE_MAX_WAIT_MS = 20;
 
@@ -465,15 +468,19 @@ void setup()
   // Tasks.add(&storage::readWriteTest)->startFps(1);                 // 1Hzで実行
   // 各種センサー(電圧、電流、温度など)の計測タスク
   Tasks.add(&power::measureTask)->startFps(10); // 10Hzで実行
+
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
   Tasks.add(&control::handleManualTask)->startFps(9); // 9Hzで実行
+
   // SatelliteController へポーリング要求を送信するタスク
   // 100Hz で呼び、送信してよいか (間隔経過・応答受信) は pollingTask の中で判定する
   Tasks.add(&communication::pollingTask)->startFps(100);
+
   // 通信がタイムアウトしていないか監視するタスク
   Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
+
   // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
-  Tasks.add(&communication::sendTelemetryForPython)->startFps(10); // 10Hzで実行
+  // Tasks.add(&communication::sendTelemetryForPython)->startFps(10); // 10Hzで実行
 #ifdef RS485_RX_LOG
   Tasks.add(&communication::rxDebugTask)->startFps(1); // 受信統計 1Hz
 #endif
@@ -766,11 +773,11 @@ void communication::waitRxIdle()
 void communication::pollingTask()
 {
   const unsigned long elapsed = millis() - communication::lastPollSentTime;
-  if (elapsed < communication::POLL_SLOT_MS)
+  if (elapsed < communication::POLL_SLOT_MS) // 前回送信から150ms未満なら送らない
   {
     return;
   }
-  if (communication::isAwaitingReply && elapsed < communication::REPLY_TIMEOUT_MS)
+  if (communication::isAwaitingReply && elapsed < communication::REPLY_TIMEOUT_MS) // 応答待ちで400ms未満なら送らない
   {
     return;
   }
@@ -1173,10 +1180,9 @@ void control::handleManualTask()
   // ================= キルスイッチ処理 =================
   if (power::killButton.isHigh() && !power::isShuttingDown)
   {
-    mp3_play(12); // 電源を落とすときの音声(アラート)を再生
+    // mp3_play(12); // 電源を落とすときの音声(アラート)を再生
 
     // 電源断待ちに入る。この間も通信は続け、pollingTask は全弁OFFを送る
-    // (以前は delay で 3.5 秒止めていたため、サテライトはタイムアウト(2秒)まで直前の指令を保持していた)
     power::isShuttingDown = true;
     power::shutdownStartTime = millis();
 
