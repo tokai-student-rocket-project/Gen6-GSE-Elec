@@ -30,6 +30,10 @@ namespace power
 
   // 電源や温度の測定値を定期的にチェックするタスク
   void measureTask();
+
+  bool isShuttingDown = false;
+  unsigned long shutdownStartTime = 0;
+  constexpr unsigned long SHUTDOWN_DELAY_MS = 3500;
 } // namespace power
 
 namespace control
@@ -572,7 +576,7 @@ void communication::applyPendingControl()
   const uint8_t state = communication::pendingState;
 
   // 安全装置（Armedスイッチ）がONになっているか確認
-  bool isArmed = control::safetyArmed.isManualRaised();
+  bool isArmed = control::safetyArmed.isManualRaised() && !power::isShuttingDown;
 
   // 受信した制御状態を保存
   communication::syncState = state;
@@ -698,22 +702,33 @@ void control::handleManualTask()
   // タスク稼働中であることを示すランプを点滅させる
   control::statusLamp.pulse(50);
 
-  // キルスイッチ（緊急停止ボタン）が押されている場合の処理
-  if (power::killButton.isHigh())
+  // キルスイッチが押されている場合の処理
+  if (power::killButton.isHigh() && !power::isShuttingDown)
   {
-    // 電源ランプを点滅させて緊急停止状態を警告する
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    // メインの電源供給（ロードスイッチ）を物理的に遮断する
-    power::loadSwitch.off();
+    // 電源遮断待ちに入る この間も LaunchController への返信は続けるが全弁OFFに保つ
+    power::isShuttingDown = true;
+    power::shutdownStartTime = millis();
+    // 次の CONTROL_SYNC を待たずすぐに全出力をOFFにする
+    control::dump.off();
+    control::fill.off();
+    control::oxygen.off();
+    control::igniter.off();
+    control::open.off();
+    control::close.off();
+    control::purge.off();
+  }
+  if (power::isShuttingDown)
+  {
+    // システム電源を落とす前に、電源ランプを 500ms ごとに点滅させる (他の操作は受け付けない)
+    const unsigned long elapsed = millis() - power::shutdownStartTime;
+    power::powerLamp.set((elapsed / 500) % 2 == 1);
+
+    if (elapsed >= power::SHUTDOWN_DELAY_MS)
+    {
+      // 最後にロードスイッチをオフにして物理的に電源供給を遮断する
+      power::loadSwitch.off();
+    }
+    return;
   }
 
   // セーフティスイッチの読み取り
