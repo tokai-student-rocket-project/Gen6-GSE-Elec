@@ -82,6 +82,11 @@ namespace power
 
   // 電源や温度の測定値を定期的にチェックするタスク
   void measureTask();
+
+  // キルスイッチ押下後、電源を落とすまでの待機中か (待機中は全弁OFFを送信する)
+  bool isShuttingDown = false;
+  unsigned long shutdownStartTime = 0;
+  constexpr unsigned long SHUTDOWN_DELAY_MS = 3500; // 電源ランプを点滅させてから電源を落とすまでの時間
 } // namespace power
 
 namespace control
@@ -190,6 +195,21 @@ namespace error
 {
   // エラー状態を示すランプ
   Output statusLamp(PIN_PK6); // ERR
+
+  // エラーの発生源。各処理は自分のビットだけを立て/下ろしし、ランプはその OR で点灯する
+  // (以前は各処理が直接 on/off していたため、別の処理が点けたエラーを消してしまっていた)
+  enum Source : uint8_t
+  {
+    POWER = 1 << 0,             // 過電流・過熱 (measureTask)
+    SEQ_START_MISTAKE = 1 << 1, // DUMPを閉じずにシーケンス開始スイッチを押している (measureTask)
+    SOLENOID = 1 << 2,          // 指令とFBの不一致 (onFeedbackSyncReceived)
+    COM_TIMEOUT = 1 << 3,       // サテライトとの通信途絶 (onComCheckFailed)
+    OPERATION = 1 << 4,         // 安全ゲート不成立などの操作エラー。Armed を OFF にするまで保持
+  };
+  uint8_t flags = 0;
+
+  void set(uint8_t source, bool isActive) { flags = isActive ? (flags | source) : (flags & ~source); }
+  void updateLamp() { statusLamp.set(flags != 0); }
 } // namespace error
 
 namespace solenoid
@@ -198,7 +218,8 @@ namespace solenoid
   // チャタリング防止用デバウンス設定
   // -------------------------------------------------------
   // コマンド ≠ FB（サテライトコントローラー側の故障検知）をこの回数連続で検出した場合にエラー確定とする
-  // onFeedbackSyncReceived は 5Hz で呈送されるため、5回 = 1秒間連続不一致で確定
+  // FEEDBACK_SYNC は問い合わせ1回ごとに届く (POLL_SLOT_MS=150 〜 REPLY_TIMEOUT_MS=400 間隔) ため、
+  // 5回 = 約0.75〜2秒間の連続不一致で確定
   constexpr uint8_t FAULT_CONFIRM_COUNT = 5;
 
   // 各弁の「コマンド/FB不一致連続検出カウンタ」
@@ -327,7 +348,8 @@ namespace communication
 
   // パケット送信関数
   void pollingTask();
-  void sendPendingCommands(); // 送信予約された単発コマンドを送る (送信有効中に呼ぶ)
+  uint8_t buildControlState(); // CONTROL_SYNC で送る8弁分の指令ビット
+  void sendPendingCommands();  // 送信予約された単発コマンドを送る (送信有効中に呼ぶ)
   // 単発コマンドの送信予約 (実際の送信は pollingTask で行う)
   void requestSensorConfigSync();
   void requestSensorDummyCurrent(float current_mA);
@@ -372,13 +394,6 @@ namespace communication
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
 } // namespace communication
-
-namespace simulation
-{
-  // ダミー電流の送信予約 (0.0 でダミーモード解除)。
-  // 以前は 2Hz で送り続けていたが、ポーリング外の送信は応答と衝突するため必要なときだけ呼ぶ
-  void setDummyCurrent(float current_mA) { communication::requestSensorDummyCurrent(current_mA); }
-} // namespace simulation
 
 namespace storage
 {
@@ -451,7 +466,7 @@ void setup()
   // 各種センサー(電圧、電流、温度など)の計測タスク
   Tasks.add(&power::measureTask)->startFps(10); // 10Hzで実行
   // 操作卓の物理スイッチの状態を読み取り処理するタスク
-  Tasks.add(&control::handleManualTask)->startFps(9); // 10Hzで実行
+  Tasks.add(&control::handleManualTask)->startFps(9); // 9Hzで実行
   // SatelliteController へポーリング要求を送信するタスク
   // 100Hz で呼び、送信してよいか (間隔経過・応答受信) は pollingTask の中で判定する
   Tasks.add(&communication::pollingTask)->startFps(100);
@@ -529,6 +544,7 @@ void loop()
   // ランプ(LED)の点滅(pulse/blink)状態を更新する
   communication::accessLamp.update();
   control::statusLamp.update();
+  error::updateLamp();
 #endif
 }
 
@@ -709,23 +725,12 @@ void power::measureTask()
   // Serial.print(">bus12Voltage_V:");
   // Serial.println(power::bus12.getVoltage_V());
 
-  // ハードウェア的な異常（過電流、過熱）があればエラーランプ点灯
-  if (isOverloadedInput || isOverloadedBus || isOverheated)
-  {
-    // HACK エラー
-    error::statusLamp.on();
-  }
+  // ハードウェア的な異常（過電流、過熱）があればエラー
+  // HACK エラー
+  error::set(error::POWER, isOverloadedInput || isOverloadedBus || isOverheated);
 
-  // 操作ミスがあればエラーランプ点灯
-  if (isSequenceStartMistake)
-  {
-    error::statusLamp.on();
-  }
-  // DUMP弁が手動で開けられた（またはエマスト中）場合は、エラー状態を解除（正常系）
-  else if (control::dump.isManualRaised() || sequence::emergencyStopSequenceIsActive)
-  {
-    error::statusLamp.off();
-  }
+  // 操作ミスがあればエラー。DUMP弁を閉じる、スイッチを離す、またはエマスト中なら解除
+  error::set(error::SEQ_START_MISTAKE, isSequenceStartMistake);
 }
 
 /// @brief Serial1 の受信が途切れるまで待つ (最大 RX_IDLE_MAX_WAIT_MS)
@@ -773,11 +778,7 @@ void communication::pollingTask()
   // 遅れて届いた応答の受信中に送信を始めないよう、受信が途切れるまで待つ
   communication::waitRxIdle();
 
-  uint8_t state =
-      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
-      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
-      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
-      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+  const uint8_t state = communication::buildControlState();
 
   communication::txSeq++;
   // 新しい seq への応答を受け取るまで、届いたフィードバックは採用しない
@@ -793,6 +794,20 @@ void communication::pollingTask()
 
   communication::lastPollSentTime = millis();
   communication::isAwaitingReply = true;
+}
+
+/// @brief CONTROL_SYNC で送る8弁分の指令ビットを作る (bit0:SHIFT ... bit7:PURGE)
+/// キルスイッチ押下後の電源断待ち中は全弁OFFを返し、サテライトを電源断より先に安全状態にする
+uint8_t communication::buildControlState()
+{
+  if (power::isShuttingDown)
+  {
+    return 0;
+  }
+  return (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
+         (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
+         (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
+         (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
 }
 
 /// @brief 送信予約された単発コマンドを送る (pollingTask から、送信有効中に呼ぶ)
@@ -973,29 +988,24 @@ void communication::onFeedbackSyncReceived(uint8_t state)
       return false;
     };
 
+    // 実際に送っている指令 (電源断待ち中は全弁OFF) と比較する
+    const uint8_t cmd = communication::buildControlState();
     bool hasFault = false;
-    hasFault |= checkFault(control::fill.isRaised(), (state & (1 << 1)) != 0,
+    hasFault |= checkFault((cmd & (1 << 1)) != 0, (state & (1 << 1)) != 0,
                            solenoid::fillFaultCount, "FILL");
-    hasFault |= checkFault(control::dump.isRaised(), (state & (1 << 2)) != 0,
+    hasFault |= checkFault((cmd & (1 << 2)) != 0, (state & (1 << 2)) != 0,
                            solenoid::dumpFaultCount, "DUMP");
-    hasFault |= checkFault(control::oxygen.isRaised(), (state & (1 << 3)) != 0,
+    hasFault |= checkFault((cmd & (1 << 3)) != 0, (state & (1 << 3)) != 0,
                            solenoid::oxygenFaultCount, "OXYGEN");
-    hasFault |= checkFault(control::purge.isRaised(), (state & (1 << 7)) != 0,
+    hasFault |= checkFault((cmd & (1 << 7)) != 0, (state & (1 << 7)) != 0,
                            solenoid::purgeFaultCount, "PURGE");
-    hasFault |= checkFault(control::open.isRaised(), (state & (1 << 5)) != 0,
+    hasFault |= checkFault((cmd & (1 << 5)) != 0, (state & (1 << 5)) != 0,
                            solenoid::openFaultCount, "OPEN");
-    hasFault |= checkFault(control::close.isRaised(), (state & (1 << 6)) != 0,
+    hasFault |= checkFault((cmd & (1 << 6)) != 0, (state & (1 << 6)) != 0,
                            solenoid::closeFaultCount, "CLOSE");
 
-    if (hasFault)
-    {
-      error::statusLamp.on();
-    }
-    else
-    {
-      // 故障判定がすべてクリアされた（またはデバウンス回数未満）場合はエラーランプを消灯
-      error::statusLamp.off();
-    }
+    // 故障判定がすべてクリアされた（またはデバウンス回数未満）場合はエラー解除
+    error::set(error::SOLENOID, hasFault);
   }
   else
   {
@@ -1006,6 +1016,7 @@ void communication::onFeedbackSyncReceived(uint8_t state)
     solenoid::purgeFaultCount = 0;
     solenoid::openFaultCount = 0;
     solenoid::closeFaultCount = 0;
+    error::set(error::SOLENOID, false);
   }
 }
 
@@ -1086,7 +1097,7 @@ void communication::onComCheckReceived(uint8_t seq, bool isConfigured)
 
   // タイムアウト以内であれば通信正常ランプを点灯
   communication::statusLamp.on();
-  error::statusLamp.off();
+  error::set(error::COM_TIMEOUT, false);
 }
 
 /// @brief サテライトとの通信が途絶した（タイムアウト）場合に実行されるフェールセーフタスク
@@ -1114,7 +1125,7 @@ void communication::onComCheckFailed()
   if (controllerTimeout)
   {
     communication::statusLamp.off();
-    error::statusLamp.on();
+    error::set(error::COM_TIMEOUT, true);
 
     // ★重要：シーケンス実行中に通信が切れたら、強制的にシーケンスを止める
     if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
@@ -1139,11 +1150,7 @@ void communication::onComCheckFailed()
  */
 void communication::sendTelemetryForPython()
 {
-  uint8_t cmd_state =
-      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
-      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
-      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
-      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+  uint8_t cmd_state = communication::buildControlState();
 
   uint8_t fb_state =
       (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
@@ -1164,29 +1171,34 @@ void control::handleManualTask()
   control::statusLamp.pulse(50);
 
   // ================= キルスイッチ処理 =================
-  if (power::killButton.isHigh())
+  if (power::killButton.isHigh() && !power::isShuttingDown)
   {
     mp3_play(12); // 電源を落とすときの音声(アラート)を再生
 
-    // システム電源を落とす前に、電源ランプを数回点滅させる
-    // 【注意】ここで delay(500) を使用しているため、この間 TaskManager や RS485 通信は完全に停止します
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
-    power::powerLamp.on();
-    delay(500);
-    power::powerLamp.off();
-    delay(500);
+    // 電源断待ちに入る。この間も通信は続け、pollingTask は全弁OFFを送る
+    // (以前は delay で 3.5 秒止めていたため、サテライトはタイムアウト(2秒)まで直前の指令を保持していた)
+    power::isShuttingDown = true;
+    power::shutdownStartTime = millis();
 
-    // 最後にロードスイッチをオフにして物理的に電源供給を遮断する
-    power::loadSwitch.off();
+    if (sequence::emergencyStopSequenceIsActive ||
+        sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
+    {
+      sequence::peacefulStop();
+    }
+  }
+
+  if (power::isShuttingDown)
+  {
+    // システム電源を落とす前に、電源ランプを 500ms ごとに点滅させる (他の操作は受け付けない)
+    const unsigned long elapsed = millis() - power::shutdownStartTime;
+    power::powerLamp.set((elapsed / 500) % 2 == 1);
+
+    if (elapsed >= power::SHUTDOWN_DELAY_MS)
+    {
+      // 最後にロードスイッチをオフにして物理的に電源供給を遮断する
+      power::loadSwitch.off();
+    }
+    return;
   }
 
   // ================= セーフティースイッチ処理 =================
@@ -1202,6 +1214,8 @@ void control::handleManualTask()
       sequence::peacefulStop();
     }
 
+    // 操作エラー (安全ゲート不成立など) は Armed を OFF にすることで解除する
+    error::set(error::OPERATION, false);
     return;
   }
 
@@ -1213,7 +1227,7 @@ void control::handleManualTask()
     {
       Serial.println("[GATE] Limit switch released during sequence! Stopping sequence.");
       sequence::peacefulStop();
-      error::statusLamp.on();
+      error::set(error::OPERATION, true);
     }
   }
 
@@ -1229,19 +1243,20 @@ void control::handleManualTask()
   control::sequenceStart.setManual();
 
   // DUMPがCLOSEされていない場合、シーケンス開始ボタンを押してもシーケンスを開始させないための安全ロック
-  if (control::sequenceStart.isManualRaised() &&
-      !control::dump.isManualRaised() &&
-      !sequence::emergencyStopSequenceIsActive)
-  {
-    mp3_play(13); // エラー音を再生
-    return;
-  }
+  // ロック中もこの後の手動弁の読み取りは続ける (以前は return していたため手動弁が反映されなかった)
+  const bool isDumpLocked = !control::dump.isManualRaised() &&
+                            !sequence::emergencyStopSequenceIsActive;
 
   // シーケンス開始スイッチが押された場合の処理
   if (control::sequenceStart.isManualRaised())
   {
     // スイッチが「新しく押された瞬間」だけ処理を進める（長押しによる連打を防止）
-    if (sequence::sequenceStartRiseCount == 0)
+    // ロック中もカウントは進めるので、押したまま DUMP を閉じても開始せず、押し直しが必要
+    if (sequence::sequenceStartRiseCount == 0 && isDumpLocked)
+    {
+      mp3_play(13); // エラー音を再生
+    }
+    else if (sequence::sequenceStartRiseCount == 0)
     {
       // どのシーケンスも実行されていなければ、充填シーケンスを開始
       if (!(sequence::emergencyStopSequenceIsActive ||
@@ -1256,6 +1271,8 @@ void control::handleManualTask()
         sequence::ignition();
       }
       // それ以外（進行中のシーケンスを中断したい場合など）はシーケンスを止める
+      // 点火シーケンス完了後も ignitionSequenceIsActive は残るため、完了後に押すとここに来る。
+      // これがリセット操作になる (自動弁をすべて解除し、OPEN も閉じる)。誤って再充填が始まらないよう意図的にフラグを残している
       else
       {
         sequence::peacefulStop();
@@ -1349,7 +1366,7 @@ void sequence::emergencyStop()
   Tasks[control::PURGE_START]->stop();
   Tasks[control::PURGE_STOP]->stop();
 
-  // 電磁弁を安全状態(DUMP開など)にセット
+  // 電磁弁を安全状態(主流路CLOSE・PURGE ON など)にセット
   control::setEmergencyStop();
 }
 
@@ -1399,7 +1416,7 @@ void sequence::fill()
   {
     // HACK エラー
     sequence::peacefulStop();
-    error::statusLamp.on();
+    error::set(error::OPERATION, true);
     return;
   }
 
@@ -1415,9 +1432,9 @@ void sequence::fill()
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::fill() blocked: limit switch safety gate not met.");
-    error::statusLamp.on();   // 未押下をエラーランプで通知
-    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
-    mp3_play(13);             // エラー音再生
+    error::set(error::OPERATION, true); // 未押下をエラーランプで通知 (Armed OFF で解除)
+    sequence::peacefulStop();           // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13);                       // エラー音再生
     return;
   }
 
@@ -1465,9 +1482,9 @@ void sequence::ignition()
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::ignition() blocked: limit switch safety gate not met.");
-    error::statusLamp.on();   // 未押下をエラーランプで通知
-    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
-    mp3_play(13);             // エラー音再生
+    error::set(error::OPERATION, true); // 未押下をエラーランプで通知 (Armed OFF で解除)
+    sequence::peacefulStop();           // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13);                       // エラー音再生
     return;
   }
 
@@ -1480,8 +1497,9 @@ void sequence::ignition()
 
   // 「充填が確認されました．点火します．5秒前...」←これが4.5秒くらいかかる
 
+  // 酸素(O2)バルブを開く (4.5秒後)
   Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5); // THR-406K 用に変更
-
+  // 点火器(IGNITER)をオンにする (5.5秒後)
   Tasks[control::IGNITER_START]->startOnceAfterSec(5.5); // THR-406K 用に変更
 
   // 充填(FILL)バルブを閉じる (9.5秒後: カウントダウン終了付近)
@@ -1495,8 +1513,11 @@ void sequence::ignition()
 
   // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする
   Tasks[control::PURGE_START]->startOnceAfterSec(15.5);
-  // パージを終了する
+  // パージを終了する (20.5秒後)
   Tasks[control::PURGE_STOP]->startOnceAfterSec(20.5);
+
+  // ※ シーケンス完了後も ignitionSequenceIsActive は true のまま (OPEN も開いたまま)。
+  //   次にシーケンス開始スイッチを押すと peacefulStop() でリセットされる (handleManualTask 参照)
 }
 
 /// @brief 起動時にすべてのLEDやフィードバックランプをテスト点灯する
@@ -1569,9 +1590,9 @@ void control::setEmergencyStop()
   // 万一のためCLOSEをONにして主流路を閉じる
   control::close.setAutomaticOn();
 
-  // DUMPを開放(CLOSE)してタンク内の圧力を抜く
-  // control::dump.setAutomaticOn();
-  control::dump.setAutomaticOff(); // ※シークエンス開始前にDUMPをCLOSEするための処理
+  // DUMPは自動・手動とも(OFF = 開)にする
+  // ※ シーケンス開始前に DUMP を閉じておく必要があるため、ここで ON にはしない
+  control::dump.setAutomaticOff();
   control::dump.setManualOff();
 
   // パージをONにして消火する
