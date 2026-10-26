@@ -10,6 +10,58 @@
 #include <MsgPacketizer.h>
 #include <TaskManager.h>
 
+// =====================================================================
+//  デモモード設定 (DEMO_MODE)
+// ---------------------------------------------------------------------
+//  下の #define のコメントを外してビルドすると「デモモード」になります。
+//  （または PlatformIO 等のビルドフラグで -DDEMO_MODE を指定）
+//
+//  想定する構成:
+//    ランチコントローラー ＋ サテライトコントローラー は接続した状態。
+//    SatelliteNode（リミットスイッチ）と RocketNode は未接続。
+//  この状態でも充填〜点火シーケンスを最後まで流せるようにします。
+//
+//  デモモードで変わるのは以下の「SatelliteNode 依存部分」だけです:
+//    - リミットスイッチによる安全ゲート(isSafetyGateMet)を常に成立扱いにする
+//  ※ 3.0 は SatelliteNode / RocketNode をポーリングしない (下記 NO_LIMIT_SWITCH_GATE 参照)。
+//  ★ ランチ⇔サテライト間の通信タイムアウト・フェールセーフはそのまま有効です。
+//    サテライトとの通信が切れれば、通常どおりシーケンスは強制停止されます。
+//
+//  ■ 安全に関する注意
+//    - 現場で運用する際は、必ず DEMO_MODE を無効（コメントアウト）にして
+//      ビルドしたファームウェアを使用してください。
+//    - 起動時にシリアルへ警告バナーを表示します。
+// =====================================================================
+// #define DEMO_MODE
+
+// =====================================================================
+//  通信構成 (3.0)
+// ---------------------------------------------------------------------
+//  Launch - MOXA NPort - WiFi | WiFi - MOXA NPort - Satellite の1対1構成。
+//  SatelliteNode / RocketNode は接続しないため、ポーリングは SatelliteController のみ。
+//
+//  -D NO_LIMIT_SWITCH_GATE (platformio.ini の env:Launch3 で指定)
+//    SatelliteNode のリミットスイッチ (ch5) による安全ゲート isSafetyGateMet() を
+//    常に成立扱いにする。Node を接続しないため、指定しないとシーケンスを開始できない。
+//    Node を戻す場合はこのフラグを外し、pollingTask に Node のスロットを戻すこと。
+// =====================================================================
+
+// =====================================================================
+//  RS485 通信デバッグ
+// ---------------------------------------------------------------------
+//  どちらも PlatformIO のビルドフラグで有効化する (現場運用では無効にすること)。
+//    -D RS485_RX_LOG     … 受信ログ。Serial(USB)へパケット受信ごとの [RX] 行と、
+//                          1秒ごとの [RX-STAT] (受信バイト数/パケット種別ごとの件数) を出力
+//    -D RS485_ECHO_TEST  … エコーテスト。通常動作(ポーリング等)は停止し、Serial1 で
+//                          受信したバイトをそのまま送り返し、16進で Serial(USB)に表示
+//  ※ ログ行は Python GUI 向けのテレメトリ(V_DATA:...)と同じ Serial に出る。
+// =====================================================================
+#ifdef RS485_RX_LOG
+#define RX_LOG(id) communication::rxLog(communication::id)
+#else
+#define RX_LOG(id) ((void)0)
+#endif
+
 namespace power
 {
   // キルスイッチ入力 (CTL_KILL): 電源を落とすためのボタン
@@ -34,7 +86,7 @@ namespace power
 
 namespace control
 {
-  // --- 操作卓（LaunchController3.0）の物理スイッチとLED設定 ---
+  // --- 操作卓（LaunchController）の物理スイッチとLED設定 ---
 
   // 安全装置（セーフティ）スイッチと連動LED (ONにしないと他の操作ができない)
   SemiAutoControl safetyArmed(PIN_PC2, false, PIN_PH7); // CTL_SAFETY, LED_SAFTEY
@@ -125,9 +177,13 @@ namespace n2o
   TM1637 tm1637(PIN_PK0, PIN_PK1); // 7SEG_CLK, 7SEG_DIO
 
   // --- キャリブレーション設定 ---
+  // 高圧ガス試験で求めた値をここに記入してください
   const float SENSOR_FS_MPa = 10.0f; // センサーの定格圧力
-  const float CALIB_SLOPE_A = 0.5777; // 傾き
-  const float CALIB_INTERCEPT_B = -CALIB_SLOPE_A * 4.0f; // 切片
+  const float CALIB_SLOPE_A =
+      0.5777; // 傾き (理論値は FS/16) //default -> SENSOR_FS_MPa / 16.0f
+  // 2026/02/21 手動手押しポンプと精製水を用いて圧力を発生させた．
+  const float CALIB_INTERCEPT_B = -CALIB_SLOPE_A * 4.0f; // 切片 (理論値は -a*4)
+  // ----------------------------------------
 } // namespace n2o
 
 namespace error
@@ -138,44 +194,45 @@ namespace error
 
 namespace solenoid
 {
+  // -------------------------------------------------------
+  // チャタリング防止用デバウンス設定
+  // -------------------------------------------------------
+  // コマンド ≠ FB（サテライトコントローラー側の故障検知）をこの回数連続で検出した場合にエラー確定とする
+  // onFeedbackSyncReceived は 5Hz で呈送されるため、5回 = 1秒間連続不一致で確定
   constexpr uint8_t FAULT_CONFIRM_COUNT = 5;
 
-  uint8_t fillFaultCount   = 0;
-  uint8_t dumpFaultCount   = 0;
+  // 各弁の「コマンド/FB不一致連続検出カウンタ」
+  // 「弁をONに指示したのにFBがOFF」 or 「OFFに指示したのにFBがON」を連続検出した回数
+  // 一致した場合はリセット
+  uint8_t fillFaultCount = 0;
+  uint8_t dumpFaultCount = 0;
   uint8_t oxygenFaultCount = 0;
-  uint8_t purgeFaultCount  = 0;
-  uint8_t openFaultCount   = 0;
-  uint8_t closeFaultCount  = 0;
+  uint8_t purgeFaultCount = 0;
+  uint8_t openFaultCount = 0;
+  uint8_t closeFaultCount = 0;
 } // namespace solenoid
 
 namespace communication
 {
-  // 通信パケットの種類を定義 (3.0 で Raspberry Pi 4 用のパケットを追加)
+  // 通信パケットの種類を定義
   enum class Packet : uint8_t
   {
-    CONTROL_SYNC = 0,              // 操作卓(Launch)からの制御コマンド同期（電磁弁開閉など）
+    CONTROL_SYNC = 0,              // 操作卓(Launch)からの制御コマンド同期 (state, seq)。生存確認も兼ねる
     FEEDBACK_SYNC = 1,             // サテライトコントローラーからのフィードバック（電磁弁の実際の状態など）
     PRESSURE_SYNC = 2,             // 算出された圧力値(MPa)の同期
-    COM_CHECK_L_TO_S = 3,          // 操作卓から機体への生存確認（ハートビート）
-    COM_CHECK_S_TO_L = 4,          // 機体から操作卓への生存確認（ハートビート）
+    COM_CHECK_L_TO_S = 3,          // (未使用) 操作卓から機体への生存確認。CONTROL_SYNC に統合した
+    COM_CHECK_S_TO_L = 4,          // 機体から操作卓への生存確認 (seq のエコー, 設定済みフラグ)
     SENSOR_CONFIG_SYNC = 5,        // センサの基本設定（フルスケールなど）の機体への同期
     SENSOR_DUMMY_CURRENT_SYNC = 6, // シミュレーション用のダミー電流値の同期
     SENSOR_CALIB_COEFF_SYNC = 7,   // 校正係数(a, b)の同期用
     SENSOR_ZERO_CALIB_REQ = 8,     // 機体に対するゼロ点校正実行の要求
     SENSOR_CURRENT_SYNC = 9,       // 機体から送信される生の電流値(mA)の同期
-    LIMIT_SWITCH_SYNC = 10,        // SatelliteNode のリミットスイッチ状態同期
-    COM_CHECK_L_TO_N = 11,         // ランチ → ノード 生存確認
-    COM_CHECK_N_TO_L = 12,         // ノード → ランチ 生存確認
-    COM_CHECK_L_TO_RN = 13,        // 親機 ➔ ロケットノード 生存確認
-    COM_CHECK_RN_TO_L = 14,        // ロケットノード ➔ 親機 生存確認
-    ROCKET_NODE_STATE_SYNC = 15,   // 親機 ➔ 状態同期
-
-    // --- Raspberry Pi 4 無線通信用パケット (3.0 新規追加) ---
-    RASPI_COMMAND = 0x20,            // (32) Raspberry Pi 4 からの遠隔制御コマンド
-    RASPI_HEARTBEAT_L_TO_R = 0x21,   // (33) Launch3.0 → Raspberry Pi 4 生存確認
-    RASPI_HEARTBEAT_R_TO_L = 0x22,   // (34) Raspberry Pi 4 → Launch3.0 生存確認
-    RASPI_TELEMETRY = 0x23,          // (35) テレメトリ一括送信
-    RASPI_WIRELESS_STATUS = 0x24,    // (36) 無線リンク状態報告
+    LIMIT_SWITCH_SYNC = 10,        // SatelliteNode のリミットスイッチ状態同期 (bit5=ch5)
+    COM_CHECK_L_TO_N = 11,         // (未使用: Node 非接続) ランチ → ノード 生存確認
+    COM_CHECK_N_TO_L = 12,         // (未使用: Node 非接続) ノード → ランチ 生存確認
+    COM_CHECK_L_TO_RN = 13,        // (未使用: Node 非接続) 親機 ➔ ロケットノード 生存確認
+    COM_CHECK_RN_TO_L = 14,        // (未使用: Node 非接続) ロケットノード ➔ 親機 生存確認
+    ROCKET_NODE_STATE_SYNC = 15,   // (未使用: Node 非接続) 親機 ➔ 状態同期（イグニッション/OPEN状態）
   };
 
   // RS485の送信許可ピン (HIGHで送信有効)
@@ -183,16 +240,60 @@ namespace communication
   // 通信アクセスランプ
   Output accessLamp(PIN_PA4); // LED_RS485_ACCESS
 
-  // 機体側から最後に通信を受信した時刻
+  // 機体側から最後に通信を受信した時刻 (タイムアウト判定用)
   unsigned long preReceivedTime = 0;
-  unsigned long preReceivedTime_Node = 0;
-  unsigned long preReceivedTime_RocketNode = 0;
-  bool isRocketNodeDisconnected = false;
-  const long timeout = 5000;
 
-  // リミットスイッチ状態
+  // 通信タイムアウト時間 (ミリ秒)
+  // MOXA NPort + WiFi 経由では遅延が揺らぐため、ポーリング (POLL_SLOT_MS 〜 REPLY_TIMEOUT_MS 間隔) の数回分を見込む。
+  // 実測して調整すること
+  const long timeout = 2000;
+
+  // ---- MOXA NPort + WiFi 経由のポーリング設定 ----
+  // 応答が届く時刻が読めないため、「問い合わせ → 応答 (またはタイムアウト) → 次の送信」の順を必ず守る。
+  // DE/RE が共用 (CTL_RS485_DERE) なので、送信中に届いた応答は受信できない。
+  // 問い合わせ間隔の最短値 (ミリ秒)
+  constexpr unsigned long POLL_SLOT_MS = 150;
+  // 応答が来ない場合に次の送信を始めるまでの最大待ち時間 (ミリ秒)
+  constexpr unsigned long REPLY_TIMEOUT_MS = 400;
+  // 送信前に「受信が途切れた」とみなす無通信時間 (マイクロ秒)。115200bps で約23バイト分
+  constexpr unsigned long RX_IDLE_US = 2000;
+  // 受信の途切れを待つ上限 (ミリ秒)
+  constexpr unsigned long RX_IDLE_MAX_WAIT_MS = 20;
+
+  // 直近に問い合わせを送った時刻
+  unsigned long lastPollSentTime = 0;
+  // 問い合わせに対する応答待ち中か
+  bool isAwaitingReply = false;
+
+  // CONTROL_SYNC の通し番号。サテライトが COM_CHECK_S_TO_L でそのまま返す
+  uint8_t txSeq = 0;
+
+  // 直近の COM_CHECK_S_TO_L が最新の txSeq への応答だったか (古い応答に続くフィードバックを捨てるため)
+  bool isLastReplyValid = false;
+
+  // 直近の往復時間 (ミリ秒)。WiFi 区間の遅延の目安
+  unsigned long lastRoundTrip_ms = 0;
+
+  // サテライトとの通信が確立しているか (途絶 → 回復の切り替わりで設定を送り直すため)
+  bool isSatelliteLinkUp = false;
+
+  // 起動後のゼロ点校正要求を出し終えたか (再接続のたびには出さない)
+  bool hasRequestedZeroCalib = false;
+
+  // 送信予約された単発コマンド。pollingTask で CONTROL_SYNC の前にまとめて送る
+  bool hasPendingSensorConfig = false;
+  bool hasPendingCalibCoeff = false;
+  bool hasPendingZeroCalib = false;
+  bool hasPendingDummyCurrent = false;
+  float pendingCalibA = 0.0f;
+  float pendingCalibB = 0.0f;
+  float pendingDummyCurrent_mA = 0.0f;
+
+  // SatelliteController 経由で転送された SatelliteNode のリミットスイッチ状態
+  // bit0=ch0, bit1=ch1, ..., bit5=ch5
   uint8_t limitSwitchState = 0;
 
+  /// @brief リミットスイッチが押されているか判定するヘルパー
   inline bool isCh0Pressed() { return (limitSwitchState >> 0) & 0x01; }
   inline bool isCh1Pressed() { return (limitSwitchState >> 1) & 0x01; }
   inline bool isCh2Pressed() { return (limitSwitchState >> 2) & 0x01; }
@@ -200,86 +301,135 @@ namespace communication
   inline bool isCh4Pressed() { return (limitSwitchState >> 4) & 0x01; }
   inline bool isCh5Pressed() { return (limitSwitchState >> 5) & 0x01; }
 
+  // 監視対象とするリミットスイッチのビットマスク (Bit5 = ch5)
+  // 将来的に他の弁/リミットスイッチを増やす場合は、このマスクや判定ロジックを変更する
   constexpr uint8_t SAFETY_GATE_MASK = (1 << 5); // ch5のみを監視
-  inline bool isSafetyGateMet() { return (limitSwitchState & SAFETY_GATE_MASK) == SAFETY_GATE_MASK; }
+
+  /// @brief 安全ゲート（必要なリミットスイッチがすべて押されているか）の判定
+  /// @return true: 安全（すべて押されている）、false: 危険（どれかが押されていない）
+  inline bool isSafetyGateMet()
+  {
+#if defined(DEMO_MODE) || defined(NO_LIMIT_SWITCH_GATE)
+    // SatelliteNode を接続しない構成 (NO_LIMIT_SWITCH_GATE) またはデモモード:
+    // リミットスイッチが無いため安全ゲートを成立扱いにする
+    return true;
+#else
+    return (limitSwitchState & SAFETY_GATE_MASK) == SAFETY_GATE_MASK;
+#endif
+  }
 
   // RS485の送信を有効/無効化する関数
   void enableOutput();
   void disableOutput();
 
+  // 受信が途切れるまで待つ (送信前に呼ぶ)
+  void waitRxIdle();
+
   // パケット送信関数
   void pollingTask();
-  void sendSensorConfigSync();
-  void sendSensorDummyCurrent(float current_mA);
-  void sendSensorCalibCoeff(float a, float b);
-  void sendSensorZeroCalibReq();
-  void sendTelemetryForPython();
+  void sendPendingCommands(); // 送信予約された単発コマンドを送る (送信有効中に呼ぶ)
+  // 単発コマンドの送信予約 (実際の送信は pollingTask で行う)
+  void requestSensorConfigSync();
+  void requestSensorDummyCurrent(float current_mA);
+  void requestSensorCalibCoeff(float a, float b);
+  void requestSensorZeroCalib();
+  void requestSatelliteResync(); // サテライトへ設定一式を送り直す
+  void sendTelemetryForPython(); // PythonのGUI用にデータをシリアル出力する関数
 
   // パケット受信時のコールバック関数
   void onFeedbackSyncReceived(uint8_t state);
   void onPressureSyncReceived(float pressure);
   void onCurrentSyncReceived(float current_mA);
-  void onComCheckReceived();
-  void onComCheckNodeReceived();
-  void onComCheckRocketNodeReceived();
-  void onComCheckFailed();
+  void onComCheckReceived(uint8_t seq, bool isConfigured);
+  void onComCheckFailed(); // タイムアウト時のフェールセーフ処理
+  // SatelliteController 経由でリミットスイッチ状態を受信した際のコールバック
   void onLimitSwitchSyncReceived(uint8_t state);
+
+#ifdef RS485_RX_LOG
+  // 受信ログ用 (RS485_RX_LOG 有効時のみ)
+  enum RxId : uint8_t
+  {
+    RX_FEEDBACK,
+    RX_PRESSURE,
+    RX_CURRENT,
+    RX_COMCHECK_S,
+    RX_LIMIT,
+    RX_ID_COUNT
+  };
+  // Serial1 の生受信バイト数 (parse() 直前の available() の累計。概算値)
+  uint32_t rxByteCount = 0;
+  uint32_t rxPacketCount[RX_ID_COUNT] = {0};
+  unsigned long rxLastPacketMs = 0;
+  void rxLog(RxId id);
+  void rxDebugTask(); // 1Hz で統計を出力
+#endif
+
+#ifdef RS485_ECHO_TEST
+  // エコーテスト (RS485_ECHO_TEST 有効時のみ)
+  void echoTest();
+#endif
 
   // 通信状態が正常であることを示すランプ
   Output statusLamp(PIN_PK5); // LED_COM
 } // namespace communication
 
-namespace raspi_wireless
-{
-  // --- Raspberry Pi 4 無線通信管理パラメータ ---
-  unsigned long lastHeartbeatTime = 0;
-  const unsigned long WIRELESS_TIMEOUT_MS = 3000; // 3.0秒タイムアウト
-  bool isWirelessConnected = false;
-  bool remoteArmingState = false;
-  float latestPressure_MPa = 0.0f;
-
-  // コマンド種別定義
-  enum class RemoteCmd : uint8_t
-  {
-    EMERGENCY_STOP = 1,
-    PEACEFUL_STOP  = 2,
-    FILL_START     = 3,
-    IGNITION_START = 4,
-    ARM_SAFETY     = 5,
-    VALVE_CONTROL  = 6,
-    ZERO_CALIB     = 7,
-  };
-
-  // 無線生存監視タスク
-  void checkWirelessTask();
-  // RasPi 4 へテレメトリを送信するタスク
-  void sendWirelessTelemetryTask();
-  // コールバック関数
-  void onRaspiHeartbeatReceived();
-  void onRaspiCommandReceived(uint8_t cmdType, uint8_t param);
-} // namespace raspi_wireless
-
 namespace simulation
 {
-  void updateTask() { communication::sendSensorDummyCurrent(0.0f); }
+  // ダミー電流の送信予約 (0.0 でダミーモード解除)。
+  // 以前は 2Hz で送り続けていたが、ポーリング外の送信は応答と衝突するため必要なときだけ呼ぶ
+  void setDummyCurrent(float current_mA) { communication::requestSensorDummyCurrent(current_mA); }
 } // namespace simulation
 
 namespace storage
 {
+  // EEPROMの制御用インスタンス (I2Cアドレス: 0x50)
   Lib_24LC256 eeprom(0x50);
+  // EEPROMの読み書きテスト用関数
   void readWriteTest();
 } // namespace storage
 
 void setup()
 {
+  // pinMode(PIN_PB7, OUTPUT);    // PIN_PB7 マイコンの頂点についてるLED
+  // digitalWrite(PIN_PB7, HIGH); // PIN_PB7 マイコンの頂点についてるLED
+
+  // EEPROMテスト用 (現在は無効化)
+  // storage::eeprom.begin();
+
+  // システムの電源をONにする
   power::loadSwitch.on();
+  // 電源ランプを点灯する
   power::powerLamp.on();
 
-  // FT232RL (USB - Raspberry Pi 4 / PC との通信用シリアル)
+  // FT232RL (USB - PCとの通信用シリアル)
   Serial.begin(115200);
+
+#ifdef DEMO_MODE
+  Serial.println();
+  Serial.println("#########################################################");
+  Serial.println("#   DEMO MODE ENABLED / デモモード有効                   #");
+  Serial.println("#   SatelliteNode(リミットSW)/RocketNode 未接続でも      #");
+  Serial.println("#   ランチ+サテライトのみでシーケンスを実行できます      #");
+  Serial.println("#   ランチ<->サテライト間のフェールセーフは通常どおり有効 #");
+  Serial.println("#   ※現場運用時は DEMO_MODE を無効化してビルドする事     #");
+  Serial.println("#########################################################");
+  Serial.println();
+#endif
+#ifdef NO_LIMIT_SWITCH_GATE
+  Serial.println("[WARN] NO_LIMIT_SWITCH_GATE: limit switch safety gate is disabled (SatelliteNode not connected)");
+#endif
+
+#ifdef RS485_RX_LOG
+  Serial.println("[DEBUG] RS485_RX_LOG enabled: [RX] / [RX-STAT] lines will be printed");
+#endif
+#ifdef RS485_ECHO_TEST
+  Serial.println("[DEBUG] RS485_ECHO_TEST enabled: Serial1 echo only, polling/failsafe stopped");
+#endif
 
   // LTC485 (RS485 - サテライトコントローラーとの通信用シリアル1)
   Serial1.begin(115200);
+  // 初期状態でタイムアウト判定にならないよう、過去の時刻をセットしておく
+  communication::preReceivedTime = millis();
 
   // DFPlayer Mini (音声再生用シリアル2)
   Serial2.begin(9600);
@@ -287,33 +437,36 @@ void setup()
   mp3_stop();
   mp3_set_volume(30);
 
-  communication::preReceivedTime = millis();
-  communication::preReceivedTime_Node = millis();
-  communication::preReceivedTime_RocketNode = millis();
-  raspi_wireless::lastHeartbeatTime = millis();
-
-  // TM1637 & Wire
+  // TM1637 (7セグメントLEDディスプレイの初期化)
   n2o::tm1637.initialize();
+
+  // INA219 (電力・電流モニタの初期化)
   Wire.begin();
   power::input.begin();
   power::bus12.begin();
 
   // ================= タスクの登録 (TaskManager) =================
-  Tasks.add(&power::measureTask)->startFps(10);
-  Tasks.add(&control::handleManualTask)->startFps(9);
-  Tasks.add(&communication::pollingTask)->startFps(5);
-  Tasks.add(&communication::onComCheckFailed)->startFps(2);
-  // (Python GUI 用シリアル送信機能通信 Tasks.add(&communication::sendTelemetryForPython) は無効化)
-  Tasks.add(&simulation::updateTask)->startFps(2);
 
-  // --- Raspberry Pi 4 無線タスクの追加 (3.0 新規: Serial 使用) ---
-  Tasks.add(&raspi_wireless::checkWirelessTask)->startFps(2);          // 2Hz で無線タイムアウト監視
-  Tasks.add(&raspi_wireless::sendWirelessTelemetryTask)->startFps(10); // 10Hz で無線テレメトリ送信
+  // Tasks.add(&storage::readWriteTest)->startFps(1);                 // 1Hzで実行
+  // 各種センサー(電圧、電流、温度など)の計測タスク
+  Tasks.add(&power::measureTask)->startFps(10); // 10Hzで実行
+  // 操作卓の物理スイッチの状態を読み取り処理するタスク
+  Tasks.add(&control::handleManualTask)->startFps(9); // 10Hzで実行
+  // SatelliteController へポーリング要求を送信するタスク
+  // 100Hz で呼び、送信してよいか (間隔経過・応答受信) は pollingTask の中で判定する
+  Tasks.add(&communication::pollingTask)->startFps(100);
+  // 通信がタイムアウトしていないか監視するタスク
+  Tasks.add(&communication::onComCheckFailed)->startFps(2); // 2Hzで実行
+  // PythonのGUI(ビジュアライザ)向けにシリアル通信でデータを送るタスク
+  Tasks.add(&communication::sendTelemetryForPython)->startFps(10); // 10Hzで実行
+#ifdef RS485_RX_LOG
+  Tasks.add(&communication::rxDebugTask)->startFps(1); // 受信統計 1Hz
+#endif
 
-  communication::sendSensorConfigSync();
-  communication::sendSensorCalibCoeff(n2o::CALIB_SLOPE_A, n2o::CALIB_INTERCEPT_B);
+  // センサ設定・校正係数・ゼロ点校正は、サテライトとの通信が確立した時点で送る (onComCheckReceived)。
+  // NPort の起動と WiFi の接続は Launch の起動より遅れるため、setup() で送っても届かない
 
-  // ================= RS485 受信コールバックの登録 (Serial1) =================
+  // ================= RS485 受信コールバックの登録 =================
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::FEEDBACK_SYNC),
       &communication::onFeedbackSyncReceived);
@@ -326,25 +479,14 @@ void setup()
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L),
       &communication::onComCheckReceived);
-  MsgPacketizer::subscribe(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_N_TO_L),
-      &communication::onComCheckNodeReceived);
-  MsgPacketizer::subscribe(
-      Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_RN_TO_L),
-      &communication::onComCheckRocketNodeReceived);
+  // SatelliteController が転送してくるリミットスイッチパケットを受信するコールバックを登録
+  // (Node 非接続の現構成では届かない。Node を戻したときのために残している)
   MsgPacketizer::subscribe(
       Serial1, static_cast<uint8_t>(communication::Packet::LIMIT_SWITCH_SYNC),
       &communication::onLimitSwitchSyncReceived);
 
-  // ================= Raspberry Pi 4 無線受信コールバックの登録 (Serial) =================
-  MsgPacketizer::subscribe(
-      Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_R_TO_L),
-      &raspi_wireless::onRaspiHeartbeatReceived);
-  MsgPacketizer::subscribe(
-      Serial, static_cast<uint8_t>(communication::Packet::RASPI_COMMAND),
-      &raspi_wireless::onRaspiCommandReceived);
-
   // ================= シーケンス関係のタスク登録 =================
+  // ※ここでは登録のみ行い、後から startOnceAfterSec() などで呼び出す
   Tasks.add(control::FILL_START, &control::setFillStart);
   Tasks.add(control::FILL_STOP, &control::setFillStop);
   Tasks.add(control::OXYGEN_START, &control::setOxygenStart);
@@ -354,158 +496,392 @@ void setup()
   Tasks.add(control::OPEN_START, &control::setOpenStart);
   Tasks.add(control::PURGE_START, &control::setPurgeStart);
   Tasks.add(control::PURGE_STOP, &control::setPurgeStop);
-  Tasks.add(control::PLAY_MUSIC, [] { mp3_play(9); });
+  Tasks.add(control::PLAY_MUSIC, []
+            { mp3_play(9); }); // 音声9番を再生
 
+  // 起動時のLED全点灯（クリスマスツリーテスト）を開始
   control::setChristmasTreeStart();
+  // 3秒後に全点灯テストを終了
   Tasks.add(&control::setChristmasTreeStop)->startOnceAfterSec(3.0);
 
-  Tasks.add([] {
-    Serial.println(">>> Requesting Remote Zero-Point Calibration...");
-    communication::sendSensorZeroCalibReq();
-  })->startOnceAfterSec(5.0);
-
+  // 起動完了の合図として音声11番を再生
   mp3_play(11);
 }
 
 void loop()
 {
-  // Serial1 (RS485) および Serial3 (Raspberry Pi 4 無線) のパケット解析
+#ifdef RS485_ECHO_TEST
+  // エコーテスト: 通常のパケット処理・タスク(ポーリング/フェールセーフ)は実行しない
+  communication::echoTest();
+  communication::accessLamp.update();
+#else
+#ifdef RS485_RX_LOG
+  // parse() が受信バッファを消費する前に、溜まっているバイト数を加算する
+  communication::rxByteCount += Serial1.available();
+#endif
+
+  // 受信したパケットを解析し、subscribeで登録したコールバックを呼び出す
   MsgPacketizer::parse();
 
+  // 登録されたタスクのスケジュール管理と実行を行う
   Tasks.update();
 
+  // ランプ(LED)の点滅(pulse/blink)状態を更新する
   communication::accessLamp.update();
   control::statusLamp.update();
+#endif
+}
+
+#ifdef RS485_RX_LOG
+/// @brief パケット受信ごとのログ出力と件数カウント
+void communication::rxLog(RxId id)
+{
+  static const char *const names[RX_ID_COUNT] = {
+      "FEEDBACK_SYNC", "PRESSURE_SYNC", "SENSOR_CURRENT_SYNC", "COM_CHECK_S_TO_L",
+      "LIMIT_SWITCH_SYNC"};
+  rxPacketCount[id]++;
+  rxLastPacketMs = millis();
+  Serial.print("[RX] ");
+  Serial.print(names[id]);
+  Serial.print(" t=");
+  Serial.println(rxLastPacketMs);
+}
+
+/// @brief 1秒ごとに受信統計を出力する
+void communication::rxDebugTask()
+{
+  static uint32_t prevBytes = 0;
+  uint32_t delta = rxByteCount - prevBytes;
+  prevBytes = rxByteCount;
+
+  uint32_t totalPackets = 0;
+  for (uint8_t i = 0; i < RX_ID_COUNT; i++)
+    totalPackets += rxPacketCount[i];
+
+  Serial.print("[RX-STAT] bytes=");
+  Serial.print(rxByteCount);
+  Serial.print(" (+");
+  Serial.print(delta);
+  Serial.print("/s) FB=");
+  Serial.print(rxPacketCount[RX_FEEDBACK]);
+  Serial.print(" PRS=");
+  Serial.print(rxPacketCount[RX_PRESSURE]);
+  Serial.print(" CUR=");
+  Serial.print(rxPacketCount[RX_CURRENT]);
+  Serial.print(" CC_S=");
+  Serial.print(rxPacketCount[RX_COMCHECK_S]);
+  Serial.print(" LIM=");
+  Serial.print(rxPacketCount[RX_LIMIT]);
+  Serial.print(" lastPkt=");
+  if (totalPackets == 0)
+  {
+    Serial.println("none");
+  }
+  else
+  {
+    Serial.print(millis() - rxLastPacketMs);
+    Serial.println("ms ago");
+  }
+
+  // 切り分けのヒント: バイトが全く来ない / バイトは来るがパケットにならない
+  if (delta == 0)
+  {
+    Serial.println("[RX-STAT] no bytes received (check wiring / NPort serial settings / DE-RE)");
+  }
+  else if (totalPackets == 0 || millis() - rxLastPacketMs > 3000)
+  {
+    Serial.println("[RX-STAT] bytes arrive but no valid packet (check baud/format/packet index/framing)");
+  }
+}
+#endif
+
+#ifdef RS485_ECHO_TEST
+/// @brief Serial1 で受信したバイトをそのまま送り返し、16進で Serial(USB) に表示する
+/// 受信が途切れて約1ms経過したらまとめて送り返す (DEの切替を最小限にするため)
+void communication::echoTest()
+{
+  static uint8_t buf[64];
+  static uint8_t len = 0;
+  static unsigned long lastRxUs = 0;
+  static uint32_t totalBytes = 0;
+
+  while (Serial1.available() && len < sizeof(buf))
+  {
+    buf[len++] = static_cast<uint8_t>(Serial1.read());
+    lastRxUs = micros();
+  }
+
+  if (len > 0 && (len == sizeof(buf) || micros() - lastRxUs > 1000))
+  {
+    totalBytes += len;
+    Serial.print("[ECHO] rx ");
+    Serial.print(len);
+    Serial.print("B (total ");
+    Serial.print(totalBytes);
+    Serial.print("):");
+    for (uint8_t i = 0; i < len; i++)
+    {
+      Serial.print(' ');
+      if (buf[i] < 0x10)
+        Serial.print('0');
+      Serial.print(buf[i], HEX);
+    }
+    Serial.println();
+
+    communication::enableOutput();
+    Serial1.write(buf, len);
+    Serial1.flush();
+    delayMicroseconds(200); // 最終バイトが線上に出切るまで DE を保持
+    communication::disableOutput();
+    len = 0;
+  }
+}
+#endif
+
+/// @brief 外部EEPROMの読み書きテスト関数
+void storage::readWriteTest()
+{
+  Serial.println("== EEPROM TEST ==");
+
+  uint16_t testAddress = 0x0100; // テスト書き込み先アドレス
+  const char *myText = "Hello, TSRP";
+  uint16_t dataLength = strlen(myText) + 1; // ヌル文字を含む長さ
+  Serial.print("Writing text: ");
+  Serial.println(myText);
+
+  // EEPROMへ書き込み
+  storage::eeprom.writeBuffer(testAddress, (const uint8_t *)myText, dataLength);
+
+  char readData[100]; // 読み出し用バッファ
+
+  // EEPROMから読み出し
+  storage::eeprom.readBuffer(testAddress, (uint8_t *)readData, dataLength);
+
+  Serial.print("Read text: ");
+  Serial.println(readData);
+
+  // 書き込んだデータと読み出したデータが一致するか確認
+  if (strcmp(myText, readData) == 0)
+  {
+    Serial.println("== Success ==");
+  }
+  else
+  {
+    Serial.println("== Error... ==");
+  }
 }
 
 /// @brief RS485の送信モードを有効にする（DEピンをHIGH）
 void communication::enableOutput()
 {
   communication::sendEnableControl.on();
-  communication::accessLamp.pulse(10);
+  communication::accessLamp.pulse(10); // 送信時にアクセスランプを一瞬(10ms)点灯
 }
 
-/// @brief RS485の送信モードを無効にする（DEピンをLOW）
+/// @brief RS485の送信モードを無効にする（DEピンをLOW、受信モードに戻す）
 void communication::disableOutput() { communication::sendEnableControl.off(); }
 
-/// @brief 入力電圧、システム電流、温度を監視
+/// @brief 入力電圧、システム電流、温度を監視し、異常があればエラーを出すタスク
 void power::measureTask()
 {
-  bool isLowVoltage = power::input.getVoltage_V() < 11.5;
-  bool isOverloadedInput = power::input.getAmpere_A() > 3.0;
-  bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;
-  bool isOverheated = power::thermal.getTemperature_degC() > 100.0;
+  // 各種ステータスの取得と閾値チェック
+  bool isLowVoltage = power::input.getVoltage_V() < 11.5;           // 入力電圧が11.5V未満か
+  bool isOverloadedInput = power::input.getAmpere_A() > 3.0;        // 全体消費電流が3.0Aを超えているか
+  bool isOverloadedBus = power::bus12.getAmpere_A() > 3.0;          // 12V系の消費電流が3.0Aを超えているか
+  bool isOverheated = power::thermal.getTemperature_degC() > 100.0; // 基板温度が100℃を超えているか
 
+  // 低電圧ランプの点灯/消灯
   power::lowVoltageLamp.set(isLowVoltage);
 
+  // 【誤操作チェック】
+  // DUMP弁を閉じていない状態でシーケンス開始スイッチを押す、というミスをしたか判定
   bool isSequenceStartMistake = control::sequenceStart.isManualRaised() &&
                                 !control::dump.isManualRaised() &&
                                 !sequence::emergencyStopSequenceIsActive;
 
+  // Teleplot用 (現在はコメントアウト)
+  // Serial.print(">Tempelature_degC:");
+  // Serial.println(power::thermal.getTemperature_degC()); // 温度モニター
+  // Serial.print(">inputVoltage_V:");
+  // Serial.println(power::input.getVoltage_V());
+  // Serial.print(">inputAmpere_A:");
+  // Serial.println(power::input.getAmpere_A());
+  // Serial.print(">bus12Voltage_V:");
+  // Serial.println(power::bus12.getVoltage_V());
+
+  // ハードウェア的な異常（過電流、過熱）があればエラーランプ点灯
   if (isOverloadedInput || isOverloadedBus || isOverheated)
   {
+    // HACK エラー
     error::statusLamp.on();
   }
 
+  // 操作ミスがあればエラーランプ点灯
   if (isSequenceStartMistake)
   {
     error::statusLamp.on();
   }
+  // DUMP弁が手動で開けられた（またはエマスト中）場合は、エラー状態を解除（正常系）
   else if (control::dump.isManualRaised() || sequence::emergencyStopSequenceIsActive)
   {
     error::statusLamp.off();
   }
 }
 
-/// @brief ポーリングタスク
+/// @brief Serial1 の受信が途切れるまで待つ (最大 RX_IDLE_MAX_WAIT_MS)
+/// DE/RE 共用のため、送信を始めると受信中のバイトを取りこぼす。送信の直前に呼ぶ。
+/// 待っている間に届いたバイトは受信バッファに残り、次の MsgPacketizer::parse() で処理される。
+void communication::waitRxIdle()
+{
+  const unsigned long startTime = millis();
+  int lastAvailable = Serial1.available();
+  unsigned long lastRxTime_us = micros();
+
+  while (millis() - startTime < communication::RX_IDLE_MAX_WAIT_MS)
+  {
+    const int available = Serial1.available();
+    if (available != lastAvailable)
+    {
+      // 新しいバイトが届いたので、無通信時間の計測をやり直す
+      lastAvailable = available;
+      lastRxTime_us = micros();
+    }
+    else if (micros() - lastRxTime_us >= communication::RX_IDLE_US)
+    {
+      return;
+    }
+  }
+}
+
+/// @brief SatelliteController へ問い合わせ (送信予約された単発コマンド + CONTROL_SYNC) を送るポーリングタスク
+/// 100Hz で呼ばれ、次の条件をすべて満たしたときだけ送信する。
+///   - 前回の送信から POLL_SLOT_MS 以上経過している
+///   - 前回の問い合わせへの応答を受信済み、または REPLY_TIMEOUT_MS を過ぎた
+/// SatelliteNode / RocketNode は接続しないため問い合わせない
 void communication::pollingTask()
 {
-  static uint8_t pollTarget = 0;
-
-  if (pollTarget == 0)
+  const unsigned long elapsed = millis() - communication::lastPollSentTime;
+  if (elapsed < communication::POLL_SLOT_MS)
   {
-    uint8_t state =
-        (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
-        (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
-        (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
-        (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
-
-    communication::enableOutput();
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), state);
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_S));
-    Serial1.flush();
-    communication::disableOutput();
+    return;
   }
-  else if (pollTarget == 1)
+  if (communication::isAwaitingReply && elapsed < communication::REPLY_TIMEOUT_MS)
   {
-    communication::enableOutput();
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_N));
-    Serial1.flush();
-    communication::disableOutput();
-  }
-  else if (pollTarget == 2)
-  {
-    uint8_t syncState = 0;
-    if (control::igniter.isRaised()) syncState |= (1 << 0);
-    if (control::open.isRaised()) syncState |= (1 << 1);
-
-    communication::enableOutput();
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::ROCKET_NODE_STATE_SYNC), syncState);
-    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_L_TO_RN));
-    Serial1.flush();
-    communication::disableOutput();
+    return;
   }
 
-  pollTarget = (pollTarget + 1) % 3;
-}
+  // 遅れて届いた応答の受信中に送信を始めないよう、受信が途切れるまで待つ
+  communication::waitRxIdle();
 
-void communication::sendSensorConfigSync()
-{
+  uint8_t state =
+      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
+      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
+      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
+      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
+
+  communication::txSeq++;
+  // 新しい seq への応答を受け取るまで、届いたフィードバックは採用しない
+  communication::isLastReplyValid = false;
+
   communication::enableOutput();
-  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC), 10.0f);
+  communication::sendPendingCommands();
+  // CONTROL_SYNC は必ずバーストの最後に送る。
+  // サテライトはこれを受け取ると返信を始めるため、後ろにパケットがあると返信と衝突する
+  MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::CONTROL_SYNC), state, communication::txSeq);
   Serial1.flush();
   communication::disableOutput();
+
+  communication::lastPollSentTime = millis();
+  communication::isAwaitingReply = true;
 }
 
-void communication::sendSensorDummyCurrent(float current_mA)
+/// @brief 送信予約された単発コマンドを送る (pollingTask から、送信有効中に呼ぶ)
+void communication::sendPendingCommands()
 {
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC),
-      current_mA);
-  Serial1.flush();
-  communication::disableOutput();
+  if (communication::hasPendingSensorConfig)
+  {
+    MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CONFIG_SYNC), 10.0f); // Default 10.0 MPa
+    communication::hasPendingSensorConfig = false;
+  }
+  if (communication::hasPendingCalibCoeff)
+  {
+    MsgPacketizer::send(
+        Serial1,
+        static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC),
+        communication::pendingCalibA, communication::pendingCalibB);
+    communication::hasPendingCalibCoeff = false;
+  }
+  if (communication::hasPendingDummyCurrent)
+  {
+    MsgPacketizer::send(
+        Serial1,
+        static_cast<uint8_t>(communication::Packet::SENSOR_DUMMY_CURRENT_SYNC),
+        communication::pendingDummyCurrent_mA);
+    communication::hasPendingDummyCurrent = false;
+  }
+  if (communication::hasPendingZeroCalib)
+  {
+    Serial.println(">>> Requesting Remote Zero-Point Calibration...");
+    MsgPacketizer::send(
+        Serial1,
+        static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ));
+    communication::hasPendingZeroCalib = false;
+  }
 }
 
-void communication::sendSensorCalibCoeff(float a, float b)
+/// @brief センサの基本設定（フルスケール圧など）の送信を予約する
+void communication::requestSensorConfigSync() { communication::hasPendingSensorConfig = true; }
+
+/// @brief シミュレーション用のダミー電流値の送信を予約する (0.0 でダミーモード解除)
+void communication::requestSensorDummyCurrent(float current_mA)
 {
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_CALIB_COEFF_SYNC), a, b);
-  Serial1.flush();
-  communication::disableOutput();
+  communication::pendingDummyCurrent_mA = current_mA;
+  communication::hasPendingDummyCurrent = true;
 }
 
-void communication::sendSensorZeroCalibReq()
+/**
+ * @brief センサ校正係数の送信を予約する
+ * @param a 傾き (Pressure = a * Current + b)
+ * @param b 切片
+ */
+void communication::requestSensorCalibCoeff(float a, float b)
 {
-  communication::enableOutput();
-  MsgPacketizer::send(
-      Serial1,
-      static_cast<uint8_t>(communication::Packet::SENSOR_ZERO_CALIB_REQ));
-  Serial1.flush();
-  communication::disableOutput();
+  communication::pendingCalibA = a;
+  communication::pendingCalibB = b;
+  communication::hasPendingCalibCoeff = true;
 }
 
+/**
+ * @brief ゼロ点校正（大気圧環境でのキャリブレーション）の実行リクエストの送信を予約する
+ */
+void communication::requestSensorZeroCalib() { communication::hasPendingZeroCalib = true; }
+
+/// @brief サテライトへ設定一式 (フルスケール, 校正係数, ダミー電流解除) の送信を予約する
+/// 通信の確立・回復時と、サテライトが未設定 (再起動直後) と応答してきたときに呼ぶ
+void communication::requestSatelliteResync()
+{
+  communication::requestSensorConfigSync();
+  communication::requestSensorCalibCoeff(n2o::CALIB_SLOPE_A, n2o::CALIB_INTERCEPT_B);
+  communication::requestSensorDummyCurrent(0.0f);
+}
+
+// sendComCheck, sendComCheckNode was replaced by pollingTask
+
+/// @brief SatelliteController から転送されたリミットスイッチ状態を受信するコールバック
+/// SatelliteNode (ch0〜ch5) → SatelliteController → (LIMIT_SWITCH_SYNCパケット) → LaunchController
+/// 内部変数 limitSwitchState に保存し、isCh0Pressed() 〜 isCh5Pressed() で参照する。
 void communication::onLimitSwitchSyncReceived(uint8_t state)
 {
+  RX_LOG(RX_LIMIT);
+  // ソフトウェア・デバウンス（チャタリング防止）処理
+  // コメントアウトすることでデバウンスを無効化できます
 #define DEBOUNCE_LIMIT_SWITCH
+
 #ifdef DEBOUNCE_LIMIT_SWITCH
   static uint8_t lastRawState = 0;
   static uint8_t stableState = 0;
   static uint8_t confirmCount = 0;
-  constexpr uint8_t REQUIRED_CONFIRMS = 2;
+  constexpr uint8_t REQUIRED_CONFIRMS = 2; // 10Hz周期で2回連続一致(約200ms)で状態確定
 
   if (state == lastRawState)
   {
@@ -524,10 +900,32 @@ void communication::onLimitSwitchSyncReceived(uint8_t state)
 #else
   communication::limitSwitchState = state;
 #endif
+
+  // teleplot / デバッグ用: リミットスイッチ各chの状態をシリアルモニターで確認できるようにする
+  Serial.print(">limitSwitch_ch0:");
+  Serial.println(communication::isCh0Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch1:");
+  Serial.println(communication::isCh1Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch2:");
+  Serial.println(communication::isCh2Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch3:");
+  Serial.println(communication::isCh3Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch4:");
+  Serial.println(communication::isCh4Pressed() ? 1 : 0);
+  Serial.print(">limitSwitch_ch5:");
+  Serial.println(communication::isCh5Pressed() ? 1 : 0);
 }
 
+/// @brief 機体から実際の電磁弁状態（フィードバック）を受信した際のコールバック
 void communication::onFeedbackSyncReceived(uint8_t state)
 {
+  RX_LOG(RX_FEEDBACK);
+  // 最新の CONTROL_SYNC への応答でなければ (遅れて届いた古い応答など) 反映しない
+  if (!communication::isLastReplyValid)
+  {
+    return;
+  }
+  // 受信したビット列を展開し、各フィードバック用LEDに状態を反映させる
   control::shiftFB.set(state & (1 << 0));
   control::fillFB.set(state & (1 << 1));
   control::dumpFB.set(state & (1 << 2));
@@ -537,8 +935,13 @@ void communication::onFeedbackSyncReceived(uint8_t state)
   control::closeFB.set(state & (1 << 6));
   control::purgeFB.set(state & (1 << 7));
 
+  // コマンド vs FB の不一致による故障デバウンスチェック
+  // 「弁をONに指示したのにFBがOFF」 or 「OFFに指示したのにFBがON」を連続検出する
+  // ※ Armed状態のときのみチェックする（未展開時は常にFB=OFFなので誤検知防止）
   if (control::safetyArmed.isManualRaised())
   {
+    // 各弁 of コマンド状態（isRaised）とFB状態を比較するラムダ
+    // mismatchが継続したらカウントアップし、一定回数に達したら故障確定（trueを返す）
     auto checkFault = [](bool cmdOn, bool fbOn,
                          uint8_t &count, const char *name) -> bool
     {
@@ -552,24 +955,37 @@ void communication::onFeedbackSyncReceived(uint8_t state)
         {
           Serial.print("[SOLENOID FAULT] ");
           Serial.print(name);
-          Serial.println(" mismatch confirmed");
+          Serial.print(": CMD=");
+          Serial.print(cmdOn ? "ON" : "OFF");
+          Serial.print(" FB=");
+          Serial.print(fbOn ? "ON" : "OFF");
+          Serial.print(" (mismatch confirmed ");
+          Serial.print(solenoid::FAULT_CONFIRM_COUNT);
+          Serial.println(" times)");
           return true;
         }
       }
       else
       {
+        // 一致したのでカウンタリセット
         count = 0;
       }
       return false;
     };
 
     bool hasFault = false;
-    hasFault |= checkFault(control::fill.isRaised(),   (state & (1 << 1)) != 0, solenoid::fillFaultCount,   "FILL");
-    hasFault |= checkFault(control::dump.isRaised(),   (state & (1 << 2)) != 0, solenoid::dumpFaultCount,   "DUMP");
-    hasFault |= checkFault(control::oxygen.isRaised(), (state & (1 << 3)) != 0, solenoid::oxygenFaultCount, "OXYGEN");
-    hasFault |= checkFault(control::purge.isRaised(),  (state & (1 << 7)) != 0, solenoid::purgeFaultCount,  "PURGE");
-    hasFault |= checkFault(control::open.isRaised(),   (state & (1 << 5)) != 0, solenoid::openFaultCount,   "OPEN");
-    hasFault |= checkFault(control::close.isRaised(),  (state & (1 << 6)) != 0, solenoid::closeFaultCount,  "CLOSE");
+    hasFault |= checkFault(control::fill.isRaised(), (state & (1 << 1)) != 0,
+                           solenoid::fillFaultCount, "FILL");
+    hasFault |= checkFault(control::dump.isRaised(), (state & (1 << 2)) != 0,
+                           solenoid::dumpFaultCount, "DUMP");
+    hasFault |= checkFault(control::oxygen.isRaised(), (state & (1 << 3)) != 0,
+                           solenoid::oxygenFaultCount, "OXYGEN");
+    hasFault |= checkFault(control::purge.isRaised(), (state & (1 << 7)) != 0,
+                           solenoid::purgeFaultCount, "PURGE");
+    hasFault |= checkFault(control::open.isRaised(), (state & (1 << 5)) != 0,
+                           solenoid::openFaultCount, "OPEN");
+    hasFault |= checkFault(control::close.isRaised(), (state & (1 << 6)) != 0,
+                           solenoid::closeFaultCount, "CLOSE");
 
     if (hasFault)
     {
@@ -577,81 +993,136 @@ void communication::onFeedbackSyncReceived(uint8_t state)
     }
     else
     {
+      // 故障判定がすべてクリアされた（またはデバウンス回数未満）場合はエラーランプを消灯
       error::statusLamp.off();
     }
   }
   else
   {
-    solenoid::fillFaultCount   = 0;
-    solenoid::dumpFaultCount   = 0;
+    // Armed解除中はカウンタをリセット
+    solenoid::fillFaultCount = 0;
+    solenoid::dumpFaultCount = 0;
     solenoid::oxygenFaultCount = 0;
-    solenoid::purgeFaultCount  = 0;
-    solenoid::openFaultCount   = 0;
-    solenoid::closeFaultCount  = 0;
+    solenoid::purgeFaultCount = 0;
+    solenoid::openFaultCount = 0;
+    solenoid::closeFaultCount = 0;
   }
 }
 
+/// @brief 機体から算出された圧力値を受信した際のコールバック
 void communication::onPressureSyncReceived(float pressure)
 {
+  RX_LOG(RX_PRESSURE);
+  if (!communication::isLastReplyValid)
+  {
+    return;
+  }
+  // 7セグメントディスプレイに圧力を表示
   n2o::tm1637.displayNumber(pressure);
-  raspi_wireless::latestPressure_MPa = pressure;
 }
 
+/**
+ * @brief 機体から受信した生の電流値(mA)をシリアル出力
+ */
 void communication::onCurrentSyncReceived(float current_mA)
 {
+  RX_LOG(RX_CURRENT);
+  if (!communication::isLastReplyValid)
+  {
+    return;
+  }
   Serial.print(">VESIM10 Current: ");
   Serial.println(current_mA);
 }
 
-void communication::onComCheckReceived()
+/// @brief 機体から通信生存確認（ハートビート）を受信した際のコールバック
+/// サテライトは返信の先頭でこれを送るため、続く FEEDBACK/PRESSURE/CURRENT の採否はここで決まる
+/// @param seq 応答元の CONTROL_SYNC の通し番号 (エコー)
+/// @param isConfigured サテライトがセンサ設定・校正係数を受信済みか (false なら再起動直後)
+void communication::onComCheckReceived(uint8_t seq, bool isConfigured)
 {
+  RX_LOG(RX_COMCHECK_S);
+
+  // 最新の CONTROL_SYNC への応答でなければ、生存確認に使わない
+  // (WiFi 再接続時に NPort から遅れてまとめて届いた古い応答など)
+  communication::isLastReplyValid = (seq == communication::txSeq);
+  if (!communication::isLastReplyValid)
+  {
+    Serial.print("[COM] stale reply ignored: seq=");
+    Serial.print(seq);
+    Serial.print(" expected=");
+    Serial.println(communication::txSeq);
+    return;
+  }
+
+  communication::isAwaitingReply = false;
+  communication::lastRoundTrip_ms = millis() - communication::lastPollSentTime;
+  // 通信受信時刻を更新
   communication::preReceivedTime = millis();
 
-  if (millis() - communication::preReceivedTime <= communication::timeout &&
-      millis() - communication::preReceivedTime_Node <= communication::timeout)
+  if (!communication::isSatelliteLinkUp)
   {
-    communication::statusLamp.on();
-    error::statusLamp.off();
+    // 途絶 → 回復 (または起動後の初回接続)。設定一式を送り直す
+    communication::isSatelliteLinkUp = true;
+    Serial.print("[COM] SatelliteController link up (RTT=");
+    Serial.print(communication::lastRoundTrip_ms);
+    Serial.println("ms)");
+    communication::requestSatelliteResync();
+
+    // ゼロ点校正は起動後の最初の接続時のみ (再接続のたびには行わない)
+    if (!communication::hasRequestedZeroCalib)
+    {
+      communication::requestSensorZeroCalib();
+      communication::hasRequestedZeroCalib = true;
+    }
   }
-}
-
-void communication::onComCheckNodeReceived()
-{
-  communication::preReceivedTime_Node = millis();
-
-  if (millis() - communication::preReceivedTime <= communication::timeout &&
-      millis() - communication::preReceivedTime_Node <= communication::timeout)
+  else if (!isConfigured && !communication::hasPendingCalibCoeff)
   {
-    communication::statusLamp.on();
-    error::statusLamp.off();
+    // 通信は途切れていないが、サテライトだけが再起動して設定を失っている
+    Serial.println("[COM] SatelliteController is not configured (rebooted?): resending sensor settings");
+    Serial.println("[COM] note: zero-point calibration is NOT re-run automatically");
+    communication::requestSatelliteResync();
   }
+
+  // タイムアウト以内であれば通信正常ランプを点灯
+  communication::statusLamp.on();
+  error::statusLamp.off();
 }
 
-void communication::onComCheckRocketNodeReceived()
-{
-  communication::preReceivedTime_RocketNode = millis();
-  if (communication::isRocketNodeDisconnected) {
-      communication::isRocketNodeDisconnected = false;
-      Serial.println("[INFO] RocketNode Connected");
-  }
-}
-
+/// @brief サテライトとの通信が途絶した（タイムアウト）場合に実行されるフェールセーフタスク
 void communication::onComCheckFailed()
 {
   bool controllerTimeout = (millis() - communication::preReceivedTime > communication::timeout);
-  bool nodeTimeout = (millis() - communication::preReceivedTime_Node > communication::timeout);
-  bool rocketNodeTimeout = (millis() - communication::preReceivedTime_RocketNode > communication::timeout);
 
-  if (controllerTimeout || nodeTimeout)
+  if (controllerTimeout)
+  {
+    static unsigned long lastLogTime = 0;
+    if (millis() - lastLogTime > 2000) // 2秒おきに出力
+    {
+      Serial.println("[COM ERROR] SatelliteController timed out!");
+      lastLogTime = millis();
+    }
+  }
+
+  if (controllerTimeout && communication::isSatelliteLinkUp)
+  {
+    // 回復したときに設定一式を送り直すため、途絶を記録しておく
+    communication::isSatelliteLinkUp = false;
+    Serial.println("[COM] SatelliteController link down");
+  }
+
+  if (controllerTimeout)
   {
     communication::statusLamp.off();
     error::statusLamp.on();
 
+    // ★重要：シーケンス実行中に通信が切れたら、強制的にシーケンスを止める
     if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
     {
       sequence::peacefulStop();
     }
 
+    // 実際の電磁弁の状態が分からないため、操作卓側のフィードバックLEDも安全のため消灯させる
     control::fillFB.off();
     control::dumpFB.off();
     control::oxygenFB.off();
@@ -660,13 +1131,12 @@ void communication::onComCheckFailed()
     control::closeFB.off();
     control::purgeFB.off();
   }
-
-  if (rocketNodeTimeout && !communication::isRocketNodeDisconnected)
-  {
-    communication::isRocketNodeDisconnected = true;
-  }
 }
 
+/**
+ * @brief Python GUI (Visualizer) 用に現在の状態をSerial出力
+ * フォーマット: V_DATA:<CMD_BITS>,<FB_BITS>
+ */
 void communication::sendTelemetryForPython()
 {
   uint8_t cmd_state =
@@ -687,195 +1157,56 @@ void communication::sendTelemetryForPython()
   Serial.println(fb_state);
 }
 
-// =========================================================================
-// Raspberry Pi 4 無線遠隔制御実装 (新規 3.0)
-// =========================================================================
-
-/// @brief Raspberry Pi 4 からのハートビート受信ハンドラ
-void raspi_wireless::onRaspiHeartbeatReceived()
-{
-  raspi_wireless::lastHeartbeatTime = millis();
-  if (!raspi_wireless::isWirelessConnected)
-  {
-    raspi_wireless::isWirelessConnected = true;
-    Serial.println("[RASPI WIRELESS] Link Established / Restored.");
-  }
-}
-
-/// @brief Raspberry Pi 4 からの遠隔制御コマンド受信ハンドラ
-void raspi_wireless::onRaspiCommandReceived(uint8_t cmdType, uint8_t param)
-{
-  raspi_wireless::lastHeartbeatTime = millis(); // コマンド受信時も生存時刻更新
-
-  // 【必須条件】無線接続がタイムアウトしている場合はリモートコマンドを拒否
-  if (!raspi_wireless::isWirelessConnected)
-  {
-    Serial.println("[RASPI WIRELESS REJECT] Remote command rejected: Wireless link not connected!");
-    error::statusLamp.on();
-    return;
-  }
-
-  // 物理セーフティスイッチがONになっていない場合はリモート動作をブロック
-  bool isArmed = control::safetyArmed.isManualRaised() || raspi_wireless::remoteArmingState;
-
-  RemoteCmd cmd = static_cast<RemoteCmd>(cmdType);
-  switch (cmd)
-  {
-  case RemoteCmd::EMERGENCY_STOP:
-    Serial.println("[RASPI CMD] Remote Emergency Stop triggered!");
-    sequence::emergencyStop();
-    break;
-
-  case RemoteCmd::PEACEFUL_STOP:
-    Serial.println("[RASPI CMD] Remote Peaceful Stop triggered!");
-    sequence::peacefulStop();
-    break;
-
-  case RemoteCmd::FILL_START:
-    if (!isArmed)
-    {
-      Serial.println("[RASPI CMD REJECT] Remote Fill blocked: Safety not ARMED!");
-      error::statusLamp.on();
-      return;
-    }
-    Serial.println("[RASPI CMD] Remote Fill Sequence Start requested!");
-    sequence::fill();
-    break;
-
-  case RemoteCmd::IGNITION_START:
-    if (!isArmed)
-    {
-      Serial.println("[RASPI CMD REJECT] Remote Ignition blocked: Safety not ARMED!");
-      error::statusLamp.on();
-      return;
-    }
-    Serial.println("[RASPI CMD] Remote Ignition Sequence Start requested!");
-    sequence::ignition();
-    break;
-
-  case RemoteCmd::ARM_SAFETY:
-    raspi_wireless::remoteArmingState = (param != 0);
-    Serial.print("[RASPI CMD] Remote Arming set to: ");
-    Serial.println(raspi_wireless::remoteArmingState ? "ARMED" : "DISARMED");
-    break;
-
-  case RemoteCmd::VALVE_CONTROL:
-    if (!isArmed)
-    {
-      Serial.println("[RASPI CMD REJECT] Remote Valve control blocked: Safety not ARMED!");
-      error::statusLamp.on();
-      return;
-    }
-    // param: bit0=shift, bit1=fill, bit2=dump, bit3=o2, bit4=igniter, bit5=open, bit6=close, bit7=purge
-    if (param & (1 << 1)) control::fill.setAutomaticOn(); else control::fill.setAutomaticOff();
-    if (param & (1 << 2)) control::dump.setAutomaticOn(); else control::dump.setAutomaticOff();
-    if (param & (1 << 3)) control::oxygen.setAutomaticOn(); else control::oxygen.setAutomaticOff();
-    if (param & (1 << 4)) control::igniter.setAutomaticOn(); else control::igniter.setAutomaticOff();
-    if (param & (1 << 5)) control::open.setAutomaticOn(); else control::open.setAutomaticOff();
-    if (param & (1 << 6)) control::close.setAutomaticOn(); else control::close.setAutomaticOff();
-    if (param & (1 << 7)) control::purge.setAutomaticOn(); else control::purge.setAutomaticOff();
-    Serial.print("[RASPI CMD] Remote Valve Control applied: 0x");
-    Serial.println(param, HEX);
-    break;
-
-  case RemoteCmd::ZERO_CALIB:
-    Serial.println("[RASPI CMD] Remote Zero Calibration requested!");
-    communication::sendSensorZeroCalibReq();
-    break;
-
-  default:
-    Serial.print("[RASPI CMD WARN] Unknown Remote Command: ");
-    Serial.println(cmdType);
-    break;
-  }
-}
-
-/// @brief 無線接続生存監視タスク（無線化必須条件のインターロック）
-void raspi_wireless::checkWirelessTask()
-{
-  // 相互生存確認（Heartbeat L -> R）を送信
-  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_HEARTBEAT_L_TO_R));
-
-  bool timeoutOccurred = (millis() - raspi_wireless::lastHeartbeatTime > raspi_wireless::WIRELESS_TIMEOUT_MS);
-
-  if (timeoutOccurred)
-  {
-    if (raspi_wireless::isWirelessConnected)
-    {
-      raspi_wireless::isWirelessConnected = false;
-      Serial.println("[RASPI WIRELESS CRITICAL] Wireless link LOST! Interlock activated.");
-      error::statusLamp.on();
-
-      // ★【必須条件アルゴリズム】自動シーケンス進行中かつ無線途絶時は直ちに安全停止を発動
-      if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
-      {
-        Serial.println("[RASPI WIRELESS FAIL-SAFE] Automatic sequence active during wireless drop -> Triggering Emergency Stop!");
-        sequence::emergencyStop();
-      }
-    }
-  }
-
-  // 無線状態のステータス同期パケット送信
-  uint8_t wirelessState = (raspi_wireless::isWirelessConnected ? 1 : 0);
-  MsgPacketizer::send(Serial, static_cast<uint8_t>(communication::Packet::RASPI_WIRELESS_STATUS), wirelessState);
-}
-
-/// @brief Raspberry Pi 4 へ無線テレメトリを一括送信するタスク (10Hz)
-void raspi_wireless::sendWirelessTelemetryTask()
-{
-  uint8_t cmd_state =
-      (control::shift.isRaised() << 0) | (control::fill.isRaised() << 1) |
-      (control::dump.isRaised() << 2) | (control::oxygen.isRaised() << 3) |
-      (control::igniter.isRaised() << 4) | (control::open.isRaised() << 5) |
-      (control::close.isRaised() << 6) | (control::purge.isRaised() << 7);
-
-  uint8_t fb_state =
-      (control::shiftFB.isHigh() << 0) | (control::fillFB.isHigh() << 1) |
-      (control::dumpFB.isHigh() << 2) | (control::oxygenFB.isHigh() << 3) |
-      (control::igniterFB.isHigh() << 4) | (control::openFB.isHigh() << 5) |
-      (control::closeFB.isHigh() << 6) | (control::purgeFB.isHigh() << 7);
-
-  uint8_t sequence_flag =
-      (sequence::emergencyStopSequenceIsActive << 0) |
-      (sequence::fillSequenceIsActive << 1) |
-      (sequence::ignitionSequenceIsActive << 2) |
-      (sequence::canConfirm << 3) |
-      (raspi_wireless::isWirelessConnected << 4);
-
-  // パケット送信: RASPI_TELEMETRY
-  // cmd_state (1 byte), fb_state (1 byte), sequence_flag (1 byte), pressure_MPa (float), limitSwitchState (1 byte), launch_voltage (float)
-  MsgPacketizer::send(
-      Serial,
-      static_cast<uint8_t>(communication::Packet::RASPI_TELEMETRY),
-      cmd_state, fb_state, sequence_flag, raspi_wireless::latestPressure_MPa, communication::limitSwitchState,
-      power::input.getVoltage_V());
-}
-
+/// @brief 操作卓の物理スイッチ・ボタン入力を読み取り、各種制御を行うメインタスク
 void control::handleManualTask()
 {
+  // タスクが稼働中であることを示すランプを点滅させる
   control::statusLamp.pulse(50);
 
+  // ================= キルスイッチ処理 =================
   if (power::killButton.isHigh())
   {
-    mp3_play(12);
-    power::powerLamp.off(); delay(500); power::powerLamp.on(); delay(500);
-    power::powerLamp.off(); delay(500); power::powerLamp.on(); delay(500);
-    power::powerLamp.off(); delay(500); power::powerLamp.on(); delay(500);
+    mp3_play(12); // 電源を落とすときの音声(アラート)を再生
+
+    // システム電源を落とす前に、電源ランプを数回点滅させる
+    // 【注意】ここで delay(500) を使用しているため、この間 TaskManager や RS485 通信は完全に停止します
     power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+    power::powerLamp.on();
+    delay(500);
+    power::powerLamp.off();
+    delay(500);
+
+    // 最後にロードスイッチをオフにして物理的に電源供給を遮断する
     power::loadSwitch.off();
   }
 
+  // ================= セーフティースイッチ処理 =================
+  // セーフティースイッチの状態を読み取り
   control::safetyArmed.setManual();
-  if (!control::safetyArmed.isManualRaised() && !raspi_wireless::remoteArmingState)
+  // Armed(ON)でなければ、これ以降の手動操作・シーケンス処理を行わずに関数を抜ける
+  if (!control::safetyArmed.isManualRaised())
   {
+    // もしシーケンスが進行中だった場合は、安全のため穏便にシーケンスを停止させる
     if (sequence::emergencyStopSequenceIsActive ||
         sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
     {
       sequence::peacefulStop();
     }
+
     return;
   }
 
+  // ★ リミットスイッチによる安全ゲートの常時監視 (シーケンス中)
+  // シーケンス実行中に安全状態が崩れたら、強制的にシーケンスを止める
   if (sequence::fillSequenceIsActive || sequence::ignitionSequenceIsActive)
   {
     if (!communication::isSafetyGateMet())
@@ -886,55 +1217,100 @@ void control::handleManualTask()
     }
   }
 
+  // ================= エマージェンシーストップ（緊急停止）処理 =================
   control::emergencyStop.setManual();
   if (control::emergencyStop.isManualRaised())
   {
+    // エマストボタンが押されたら、直ちにエマストシーケンス（安全な状態への移行）を発動
     sequence::emergencyStop();
   }
 
+  // ================= 充填シーケンス処理 =================
   control::sequenceStart.setManual();
 
+  // DUMPがCLOSEされていない場合、シーケンス開始ボタンを押してもシーケンスを開始させないための安全ロック
   if (control::sequenceStart.isManualRaised() &&
       !control::dump.isManualRaised() &&
       !sequence::emergencyStopSequenceIsActive)
   {
-    mp3_play(13);
+    mp3_play(13); // エラー音を再生
     return;
   }
 
+  // シーケンス開始スイッチが押された場合の処理
   if (control::sequenceStart.isManualRaised())
   {
+    // スイッチが「新しく押された瞬間」だけ処理を進める（長押しによる連打を防止）
     if (sequence::sequenceStartRiseCount == 0)
     {
+      // どのシーケンスも実行されていなければ、充填シーケンスを開始
       if (!(sequence::emergencyStopSequenceIsActive ||
             sequence::fillSequenceIsActive ||
             sequence::ignitionSequenceIsActive))
       {
         sequence::fill();
       }
+      // すでに充填シーケンスが完了し、点火確認状態であれば、点火シーケンスを開始
       else if (sequence::canConfirm)
       {
         sequence::ignition();
       }
+      // それ以外（進行中のシーケンスを中断したい場合など）はシーケンスを止める
       else
       {
         sequence::peacefulStop();
       }
     }
+
     sequence::sequenceStartRiseCount++;
   }
   else
   {
+    // スイッチが離されたらカウントをリセット
     sequence::sequenceStartRiseCount = 0;
   }
 
+  // ================= 点火シーケンス処理（3人同時押し） =================
+  // confirm1, confirm2, confirm3 がすべて同時に押されたら点火シーケンスを開始する
   if (control::confirm1.isHigh() && control::confirm2.isHigh() && control::confirm3.isHigh())
   {
     sequence::ignition();
   }
 
+  // ================= 手動操作処理 =================
+  // 各電磁弁の手動トグルスイッチの状態を読み取り、出力設定に反映させる
+  // (シーケンスによってAutomaticに制御されていない場合のみ有効)
   control::shift.setManual();
+
   control::fill.setManual();
+
+  // FILLのみリミットスイッチによる安全ゲートで制限しようと思ったが，
+  // FILL弁からN2OをDUMPしたいときに不都合なためコメントアウト
+  ///////////////////////////////////////////////////////////////////////////
+  // static bool lastFillBlocked = false;
+  // if (!communication::isSafetyGateMet())
+  // {
+  //   if (control::fill.isManualRaised())
+  //   {
+  //     control::fill.setManualOff();
+  //     if (!lastFillBlocked)
+  //     {
+  //       Serial.println("[GATE] Manual FILL blocked: limit switch safety gate not met.");
+  //       lastFillBlocked = true;
+  //       error::statusLamp.on(); // エラーランプ点灯
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   if (lastFillBlocked)
+  //   {
+  //     error::statusLamp.off();
+  //     lastFillBlocked = false;
+  //   }
+  // }
+  ///////////////////////////////////////////////////////////////////////////
+
   control::dump.setManual();
   control::oxygen.setManual();
   control::igniter.setManual();
@@ -943,21 +1319,25 @@ void control::handleManualTask()
   control::purge.setManual();
 }
 
+/// @brief 緊急停止シーケンスを発動し、各電磁弁を安全な状態へ強制移行する
 void sequence::emergencyStop()
 {
+  // 重複実行防止
   if (sequence::emergencyStopSequenceIsActive)
     return;
 
+  // フラグの更新
   sequence::emergencyStopSequenceIsActive = true;
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
   sequence::canConfirm = false;
 
-  control::emergencyStop.setAutomaticOn();
-  mp3_play(3);
+  control::emergencyStop.setAutomaticOn(); // エマストランプ点灯
+  mp3_play(3);                             // 0102_emergencyStop.mp3
 
   control::sequenceStart.setAutomaticOff();
 
+  // 進行中のTaskManagerタスク（音楽再生や時限発火のバルブ操作）をすべて強制停止する
   Tasks[control::PLAY_MUSIC]->stop();
   Tasks[control::FILL_START]->stop();
   Tasks[control::OXYGEN_START]->stop();
@@ -966,14 +1346,19 @@ void sequence::emergencyStop()
   Tasks[control::OPEN_START]->stop();
   Tasks[control::OXYGEN_STOP]->stop();
   Tasks[control::IGNITER_STOP]->stop();
+  Tasks[control::PURGE_START]->stop();
+  Tasks[control::PURGE_STOP]->stop();
 
+  // 電磁弁を安全状態(DUMP開など)にセット
   control::setEmergencyStop();
 }
 
+/// @brief 通常のシーケンス中断（穏便ストップ）処理。実行中のシーケンスをキャンセルする
 void sequence::peacefulStop()
 {
   control::sequenceStart.setAutomaticOff();
 
+  // すべてのシーケンスフラグを解除
   sequence::emergencyStopSequenceIsActive = false;
   sequence::fillSequenceIsActive = false;
   sequence::ignitionSequenceIsActive = false;
@@ -982,6 +1367,7 @@ void sequence::peacefulStop()
   control::sequenceStart.setAutomaticOff();
   control::emergencyStop.setAutomaticOff();
 
+  // 進行中のTaskManagerタスクをすべて停止する
   Tasks[control::PLAY_MUSIC]->stop();
   Tasks[control::FILL_START]->stop();
   Tasks[control::OXYGEN_START]->stop();
@@ -993,98 +1379,130 @@ void sequence::peacefulStop()
   Tasks[control::IGNITER_STOP]->stop();
   Tasks[control::PURGE_STOP]->stop();
 
-  mp3_stop();
-  control::setPeacefulStop();
+  mp3_stop();                 // 音楽・音声を停止
+  control::setPeacefulStop(); // 各操作の自動制御状態を解除
 }
 
+/// @brief 自動充填シーケンスを開始する
 void sequence::fill()
 {
+  // 重複実行防止
   if (sequence::fillSequenceIsActive)
     return;
 
+  // エマスト中は充填シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive)
     return;
 
+  // シーケンス開始時点で充填確認(confirm1〜3)が既に押されていたらエラーを吐いて中断
   if (control::confirm1.isHigh() || control::confirm2.isHigh() || control::confirm3.isHigh())
   {
+    // HACK エラー
     sequence::peacefulStop();
     error::statusLamp.on();
     return;
   }
 
+  // 通信状態が正常でない（通信切断中）場合はシーケンスに進めない
   if (!communication::statusLamp.isHigh())
   {
     sequence::peacefulStop();
     return;
   }
 
+  // ★ リミットスイッチによる安全ゲート
+  // 安全ゲート（必要なリミットスイッチ）が満たされていない場合は充填シーケンスを開始しない
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::fill() blocked: limit switch safety gate not met.");
-    error::statusLamp.on();
-    sequence::peacefulStop();
-    mp3_play(13);
+    error::statusLamp.on();   // 未押下をエラーランプで通知
+    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13);             // エラー音再生
     return;
   }
 
+  // フラグ更新
   sequence::fillSequenceIsActive = true;
   sequence::canConfirm = false;
 
-  control::sequenceStart.setAutomaticOn();
-  mp3_play(10);
+  control::sequenceStart.setAutomaticOn(); // シーケンスランプ点灯
+  mp3_play(10);                            // 音声再生
 
+  // 15秒後に音楽再生タスクをスケジュール
   Tasks[control::PLAY_MUSIC]->startOnceAfterSec(15.0);
+  // 24秒後に実際の充填（FILL開）タスクをスケジュール
   Tasks[control::FILL_START]->startOnceAfterSec(24.0);
 }
 
+/// @brief 自動点火シーケンスを開始する
 void sequence::ignition()
 {
+  // 重複実行防止
   if (sequence::ignitionSequenceIsActive)
     return;
 
+  // 通信失敗時は点火シーケンスに進めない
   if (!communication::statusLamp.isHigh())
   {
     sequence::peacefulStop();
     return;
   }
 
+  // エマスト中は点火シーケンスを始めない
   if (sequence::emergencyStopSequenceIsActive)
     return;
 
+  // 充填シーケンス（FILL_START）が走っていない（自動的にFILLが上がっていない）場合は始めない
   if (!control::fill.isAutomaticRaised())
     return;
 
+  // 手動でFILLをONにしている最中は点火シーケンスを始めない
   if (control::fill.isManualRaised())
     return;
 
+  // ★ リミットスイッチによる安全ゲート
+  // 安全ゲート（必要なリミットスイッチ）が満たされていない場合は点火シーケンスに進めない
   if (!communication::isSafetyGateMet())
   {
     Serial.println("[GATE] sequence::ignition() blocked: limit switch safety gate not met.");
-    error::statusLamp.on();
-    sequence::peacefulStop();
-    mp3_play(13);
+    error::statusLamp.on();   // 未押下をエラーランプで通知
+    sequence::peacefulStop(); // シーケンスをキャンセル（穏便ストップ）
+    mp3_play(13);             // エラー音再生
     return;
   }
 
+  // フラグ更新
   sequence::ignitionSequenceIsActive = true;
   sequence::canConfirm = false;
 
   control::sequenceStart.setAutomaticOn();
-  mp3_play(4);
+  mp3_play(4); // 0104_ignitionSequenceStart
 
-  Tasks[control::OXYGEN_START]->startOnceAfterMsec(50);
-  Tasks[control::IGNITER_START]->startOnceAfterSec(1.0);
-  Tasks[control::FILL_STOP]->startOnceAfterSec(10.0);
-  Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
-  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.5);
-  Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.5);
-  Tasks[control::PURGE_START]->startOnceAfterSec(30.5);
-  Tasks[control::PURGE_STOP]->startOnceAfterSec(35.5);
+  // 「充填が確認されました．点火します．5秒前...」←これが4.5秒くらいかかる
+
+  Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5); // THR-406K 用に変更
+
+  Tasks[control::IGNITER_START]->startOnceAfterSec(5.5); // THR-406K 用に変更
+
+  // 充填(FILL)バルブを閉じる (9.5秒後: カウントダウン終了付近)
+  Tasks[control::FILL_STOP]->startOnceAfterSec(9.5);
+  // 主流路(OPEN)バルブを開く (9.5秒後)
+  Tasks[control::OPEN_START]->startOnceAfterSec(9.5);
+
+  // 酸素(O2)バルブと点火器(IGNITER)をオフにする (10.0秒後)
+  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.0);
+  Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.0);
+
+  // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする
+  Tasks[control::PURGE_START]->startOnceAfterSec(15.5);
+  // パージを終了する
+  Tasks[control::PURGE_STOP]->startOnceAfterSec(20.5);
 }
 
+/// @brief 起動時にすべてのLEDやフィードバックランプをテスト点灯する
 void control::setChristmasTreeStart()
 {
-  n2o::tm1637.displayNumber(8.8);
+  n2o::tm1637.displayNumber(8.8); // 7セグに8.8を表示
   error::statusLamp.setTestOn();
   power::lowVoltageLamp.setTestOn();
   control::statusLamp.setTestOn();
@@ -1111,6 +1529,7 @@ void control::setChristmasTreeStart()
   control::purgeFB.setTestOn();
 }
 
+/// @brief テスト点灯（クリスマスツリー）を終了する
 void control::setChristmasTreeStop()
 {
   n2o::tm1637.clearDisplay();
@@ -1140,18 +1559,26 @@ void control::setChristmasTreeStop()
   control::purgeFB.setTestOff();
 }
 
+/// @brief エマスト（緊急停止）時に設定する各バルブ・制御状態
 void control::setEmergencyStop()
 {
   control::fill.setAutomaticOff();
   control::oxygen.setAutomaticOff();
   control::igniter.setAutomaticOff();
   control::open.setAutomaticOff();
+  // 万一のためCLOSEをONにして主流路を閉じる
   control::close.setAutomaticOn();
-  control::dump.setAutomaticOff();
+
+  // DUMPを開放(CLOSE)してタンク内の圧力を抜く
+  // control::dump.setAutomaticOn();
+  control::dump.setAutomaticOff(); // ※シークエンス開始前にDUMPをCLOSEするための処理
   control::dump.setManualOff();
+
+  // パージをONにして消火する
   control::purge.setAutomaticOn();
 }
 
+/// @brief 通常のシーケンス中断時に各自動制御フラグをリセットする
 void control::setPeacefulStop()
 {
   control::fill.setAutomaticOff();
@@ -1163,9 +1590,11 @@ void control::setPeacefulStop()
   control::purge.setAutomaticOff();
 }
 
+/// @brief 各シーケンス動作でTaskManagerから呼び出されるヘルパー関数群
 void control::setFillStart()
 {
   control::fill.setAutomaticOn();
+  // FILLが始まったら、点火前の最終確認が可能になる
   sequence::canConfirm = true;
 }
 
