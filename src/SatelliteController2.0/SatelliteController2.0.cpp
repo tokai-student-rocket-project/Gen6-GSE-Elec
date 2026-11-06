@@ -475,7 +475,7 @@ void communication::sendReplyToLaunch()
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::SENSOR_CURRENT_SYNC), n2o::vesim10.getCurrent_mA());
   MsgPacketizer::send(Serial1, static_cast<uint8_t>(communication::Packet::COM_CHECK_S_TO_L));
 
-  delayMicroseconds(500);
+  // delayMicroseconds(500);
   Serial1.flush();
   communication::disableOutput();
 }

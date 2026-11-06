@@ -58,8 +58,10 @@
 // =====================================================================
 #ifdef RS485_RX_LOG
 #define RX_LOG(id) communication::rxLog(communication::id)
+#define RX_RTT(ms) communication::rttRecord(ms)
 #else
 #define RX_LOG(id) ((void)0)
+#define RX_RTT(ms) ((void)0)
 #endif
 
 namespace power
@@ -385,7 +387,13 @@ namespace communication
   uint32_t rxByteCount = 0;
   uint32_t rxPacketCount[RX_ID_COUNT] = {0};
   unsigned long rxLastPacketMs = 0;
+  // 往復時間 (RTT) の1秒ごとの統計。最新の応答に対する値のみ集計する (古い応答は除外)
+  unsigned long rttMin_ms = 0;
+  unsigned long rttMax_ms = 0;
+  unsigned long rttSum_ms = 0;
+  uint16_t rttCount = 0;
   void rxLog(RxId id);
+  void rttRecord(unsigned long rtt_ms);
   void rxDebugTask(); // 1Hz で統計を出力
 #endif
 
@@ -570,6 +578,17 @@ void communication::rxLog(RxId id)
   Serial.println(rxLastPacketMs);
 }
 
+/// @brief 往復時間を1秒間の統計 (最小/最大/合計/件数) に加える
+void communication::rttRecord(unsigned long rtt_ms)
+{
+  if (rttCount == 0 || rtt_ms < rttMin_ms)
+    rttMin_ms = rtt_ms;
+  if (rttCount == 0 || rtt_ms > rttMax_ms)
+    rttMax_ms = rtt_ms;
+  rttSum_ms += rtt_ms;
+  rttCount++;
+}
+
 /// @brief 1秒ごとに受信統計を出力する
 void communication::rxDebugTask()
 {
@@ -605,6 +624,26 @@ void communication::rxDebugTask()
     Serial.print(millis() - rxLastPacketMs);
     Serial.println("ms ago");
   }
+
+  // 直近1秒の往復時間。timeout / REPLY_TIMEOUT_MS の妥当性はここで max を見て判断する
+  if (rttCount == 0)
+  {
+    Serial.println("[RTT] no valid reply in last 1s");
+  }
+  else
+  {
+    Serial.print("[RTT] n=");
+    Serial.print(rttCount);
+    Serial.print(" min=");
+    Serial.print(rttMin_ms);
+    Serial.print("ms avg=");
+    Serial.print(rttSum_ms / rttCount);
+    Serial.print("ms max=");
+    Serial.print(rttMax_ms);
+    Serial.println("ms");
+  }
+  rttCount = 0;
+  rttSum_ms = 0;
 
   // 切り分けのヒント: バイトが全く来ない / バイトは来るがパケットにならない
   if (delta == 0)
@@ -1075,6 +1114,7 @@ void communication::onComCheckReceived(uint8_t seq, bool isConfigured)
 
   communication::isAwaitingReply = false;
   communication::lastRoundTrip_ms = millis() - communication::lastPollSentTime;
+  RX_RTT(communication::lastRoundTrip_ms);
   // 通信受信時刻を更新
   communication::preReceivedTime = millis();
 

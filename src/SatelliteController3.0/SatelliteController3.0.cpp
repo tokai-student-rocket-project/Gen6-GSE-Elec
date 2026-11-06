@@ -131,6 +131,9 @@ namespace solenoid
   Debouncer oxygenDebouncer;
   Debouncer purgeDebouncer;
 
+  // 開故障 (OPEN_FAILURE) のときのフィードバックLED表示。
+  // -D BENCH_NO_SOLENOID では電磁弁を接続していなくても点滅しないよう消灯する (現場運用では指定しない)
+  void showOpenFailure(Output &led);
   // 特定の電磁弁の電圧・状態をチェックしシリアル出力する関数
   void checkSolenoid(SolenoidMonitor::Solenoid solenoid, const char *name);
   // すべての電磁弁の状態を監視・判定するタスク
@@ -309,6 +312,16 @@ void power::measureTask()
   }
 }
 
+/// @brief 開故障 (断線など) のときのフィードバックLED表示
+void solenoid::showOpenFailure(Output &led)
+{
+#ifdef BENCH_NO_SOLENOID
+  led.off();
+#else
+  led.toggle();
+#endif
+}
+
 /// @brief 電磁弁の動作状態を監視・判定し、フィードバックLEDに反映させるタスク
 void solenoid::measureTask()
 {
@@ -364,7 +377,7 @@ void solenoid::measureTask()
   switch (fillStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE: // 断線などの開故障 -> LEDを点滅（エラー）
-    control::fillFB.toggle();
+    showOpenFailure(control::fillFB);
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE: // 短絡などの閉故障 -> LED消灯
     control::fillFB.off();
@@ -381,7 +394,7 @@ void solenoid::measureTask()
   switch (dumpStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::dumpFB.toggle();
+    showOpenFailure(control::dumpFB);
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
     control::dumpFB.off();
@@ -398,7 +411,7 @@ void solenoid::measureTask()
   switch (oxygenStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::oxygenFB.toggle();
+    showOpenFailure(control::oxygenFB);
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
     control::oxygenFB.off();
@@ -415,7 +428,7 @@ void solenoid::measureTask()
   switch (purgeStatus)
   {
   case SolenoidMonitor::Status::OPEN_FAILURE:
-    control::purgeFB.toggle();
+    showOpenFailure(control::purgeFB);
     break;
   case SolenoidMonitor::Status::CLOSE_FAILURE:
     control::purgeFB.off();
@@ -815,6 +828,9 @@ void setup()
   Serial.println("| |_| || |___| |\\  |_____| | (_) |   | |_| |___) | |___ ");
   Serial.println(" \\____||_____|_| \\_|        \\___/     \\____|____/|_____|");
   Serial.println("");
+#ifdef BENCH_NO_SOLENOID
+  Serial.println("[WARN] BENCH_NO_SOLENOID: open-circuit FB LED blinking is disabled (bench use only)");
+#endif
 
   // ランチコントローラーと通信するRS485用ハードウェアシリアルの初期化
   Serial1.begin(115200);
