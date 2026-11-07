@@ -1553,17 +1553,42 @@ void sequence::ignition()
   // 主流路(OPEN)バルブを開く (9.5秒後)
   Tasks[control::OPEN_START]->startOnceAfterSec(9.5);
 
-  // 酸素(O2)バルブと点火器(IGNITER)をオフにする (11.0秒後)
-  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(11.0); // THR-406K 点火リベンジ
-  Tasks[control::IGNITER_STOP]->startOnceAfterSec(11.0); // THR-406K 点火リベンジ
+  // 酸素(O2)バルブと点火器(IGNITER)をオフにする (12.0秒後)
+  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(12.0);  // THR-406K 点火リベンジ
+  Tasks[control::IGNITER_STOP]->startOnceAfterSec(12.0); // THR-406K 点火リベンジ
 
-  // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする
-  Tasks[control::PURGE_START]->startOnceAfterSec(15.5);
-  // パージを終了する (20.5秒後)
-  Tasks[control::PURGE_STOP]->startOnceAfterSec(20.5);
+  // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする (16.0秒後)
+  Tasks[control::PURGE_START]->startOnceAfterSec(16.0);
+  // パージを終了する (21.0秒後)
+  Tasks[control::PURGE_STOP]->startOnceAfterSec(21.0);
 
   // ※ シーケンス完了後も ignitionSequenceIsActive は true のまま (OPEN も開いたまま)。
   //   次にシーケンス開始スイッチを押すと peacefulStop() でリセットされる (handleManualTask 参照)
+
+  /*
+                    A        B C       D  E F         G         H
+  FILL      (充填)   |###################________________________
+  O2        (酸素)   |_________###############___________________
+  IGNITER   (点火器) |___________###########_____________________
+  OPEN-1  (供給路弁) |_____________________######################  →(開のまま)
+  OPEN-2  (主流路弁) |______________________#####################  →(開のまま)
+  PURGE     (パージ) |________________________________##########_
+                     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+  T [s]                       -5        0         +5        +10
+
+    1文字 = 0.5 s   # = ON/開   _ = OFF/閉   + = 1 s刻み
+
+    記号 | T [s] | コード上[s] | イベント
+    -----+-------+-------------+--------------------------------------------------
+     A   |  -9.5 |     0.0     | シーケンス開始・音声 #4 再生 (「充填が確認されました…5秒前…」)
+     B   |  -5.0 |     4.5     | O2 開
+     C   |  -4.0 |     5.5     | IGNITER ON
+     D   |   0.0 |     9.5     | FILL 閉 / OPEN 開 (供給路弁)
+     E   |  +1.8 |   (11.3)    | 主流路弁 開 (供給路弁 開から 1.8 s 遅延。この関数内では設定していない. 実測値)
+     F   |  +2.5 |    12.0     | O2 閉 / IGNITER OFF (主流路弁 開から1.0 ~ 1.9 遅延.)
+     G   |  +6.5 |    16.0     | PURGE 開
+     H   | +11.5 |    21.0     | PURGE 閉
+  */
 }
 
 /// @brief 起動時にすべてのLEDやフィードバックランプをテスト点灯する
