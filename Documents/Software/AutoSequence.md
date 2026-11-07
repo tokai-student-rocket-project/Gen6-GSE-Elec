@@ -13,6 +13,7 @@
 - [ignition 関数（点火シークエンス）](#ignition-関数点火シークエンス)
 - [実行タイミングの考え方](#実行タイミングの考え方)
 - [シークエンスの中断](#シークエンスの中断)
+- [LaunchController3.0（THR-406K）の点火シークエンス](#launchcontroller30thr-406kの点火シークエンス)
 - [SatelliteController2.0 の役割](#satellitecontroller20-の役割)
 - [補足](#補足)
 
@@ -302,6 +303,68 @@ Tasks[control::OPEN_START]->startOnceAfterSec(10.0);
 
 TSRPに所属している人のみが閲覧可能.
 - [THR-E820N 点火シークエンス タイミング設定 | TSRP BOX](https://u-tokai.box.com/s/ij2yk944d7rt8ybjq47xpfkimphpgx4y)
+
+## LaunchController3.0（THR-406K）の点火シークエンス
+
+`src/LaunchController3.0/LaunchController3.0.cpp` の `sequence::ignition()` では，THR-406K 用にタイミングを変更している．
+開始条件は LaunchController2.0 と同じで，`Tasks` への登録部分だけが異なる．
+
+```cpp
+control::sequenceStart.setAutomaticOn();
+mp3_play(4); // 0104_ignitionSequenceStart
+
+Tasks[control::OXYGEN_START]->startOnceAfterSec(4.5);
+Tasks[control::IGNITER_START]->startOnceAfterSec(5.5);
+
+Tasks[control::FILL_STOP]->startOnceAfterSec(9.5);
+Tasks[control::OPEN_START]->startOnceAfterSec(9.5);
+
+Tasks[control::OXYGEN_STOP]->startOnceAfterSec(11.0);
+Tasks[control::IGNITER_STOP]->startOnceAfterSec(11.0);
+
+Tasks[control::PURGE_START]->startOnceAfterSec(16.0);
+Tasks[control::PURGE_STOP]->startOnceAfterSec(21.0);
+```
+
+音声「充填が確認されました．点火します．5 秒前…」に約 4.5 秒かかるため，酸素の開始を音声の終わりに合わせている．
+点火の基準時刻（T）は，供給弁が開く `OPEN_START` の 9.5 秒後とする．
+
+### 点火シークエンス（時系列順）
+
+| 記号 | T 基準 | `ignition()` からの経過 | 動作 | タスク |
+| :-: | -----: | ------: | --- | --- |
+| A | T − 9.5 s | 0 s | シークエンス開始，音声 4 番を再生 | － |
+| B | T − 5.0 s | 4.5 s | 酸素充填 開始 | `OXYGEN_START` |
+| C | T − 4.0 s | 5.5 s | イグナイター 点火開始 | `IGNITER_START` |
+| D | **T ± 0 s** | **9.5 s** | **FILL 停止** | `FILL_STOP` |
+| D | **T ± 0 s** | **9.5 s** | **供給弁 開（点火）** | `OPEN_START` |
+| E | T + 0.5 s | (10.0 s) | 主流路弁 開 | －（アビオニクス（すばる）側で 0.5 s 遅延） |
+| F | T + 1.5 s | 11.0 s | 酸素充填 停止 | `OXYGEN_STOP` |
+| F | T + 1.5 s | 11.0 s | イグナイター 点火停止 | `IGNITER_STOP` |
+| G | T + 6.5 s | 16.0 s | パージ 開始 | `PURGE_START` |
+| H | T + 11.5 s | 21.0 s | パージ 停止 | `PURGE_STOP` |
+
+> [!NOTE]
+> 酸素とイグナイターは T − 4.0 s 〜 T + 1.5 s の 5.5 秒間，同時に ON になる．主流路弁が開いた後も 1.0 秒間は ON のままである．
+> 主流路弁の 0.5 s 遅延は `ignition()` の中では設定していない．
+
+### タイミングチャート
+
+```
+                    A        B C       DE F         G         H
+FILL      (充填)   |###################________________________
+O2        (酸素)   |_________#############_____________________
+IGNITER   (点火器) |___________###########_____________________
+OPEN-1    (供給弁) |___________________########################  →(開のまま)
+OPEN-2  (主流路弁) |____________________#######################  →(開のまま)
+PURGE     (パージ) |________________________________##########_
+                   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+T [s]                       -5        0         +5        +10
+
+  1文字 = 0.5 s   # = ON/開   _ = OFF/閉   + = 1 s刻み
+```
+
+シークエンスが終わっても `ignitionSequenceIsActive` は `true` のままで，OPEN も開いたままになる．次にシークエンス開始スイッチを押すと `peacefulStop()` でリセットされる．
 
 ## SatelliteController2.0 の役割
 
