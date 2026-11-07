@@ -1549,13 +1549,13 @@ void sequence::ignition()
   Tasks[control::IGNITER_START]->startOnceAfterSec(5.5); // THR-406K 用に変更
 
   // 充填(FILL)バルブを閉じる (9.5秒後: カウントダウン終了付近)
-  Tasks[control::FILL_STOP]->startOnceAfterSec(9.5);
+  Tasks[control::FILL_STOP]->startOnceAfterSec(9.5); // THR-406K 不点火
   // 主流路(OPEN)バルブを開く (9.5秒後)
-  Tasks[control::OPEN_START]->startOnceAfterSec(9.5);
+  Tasks[control::OPEN_START]->startOnceAfterSec(9.5); // THR-406K 不点火
 
   // 酸素(O2)バルブと点火器(IGNITER)をオフにする (10.0秒後)
-  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.0);
-  Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.0);
+  Tasks[control::OXYGEN_STOP]->startOnceAfterSec(10.0); // THR-406K 不点火
+  Tasks[control::IGNITER_STOP]->startOnceAfterSec(10.0); // THR-406K 不点火
 
   // 燃焼終了後、パージ(PURGE)バルブを開けて配管内をパージする
   Tasks[control::PURGE_START]->startOnceAfterSec(15.5);
